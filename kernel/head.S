@@ -2,7 +2,7 @@
 .section    .init_text, "ax"
 .globl _start
 _start:
-//==================bsp/ap核
+//===============================bsp/ap核
     movl    $0x1B,%ecx           //IA32_APIC_BASE=0x1b 寄存器
     rdmsr
     or      $0xc00,%eax
@@ -11,14 +11,14 @@ _start:
     movabs  %eax,bsp_flags
     jz      kernel_stack_init
 
-//////////////////////cpu_num=cpu数量
+//===============================cpu_num=cpu数量
     mov        $1,%eax
     cpuid
     shr        $16,%ebx         //右移16位得到cpu数量
     mov        %rbx,%rax
     movabs     %rax,cpu_num
 
-//////////////////开辟多核栈空间
+//===============================开辟多核栈空间
     movabs     cpu_num,%rax
     shl        $14,%rax                 //每个核心分配16k栈
     mov        %rax,%rbx
@@ -26,7 +26,7 @@ _start:
     add        %rbx,%rax
     movabs     %rax,kernel_memend       //内核栈顶
 
-//======= 初始化多核内核栈
+//===============================初始化多核内核栈
 kernel_stack_init:
     mov     $0x802,%ecx
     rdmsr                   //获取APIC ID
@@ -35,7 +35,8 @@ kernel_stack_init:
     mov     (%rbx),%rsp
     sub     %rax,%rsp           //计算每个内核栈 栈顶=VBASESTACK-(APIC ID*16K)
 
-	jmp	    Kernel_init
+//  进入C语言Kernel_init
+//	jmp	    Kernel_init
 
 //===============================初始化程序数据=================================================
 .section    .init_data, "wa"
