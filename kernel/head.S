@@ -15,11 +15,11 @@ _start:
     mov        $1,%eax
     cpuid
     shr        $16,%ebx         //右移16位得到cpu数量
-    mov        %rbx,%rax
-    movabs     %rax,cpu_num
+    mov        %ebx,%eax
+    movabs     %eax,cpu_num
 
 //===============================开辟多核栈空间
-    movabs     cpu_num,%rax
+    movabs     cpu_num,%eax
     shl        $14,%rax                 //每个核心分配16k栈
     mov        %rax,%rbx
     movabs     kernel_memend,%rax
@@ -48,10 +48,10 @@ kernel_stack_init:
     kernel_memend:   .quad   _end
 
     .globl cpu_num
-    cpu_num:         .quad   0
+    cpu_num:         .int   0
 
     .globl bsp_flags
-    bsp_flags:   .int    0
+    bsp_flags:       .int   0
 
     .equ    VBASEADDR,0xffff800000000000      //内核虛擬地址基址
 

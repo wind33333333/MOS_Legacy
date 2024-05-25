@@ -18,7 +18,7 @@ void memory_init(unsigned int bsp_flags) {
             }
             p++;
         }
-        color_printk(YELLOW, BLACK, "Total Memory: %#018lX\n", totalmem);
+        color_printk(YELLOW, BLACK, "OS Can User Total 4K PAGEs: %#010X=%010d\n", totalmem,totalmem);
     }
     return;
 }

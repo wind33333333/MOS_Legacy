@@ -1,6 +1,9 @@
 #ifndef __LIB_H__
 #define __LIB_H__
 
+#define BOCHS_DG()    __asm__ __volatile__ ("xchg %%bx,%%bx \n\t":: :);
+extern unsigned int bsp_flags;
+extern unsigned int cpu_num;
 
 #define NULL 0
 
@@ -16,7 +19,6 @@
 #define nop() 		__asm__ __volatile__ ("nop	\n\t")
 #define io_mfence() 	__asm__ __volatile__ ("mfence	\n\t":::"memory")
 
-#define BOCHS_DG()    __asm__ __volatile__ ("xchg %%bx,%%bx \n\t":: :);
 
 
 struct List

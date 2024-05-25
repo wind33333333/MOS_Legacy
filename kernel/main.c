@@ -16,8 +16,6 @@
 
 __attribute__((section(".init_text"))) void Kernel_init(void) {
 
-    extern unsigned int bsp_flags;
-
     unsigned int cpu_id = 0;
     __asm__ __volatile__ (
             "movl $0x802,%%ecx   \n\t"
