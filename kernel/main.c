@@ -9,6 +9,9 @@
 #include "idt_init.h"
 #include "apic_init.h"
 #include "memory.h"
+#include "gdt_init.h"
+#include "tss_init.h"
+#include "papg_init.h"
 
 
 __attribute__((section(".init_text"))) void Kernel_init(void) {
@@ -21,14 +24,19 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
             "rdmsr               \n\t"
             :"=a"(cpu_id)::"%rcx", "%rdx");
 
-
     pos_init(bsp_flags);
 
     memory_init(bsp_flags);
 
-    apic_init();
+    gdt_init(bsp_flags);
+
+    tss_init(cpu_id);
+
+    papg_init(bsp_flags);
 
     idt_init(bsp_flags, (unsigned long) &ignore_int);
+
+    apic_init();
 
     sys_vector_init(bsp_flags);
 
@@ -39,7 +47,6 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
     ap_init(bsp_flags);
 
     color_printk(GREEN, BLACK, "CPU%d init successful\n", cpu_id);
-
 
 
 //  __asm__ __volatile__ ("int $0 \n\t":: :);

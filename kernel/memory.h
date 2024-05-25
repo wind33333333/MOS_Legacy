@@ -6,6 +6,9 @@
 
 void  memory_init(unsigned int bsp_flags);
 
+#define E820_SIZE    0x500
+#define E820_BASE    0x504
+
 #define PAGE_OFFSET	((unsigned long)0xffff800000000000)
 
 #define PAGE_GDT_SHIFT	39
