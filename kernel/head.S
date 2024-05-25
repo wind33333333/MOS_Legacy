@@ -29,37 +29,37 @@ _start:
 //===============================初始化多核内核栈
 kernel_stack_init:
     mov     $0x802,%ecx
-    rdmsr                   //获取APIC ID
-    shl     $14,%rax      //每个核心分配16k栈
+    rdmsr                           //获取APIC ID
+    shl     $14,%rax                //每个核心分配16k栈
     movabs  $kernel_memend,%rbx
     mov     (%rbx),%rsp
-    sub     %rax,%rsp           //计算每个内核栈 栈顶=VBASESTACK-(APIC ID*16K)
+    sub     %rax,%rsp               //计算每个内核栈 栈顶=VBASESTACK-(APIC ID*16K)
 
-//  进入C语言Kernel_init
-//	jmp	    Kernel_init
+	jmp	    Kernel_init             //进入C语言Kernel_init
 
 //===============================初始化程序数据=================================================
 .section    .init_data, "wa"
-IDT_POINTER:
-IDT_LIMIT:	.word	IDT_END - IDT_Table - 1
-IDT_BASE:	.quad	IDT_Table
 
-.globl kernel_memend
-kernel_memend:   .quad   _end
+    IDT_POINTER:
+    IDT_LIMIT:	.word	IDT_END - IDT_Table - 1
+    IDT_BASE:	.quad	IDT_Table
 
-.globl cpu_num
-cpu_num:         .quad   0
+    .globl kernel_memend
+    kernel_memend:   .quad   _end
 
-.globl bsp_flags
-bsp_flags:   .int    0
+    .globl cpu_num
+    cpu_num:         .quad   0
 
-.equ    VBASEADDR,0xffff800000000000      //内核虛擬地址基址
+    .globl bsp_flags
+    bsp_flags:   .int    0
+
+    .equ    VBASEADDR,0xffff800000000000      //内核虛擬地址基址
 
 
 //========================================正式内核代码=================================================
 
 .section    .text, "ax"
-//=======	ignore_int
+//======================默认中断处理程序========================
 .globl ignore_int
 ignore_int:
 	cld
@@ -132,8 +132,7 @@ Loop:
 	popq	%rax
 	iretq
 
-int_msg:
-	.asciz "Unknown interrupt or fault at RIP\n"
+int_msg:    .asciz "Unknown interrupt or fault at RIP\n"
 
 
 //========================================正式内核数据=================================================
