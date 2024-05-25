@@ -16,6 +16,8 @@
 #define nop() 		__asm__ __volatile__ ("nop	\n\t")
 #define io_mfence() 	__asm__ __volatile__ ("mfence	\n\t":::"memory")
 
+#define BOCHS_DG()    __asm__ __volatile__ ("xchg %%bx,%%bx \n\t":: :);
+
 
 struct List
 {

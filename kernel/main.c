@@ -13,8 +13,6 @@
 
 __attribute__((section(".init_text"))) void Kernel_init(void) {
 
-    //__asm__ __volatile__ ("xchg %%bx,%%bx \n\t":: :);
-
     extern unsigned int bsp_flags;
 
     unsigned int cpu_id = 0;
@@ -23,9 +21,6 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
             "rdmsr               \n\t"
             :"=a"(cpu_id)::"%rcx", "%rdx");
 
-
-    ap_init(bsp_flags);
-    while(1);
 
     pos_init(bsp_flags);
 
@@ -47,11 +42,8 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
 
 
 
-//  __asm__ __volatile__ ("xchg %%bx,%%bx \n\t":: :);
-
 //  __asm__ __volatile__ ("int $0 \n\t":: :);
 
-//  asm volatile ("int $0 \n\t" :::);
 //  int i = 1/0;
 
     while (1);
