@@ -1,0 +1,71 @@
+BUILD:=./build
+BOOTLOADER:=./bootloader
+KERNEL:=./kernel
+MNT:=/home/wind3/mnt
+HDD:=fat32.img
+MBR1:=1048666				#主mbr代码引导=起始扇区号*512+90
+MBR2:=1051738				#备份mbr代码引导=（起始扇区号+6)*512+90
+LOADER:=1052672				#loader起始扇区
+LOASERLEN:=10240			#loader长度
+
+CFLAGS:= -m64 			# 64 位的程序
+#CFLAGS+= -masm=intel	#intel汇编编码
+CFLAGS+= -fno-builtin	# 不需要 gcc 内置函数
+#CFLAGS+= -nostdinc		# 不需要标准头文件
+CFLAGS+= -fno-pic		# 不需要位置无关的代码  position independent code
+CFLAGS+= -fno-pie		# 不需要位置无关的可执行程序 position independent executable
+CFLAGS+= -nostdlib		# 不需要标准库
+CFLAGS+= -mcmodel=large #大内存模型
+CFLAGS+= -fno-stack-protector	# 不需要栈保护
+CFLAGS+= -g						#开启调试符号
+CFLAGS:=$(strip ${CFLAGS})
+
+all: clean $(BUILD)/boot.bin $(BUILD)/loader.bin ${BUILD}/system ${BUILD}/kernel.bin HDDimg
+
+HDDimg:
+	dd if=$(BUILD)/boot.bin of=$(BUILD)/$(HDD) bs=1 seek=$(MBR1) skip=90 count=422 conv=notrunc
+	dd if=$(BUILD)/boot.bin of=$(BUILD)/$(HDD) bs=1 seek=$(MBR2) skip=90 count=422 conv=notrunc
+	dd if=$(BUILD)/loader.bin of=$(BUILD)/$(HDD) bs=1 seek=$(LOADER) skip=0 count=$(LOASERLEN) conv=notrunc
+	sudo mount -o loop,offset=1048576,uid=1000,gid=1000 $(BUILD)/$(HDD) $(MNT)   #offset fat32分区起始地址=起始扇区号*512
+	cp $(BUILD)/kernel.bin $(MNT)
+	sudo umount $(MNT)
+
+$(BUILD)/%.bin: $(BOOTLOADER)/%.asm
+	nasm $< -o $@
+
+${BUILD}/kernel.bin: ${BUILD}/system
+	objcopy -I elf64-x86-64 -S -R ".eh_frame" -R ".comment" -O binary $^ $@
+	nm ${BUILD}/system | sort > ${BUILD}/system.map
+
+${BUILD}/system: ${BUILD}/head.o ${BUILD}/main.o ${BUILD}/printk.o ${BUILD}/entry.o ${BUILD}/trap.o ${BUILD}/ioapic_init.o ${BUILD}/ap_init.o ${BUILD}/acpi_init.o ${BUILD}/pos_init.o ${BUILD}/idt_init.o ${BUILD}/apic_init.o ${BUILD}/memory.o
+	ld -b elf64-x86-64 -z muldefs -o $@ $^ -T $(KERNEL)/Kernel.lds
+
+$(BUILD)/%.o: $(BUILD)/%.s
+	as --64 $< -o $@
+
+$(BUILD)/%.s: $(KERNEL)/%.S
+	gcc -E $< > $@
+
+$(BUILD)/%.o: $(KERNEL)/%.c
+	gcc ${CFLAGS} -c $< -o $@
+
+bochs: all
+	bochs -q -f bochsrc
+
+qemu-gdb: all
+	qemu-system-x86_64 -m 8G -boot c -S -s -cpu Icelake-Server-v5 -smp cores=1,threads=2 -hda $(BUILD)/$(HDD)
+
+qemu: all
+	qemu-system-x86_64  -m 8G -boot c -cpu Icelake-Server-v5 -smp cores=2,threads=2 -hda $(BUILD)/$(HDD)
+
+#qemu-gdb: all
+#	qemu-system-x86_64 -M q35 -m 2G -boot c -S -s -cpu Icelake-Server-v5 -smp cores=1,threads=2 -hda $(BUILD)/$(HDD)
+
+#qemu: all
+#	qemu-system-x86_64 -M q35 -m 2G -boot c -cpu Icelake-Server-v5 -smp cores=1,threads=2 -hda $(BUILD)/$(HDD)
+
+clean:
+#	-rm ./build/*
+	find build/ -type f ! -name "$(HDD)" -exec rm {} +
+
+
