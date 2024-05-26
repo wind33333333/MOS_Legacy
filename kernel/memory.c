@@ -4,22 +4,29 @@
 void memory_init(unsigned int bsp_flags) {
 
     if (bsp_flags) {
-        unsigned totalmem = 0;
-        unsigned start=0;
+        unsigned int x=0;
+        unsigned long totalmem = 0;
+        unsigned long page4knum=0;
+        unsigned long start=0;
         unsigned long end=0;
         struct E820 *p = (struct E820 *) E820_BASE;
         for (unsigned int i = 0; i < *(unsigned int *) E820_SIZE; i++) {
             color_printk(YELLOW, BLACK, "Addr: %#018lX\t Len: %#018lX\t Type: %d\n", p->address,
                          p->length, p->type);
             if (p->type == 1) {
-                start = p->address&PAGE_4K_MASK;
-                end = start+(p->length&PAGE_4K_MASK);
-                totalmem += (end-start)>>PAGE_4K_SHIFT;
+                memory_management_struct.e820[x].address = p->address&PAGE_4K_MASK;
+                memory_management_struct.e820[x].length = p->length&PAGE_4K_MASK;
+                memory_management_struct.e820[x].type = p->type;
+                memory_management_struct.e820_length++;
+                totalmem += p->length;
+                page4knum += memory_management_struct.e820[x].length;
+                x++;
             }
             p++;
         }
-        color_printk(YELLOW, BLACK, "OS Can User Total 4K PAGEs: %#018lX=%010ld\n", totalmem,totalmem);
-        unsigned long q=0x8FFFFFFFFFFFFFFF;
+        color_printk(ORANGE,BLACK,"OS Can Used Total RAM: %#018lX=%ldMB\n",totalmem,totalmem/1024/1024);
+        color_printk(ORANGE,BLACK, "OS Can Used Total 4K PAGEs: %#018lX=%ld\n", page4knum>>PAGE_4K_SHIFT,page4knum>>PAGE_4K_SHIFT);
+
     }
     return;
 }
