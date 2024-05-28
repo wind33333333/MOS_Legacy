@@ -42,9 +42,9 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
 
     ioapic_init(bsp_flags);         //初始化ioapic
 
-    ap_init(bsp_flags);             //初始化ap核
+    ap_init(bsp_flags,cpu_id);             //初始化ap核
 
-    color_printk(GREEN, BLACK, "CPU%d init successful\n", cpu_id);
+
 
 
 //  __asm__ __volatile__ ("int $0 \n\t":: :);
