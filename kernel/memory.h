@@ -40,6 +40,4 @@ struct Global_Memory_Descriptor
 
 struct Global_Memory_Descriptor memory_management_struct = {{0},0};
 
-
-
 #endif
