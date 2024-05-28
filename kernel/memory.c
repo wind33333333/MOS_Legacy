@@ -2,7 +2,7 @@
 #include "printk.h"
 
 
-void memory_init(unsigned int bsp_flags) {
+__attribute__((section(".init_text"))) void memory_init(unsigned int bsp_flags) {
 
     if (bsp_flags) {
         unsigned int x = 0;
@@ -37,8 +37,11 @@ void memory_init(unsigned int bsp_flags) {
                 (memory_management_struct.bits_size + 63) / 8 & 0xFFFFFFFFFFFFFFF8;
         memset(memory_management_struct.bits_map, 0xff, memory_management_struct.bits_length);
 
-        memory_management_struct.end_data=kernel_memend+(memory_management_struct.bits_length+0xfff)&0xFFFFFFFFFFFFF000;
 
+        memory_management_struct.kernel_start = &_start_text;
+        memory_management_struct.kernel_end =kernel_memend + (memory_management_struct.bits_length + 0xfff) & 0xFFFFFFFFFFFFF000;
+        color_printk(ORANGE,BLACK,"bits_map:%#018lx,bits_size:%#018lx,bits_length:%#018lx\n",memory_management_struct.bits_map,memory_management_struct.bits_size,memory_management_struct.bits_length);
+        color_printk(ORANGE, BLACK, "Kernel Start Addr: %#018lX \tKernel End Addr: %#018lX\n",memory_management_struct.kernel_start,memory_management_struct.kernel_end);
 
     }
     return;

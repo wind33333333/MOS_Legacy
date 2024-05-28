@@ -7,6 +7,8 @@ extern unsigned int bsp_flags;
 extern unsigned int cpu_num;
 extern unsigned long kernel_memend;
 
+extern unsigned long _start_text;
+
 
 #define NULL 0
 

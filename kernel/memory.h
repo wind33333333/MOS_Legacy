@@ -34,7 +34,8 @@ struct Global_Memory_Descriptor
     unsigned long 	bits_size;
     unsigned long   bits_length;
 
-    unsigned long 	start_code , end_code ,start_data ,end_data
+    unsigned long 	kernel_start;
+    unsigned long   kernel_end;
 
 };
 
