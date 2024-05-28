@@ -1,6 +1,6 @@
 #include "idt_init.h"
 
-void idt_init(unsigned int bsp_flags, unsigned long intfnuc) {
+__attribute__((section(".init_text"))) void idt_init(unsigned int bsp_flags, unsigned long intfnuc) {
     if (bsp_flags) {
     struct idt_desc_struct *p_idt=IDT_Table;
         for (int i=0;i<256;i++) {

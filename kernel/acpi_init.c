@@ -1,5 +1,5 @@
 #include "printk.h"
-void acpi_init(unsigned int bsp_flags){
+__attribute__((section(".init_text"))) void acpi_init(unsigned int bsp_flags){
     if(bsp_flags) {
         unsigned long rsdpstr = 0x2052545020445352;   //'RSD PTR '
         unsigned long *prsdp = (long *) 0xe0000;

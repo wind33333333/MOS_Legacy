@@ -1,7 +1,7 @@
 #include "pos_init.h"
 
 //显存起始地址由loader调用int10保存在0x600+0x28地址处
-void pos_init(unsigned int bsp_flags) {
+__attribute__((section(".init_text"))) void pos_init(unsigned int bsp_flags) {
 
     if (bsp_flags) {
         Pos.XResolution = 1440;

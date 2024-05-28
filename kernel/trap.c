@@ -350,7 +350,7 @@ void do_virtualization_exception(unsigned long rsp, unsigned long error_code) {
 
 */
 
-void sys_vector_init(unsigned int bsp_flags) {
+__attribute__((section(".init_text"))) void sys_vector_init(unsigned int bsp_flags) {
     if(bsp_flags) {
         set_trap_gate(0, 1, divide_error);
         set_trap_gate(1, 1, debug);

@@ -1,6 +1,6 @@
 #include "apic_init.h"
 
-void apic_init(void) {
+__attribute__((section(".init_text"))) void apic_init(void) {
     __asm__ __volatile__ (
             "mov $0xFF,%%al \n\t"
             "out %%al,$0x21 \n\t"
@@ -80,5 +80,6 @@ void apic_init(void) {
             "sti \n\t"
 
             :: :"%rax", "%rcx", "%rdx");
+    return;
 }
 
