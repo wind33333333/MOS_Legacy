@@ -36,7 +36,6 @@ struct Global_Memory_Descriptor
 
     unsigned long 	kernel_start;
     unsigned long   kernel_end;
-
 };
 
 struct Global_Memory_Descriptor memory_management_struct = {{0},0};
