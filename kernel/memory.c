@@ -25,11 +25,13 @@ void memory_init(unsigned int bsp_flags) {
         color_printk(ORANGE,BLACK,"OS Can Used Total RAM: %#018lX=%ldMB\n",totalmem,totalmem/1024/1024);
         color_printk(ORANGE,BLACK, "OS Can Used Total 4K PAGEs: %#018lX=%ld\n", page4knum>>PAGE_4K_SHIFT,page4knum>>PAGE_4K_SHIFT);
 
-        totalmem = memory_management_struct.e820[memory_management_struct.e820_length].address + memory_management_struct.e820[memory_management_struct.e820_length].length;
-        memory_management_struct.bits_map=kernel_memend;
+        //bits map construction init
+        totalmem = memory_management_struct.e820[memory_management_struct.e820_length-1].address + memory_management_struct.e820[memory_management_struct.e820_length-1].length;
+        memory_management_struct.bits_map=(unsigned long*)kernel_memend;
         memory_management_struct.bits_size=totalmem>>PAGE_4K_SHIFT;
-        memory_management_struct.bits_length=memory_management_struct.bits_size;
-
+        memory_management_struct.bits_length=(memory_management_struct.bits_size+63)/8&0xFFFFFFFFFFFFFFF8;
+        memory_management_struct.end_brk=kernel_memend+(memory_management_struct.bits_length+0xfff)&0xFFFFFFFFFFFFF000;
+        memset(memory_management_struct.bits_map,0xff,memory_management_struct.bits_length);
 
     }
     return;

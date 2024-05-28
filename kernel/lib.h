@@ -5,7 +5,7 @@
 #define BOCHS_DG()    __asm__ __volatile__ ("xchg %%bx,%%bx \n\t":: :);
 extern unsigned int bsp_flags;
 extern unsigned int cpu_num;
-extern unsigned long *kernel_memend;
+extern unsigned long kernel_memend;
 
 
 #define NULL 0
