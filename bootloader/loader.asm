@@ -135,18 +135,17 @@ GO_TO_TMP_Protect:
 ;=======	load GDTR
 	lgdt	[GdtPtr64]
 
-;=======	open PAE  启用avx指令值需要设置bit9和bit18
+;=======	open PAE
 	mov	eax,	cr4
-    or  eax,    0x50620          ;bit5 PAE, bit9 OSFXSR, bit10 OSXMMEXCPT, bit16 FSGSBASE, bit18 OSXSAVE
+    or  eax,    0x50E20   ;bit5 PAE, bit9 OSFXSR, bit10 OSXMMEXCPT,bit11 UMIP禁止用户模式下执行 SGDT、SIDT、SLDT、SMSW 和 STR 指令， bit16 FSGSBASE, bit18 OSXSAVE。启用avx指令值需要设置bit9、bit10和bit18
 	mov	cr4,	eax
 
-;========== 启用avx,avx2和（avx512指令集intel桌面级cpu大部分不支持最好不启用)
+;========== XCR0寄存器 启用avx,avx2和（avx512指令集桌面级cpu大部分不支持最好禁用)
     mov ecx, 0          ; XCR0寄存器
     xor eax, eax
     xor edx, edx
     xgetbv              ; 获取当前的XCR0值
-    or  eax, 0x7        ; 开启avx和avx2设置位0（XMM）、位1（YMM）、位2（ZMM_Hi256）（7）
-                        ;开启avx512设置设置位0（XMM）、位1（YMM）、位2（ZMM_Hi256和位5（ZMM16_31）位6位7（0xE7）
+    or  eax, 0x7        ; 开启avx和avx2设置位0（XMM）、位1（YMM）、位2（ZMM_Hi256）=7，;开启avx512设置设置位0（XMM）、位1（YMM）、位2（ZMM_Hi256和位5（ZMM16_31）位6位7 =0xE7
     xsetbv              ; 更新XCR0寄存器
 
 ;=======	load cr3
