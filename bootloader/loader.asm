@@ -140,7 +140,7 @@ GO_TO_TMP_Protect:
     or  eax,    0x50620          ;bit5 PAE, bit9 OSFXSR, bit10 OSXMMEXCPT, bit16 FSGSBASE, bit18 OSXSAVE
 	mov	cr4,	eax
 
-;========== 启用avx,avx2和avx512指令集
+;========== 启用avx,avx2和（avx512指令集intel桌面级cpu大部分不支持最好不启用)
     mov ecx, 0          ; XCR0寄存器
     xor eax, eax
     xor edx, edx
