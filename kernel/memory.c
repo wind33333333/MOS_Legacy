@@ -37,22 +37,13 @@ __attribute__((section(".init_text"))) void memory_init(unsigned int bsp_flags) 
                 (memory_management_struct.bits_size + 63) / 8 & 0xFFFFFFFFFFFFFFF8;
         memset(memory_management_struct.bits_map, 0xff, memory_management_struct.bits_length);
 
-        for(unsigned int i = 0;i < memory_management_struct.e820_length; i++)
+        for(unsigned int i = 1;i < memory_management_struct.e820_length; i++)
         {
-
             memset(memory_management_struct.bits_map+((memory_management_struct.e820[i].address>>PAGE_4K_SHIFT)>>6),0,(memory_management_struct.e820[i].length>>PAGE_4K_SHIFT)>>3);
-            totalmem=memory_management_struct.e820[i].address+(memory_management_struct.e820[i].length&0xFFFFFFFFFFFF8000);
-            for (unsigned long x = 0; x < (memory_management_struct.e820[i].length>>PAGE_4K_SHIFT & 7);x++) {
-                *(memory_management_struct.bits_map + ((totalmem >> PAGE_4K_SHIFT) >> 6)) ^= 1UL << (totalmem >> PAGE_4K_SHIFT) % 64;
+            for (unsigned int x = 0; x < (memory_management_struct.e820[i].length>>PAGE_4K_SHIFT & 7);x++) {
+                *(memory_management_struct.bits_map + (((memory_management_struct.e820[i].address+(memory_management_struct.e820[i].length&0xFFFFFFFFFFFF8000)) >> PAGE_4K_SHIFT) >> 6)) ^= 1UL << ((memory_management_struct.e820[i].address+(memory_management_struct.e820[i].length&0xFFFFFFFFFFFF8000)) >> PAGE_4K_SHIFT) % 64;
                 totalmem += PAGE_4K_SIZE;
             }
-
-/*            totalmem=memory_management_struct.e820[i].address;
-            for (unsigned long x = 0; x < (memory_management_struct.e820[i].length>>PAGE_4K_SHIFT);x++) {
-                *(memory_management_struct.bits_map + ((totalmem >> PAGE_4K_SHIFT) >> 6)) ^= 1UL << (totalmem >> PAGE_4K_SHIFT) % 64;
-                totalmem += PAGE_4K_SIZE;
-            }*/
-
         }
 
         memory_management_struct.kernel_start = &_start_text;
