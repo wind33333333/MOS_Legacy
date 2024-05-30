@@ -56,7 +56,7 @@ bochs: all
 	bochs -q -f bochsrc
 
 qemu-gdb: all
-	qemu-system-x86_64 -m 8G -boot c -S -s -cpu Icelake-Server-v5 -smp cores=1,threads=2 -hda $(BUILD)/$(HDD)
+	qemu-system-x86_64 -m 8G -boot c -S -s -cpu Icelake-Server-v5 -smp cores=2,threads=2 -hda $(BUILD)/$(HDD)
 
 qemu: all
 	qemu-system-x86_64  -m 8G -boot c -cpu Icelake-Server-v5 -smp cores=2,threads=2 -hda $(BUILD)/$(HDD)
