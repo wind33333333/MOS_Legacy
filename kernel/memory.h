@@ -5,6 +5,7 @@
 #include "lib.h"
 
 void  memory_init(unsigned int bsp_flags);
+void * alloc_pages(unsigned long num);
 
 #define E820_SIZE    0x500
 #define E820_BASE    0x504
@@ -33,6 +34,10 @@ struct Global_Memory_Descriptor
     unsigned long * bits_map;
     unsigned long 	bits_size;
     unsigned long   bits_length;
+
+    unsigned long   total_pages;
+    unsigned long   alloc_pages;
+    unsigned long   free_pages;
 
     unsigned long 	kernel_start;
     unsigned long   kernel_end;

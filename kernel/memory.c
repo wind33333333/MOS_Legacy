@@ -7,7 +7,6 @@ __attribute__((section(".init_text"))) void memory_init(unsigned int bsp_flags) 
     if (bsp_flags) {
         unsigned int x = 0;
         unsigned long totalmem = 0;
-        unsigned long page4knum = 0;
         struct E820 *p = (struct E820 *) E820_BASE;
         for (unsigned int i = 0; i < *(unsigned int *) E820_SIZE; i++) {
             color_printk(ORANGE, BLACK, "Addr: %#018lX\t Len: %#018lX\t Type: %d\n", p->address,
@@ -18,15 +17,14 @@ __attribute__((section(".init_text"))) void memory_init(unsigned int bsp_flags) 
                 memory_management_struct.e820[x].type = p->type;
                 memory_management_struct.e820_length++;
                 totalmem += p->length;
-                page4knum += memory_management_struct.e820[x].length;
+                memory_management_struct.total_pages +=
+                        memory_management_struct.e820[x].length >> PAGE_4K_SHIFT;
                 x++;
             }
             p++;
         }
         color_printk(ORANGE, BLACK, "OS Can Used Total RAM: %#018lX=%ldMB\n", totalmem,
                      totalmem / 1024 / 1024);
-        color_printk(ORANGE, BLACK, "OS Can Used Total 4K PAGEs: %#018lX=%ld\n",
-                     page4knum >> PAGE_4K_SHIFT, page4knum >> PAGE_4K_SHIFT);
 
         //bits map construction init
         totalmem = memory_management_struct.e820[memory_management_struct.e820_length - 1].address +
@@ -38,29 +36,68 @@ __attribute__((section(".init_text"))) void memory_init(unsigned int bsp_flags) 
         memset(memory_management_struct.bits_map, 0xff, memory_management_struct.bits_length);
 
         //bit map 1M以上可用空间置0，i=1跳过1M保持使用置1，等全部初始化后再释放
-        for(unsigned int i = 1;i < memory_management_struct.e820_length; i++)
-        {
-            memset(memory_management_struct.bits_map+((memory_management_struct.e820[i].address>>PAGE_4K_SHIFT)>>6),0,(memory_management_struct.e820[i].length>>PAGE_4K_SHIFT)>>3);
-            totalmem=memory_management_struct.e820[i].address+memory_management_struct.e820[i].length&0xFFFFFFFFFFFF8000;
-            for (;totalmem < (memory_management_struct.e820[i].address+memory_management_struct.e820[i].length);totalmem += PAGE_4K_SIZE) {
-                *(memory_management_struct.bits_map + (totalmem >> PAGE_4K_SHIFT >> 6)) ^= 1UL << (totalmem >> PAGE_4K_SHIFT) % 64;
+        for (unsigned int i = 1; i < memory_management_struct.e820_length; i++) {
+            memset(memory_management_struct.bits_map +
+                   ((memory_management_struct.e820[i].address >> PAGE_4K_SHIFT) >> 6), 0,
+                   (memory_management_struct.e820[i].length >> PAGE_4K_SHIFT) >> 3);
+            totalmem = memory_management_struct.e820[i].address +
+                       memory_management_struct.e820[i].length & 0xFFFFFFFFFFFF8000;
+            for (; totalmem < (memory_management_struct.e820[i].address +
+                               memory_management_struct.e820[i].length); totalmem += PAGE_4K_SIZE) {
+                *(memory_management_struct.bits_map + (totalmem >> PAGE_4K_SHIFT >> 6)) ^=
+                        1UL << (totalmem >> PAGE_4K_SHIFT) % 64;
             }
         }
 
         //kernel_end结束地址加上bit map对齐4K地址
         memory_management_struct.kernel_start = &_start_text;
-        memory_management_struct.kernel_end =kernel_memend + (memory_management_struct.bits_length + 0xfff) & 0xFFFFFFFFFFFFF000;
+        memory_management_struct.kernel_end =
+                kernel_memend + (memory_management_struct.bits_length + 0xfff) & 0xFFFFFFFFFFFFF000;
 
         //把内核1M开始到kernel_end地址bit map置1，标记为已使用
-        memset(memory_management_struct.bits_map+((0x100000>>PAGE_4K_SHIFT)>>6),0xFF, (Virt_To_Phy(memory_management_struct.kernel_end)-0x100000)>>PAGE_4K_SHIFT>>3);
-        totalmem=Virt_To_Phy(memory_management_struct.kernel_end)&0xFFFFFFFFFFFF8000;
-        for (; totalmem < Virt_To_Phy(memory_management_struct.kernel_end);totalmem += PAGE_4K_SIZE) {
-            *(memory_management_struct.bits_map + (totalmem >> PAGE_4K_SHIFT >> 6)) ^= 1UL << ((totalmem-0x100000) >> PAGE_4K_SHIFT) % 64;
+        memset(memory_management_struct.bits_map + ((0x100000 >> PAGE_4K_SHIFT) >> 6), 0xFF,
+               (Virt_To_Phy(memory_management_struct.kernel_end) - 0x100000) >> PAGE_4K_SHIFT >> 3);
+        totalmem = Virt_To_Phy(memory_management_struct.kernel_end) & 0xFFFFFFFFFFFF8000;
+        for (; totalmem <
+               Virt_To_Phy(memory_management_struct.kernel_end); totalmem += PAGE_4K_SIZE) {
+            *(memory_management_struct.bits_map + (totalmem >> PAGE_4K_SHIFT >> 6)) ^=
+                    1UL << ((totalmem - 0x100000) >> PAGE_4K_SHIFT) % 64;
         }
 
-        color_printk(ORANGE,BLACK,"bits_map:%#018lx,bits_size:%#018lx,bits_length:%#018lx\n",memory_management_struct.bits_map,memory_management_struct.bits_size,memory_management_struct.bits_length);
-        color_printk(ORANGE, BLACK, "Kernel Start Addr: %#018lX \tKernel End Addr: %#018lX\n",memory_management_struct.kernel_start,memory_management_struct.kernel_end);
+        memory_management_struct.alloc_pages += (memory_management_struct.e820[0].length
+                >> PAGE_4K_SHIFT);
+        memory_management_struct.alloc_pages += (
+                (Virt_To_Phy(memory_management_struct.kernel_end) - 0x100000) >> PAGE_4K_SHIFT);
+        memory_management_struct.free_pages =
+                memory_management_struct.total_pages - memory_management_struct.alloc_pages;
+
+        color_printk(ORANGE, BLACK,
+                     "bits_map: %#018lx \tbits_size: %#018lx \tbits_length: %#018lx\n",
+                     memory_management_struct.bits_map, memory_management_struct.bits_size,
+                     memory_management_struct.bits_length);
+        color_printk(ORANGE, BLACK, "OS Can Used Total 4K PAGEs: %ld \tAlloc: %ld \tFree: %ld\n",
+                     memory_management_struct.total_pages, memory_management_struct.alloc_pages,
+                     memory_management_struct.free_pages);
+        color_printk(ORANGE, BLACK, "Kernel Start Addr: %#018lX \tKernel End Addr: %#018lX\n",
+                     memory_management_struct.kernel_start, memory_management_struct.kernel_end);
 
     }
     return;
+}
+
+void *alloc_pages(unsigned long num) {
+
+    if ((num == 0) | (num > memory_management_struct.free_pages))
+        return (void *) 0xFFFFFFFFFFFFFFFF;
+
+    void *page_addr;
+    for (unsigned long i = 0; i < (memory_management_struct.bits_length >> 3); i++) {
+        unsigned long bits_map = *(memory_management_struct.bits_map + i);
+        if (bits_map == 0xFFFFFFFFFFFFFFFF)
+            continue;
+        page_addr = bits_map;
+
+
+    }
+    return page_addr;
 }
