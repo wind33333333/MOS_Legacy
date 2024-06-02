@@ -86,6 +86,7 @@ __attribute__((section(".init_text"))) void memory_init(unsigned int bsp_flags) 
 }
 
 
+////物理页分配器
 void *alloc_pages(void) {
     SPIN_LOCK(memory_management_struct.lock);
     if (0 != memory_management_struct.free_pages) {
@@ -106,16 +107,18 @@ void *alloc_pages(void) {
         }
     }
     memory_management_struct.lock = 0;
-    return (void *)0xFFFFFFFFFFFFFFFF;
+    return (void *) -1;
 }
 
-
+///物理页释放器
 unsigned long free_pages(void *page_addr) {
-        SPIN_LOCK(memory_management_struct.lock);
-        *(memory_management_struct.bits_map + ((unsigned long) page_addr >> PAGE_4K_SHIFT >> 6)) ^=
-                1UL << ((unsigned long) page_addr >> PAGE_4K_SHIFT) % 64;
-        memory_management_struct.alloc_pages--;
-        memory_management_struct.free_pages++;
-        return 0;
+    SPIN_LOCK(memory_management_struct.lock);
+    if (page_addr > (memory_management_struct.e820[memory_management_struct.e820_length-1].address+memory_management_struct.e820[memory_management_struct.e820_length-1].length))
+        return -1;
 
-    }
+    *(memory_management_struct.bits_map + ((unsigned long) page_addr >> PAGE_4K_SHIFT >> 6)) ^=
+            1UL << ((unsigned long) page_addr >> PAGE_4K_SHIFT) % 64;
+    memory_management_struct.alloc_pages--;
+    memory_management_struct.free_pages++;
+    return 0;
+}
