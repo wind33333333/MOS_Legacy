@@ -25,7 +25,7 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
     pos_init(bsp_flags);                           //初始化输出控制台
     memory_init(bsp_flags);                        //初始化内存管理器
 
-    void * p= alloc_pages(2);
+    void * p= alloc_pages();
 
     gdt_init(bsp_flags);                           //初始化GDT
     tss_init(cpu_id);                              //初始化TSS

@@ -85,9 +85,9 @@ __attribute__((section(".init_text"))) void memory_init(unsigned int bsp_flags) 
     return;
 }
 
-void *alloc_pages(unsigned long num) {
+void *alloc_pages(void) {
 
-    if ((num == 0) | (num > memory_management_struct.free_pages))
+    if (0 == memory_management_struct.free_pages)
         return (void *) 0xFFFFFFFFFFFFFFFF;
 
     void *page_addr;
@@ -95,9 +95,14 @@ void *alloc_pages(unsigned long num) {
         unsigned long bits_map = *(memory_management_struct.bits_map + i);
         if (bits_map == 0xFFFFFFFFFFFFFFFF)
             continue;
-        page_addr = bits_map;
-
-
+        for(unsigned int j = 0; j < 64; j++){
+            if((bits_map & (1 << j))==0){
+                page_addr = (void *)((i << 18) + (j << PAGE_4K_SHIFT));
+                *(memory_management_struct.bits_map + i) |= (1 << j);
+                memory_management_struct.alloc_pages++;
+                memory_management_struct.free_pages--;
+                return page_addr;
+            }
+        }
     }
-    return page_addr;
 }

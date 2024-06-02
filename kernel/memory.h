@@ -5,7 +5,7 @@
 #include "lib.h"
 
 void  memory_init(unsigned int bsp_flags);
-void * alloc_pages(unsigned long num);
+void * alloc_pages(void);
 
 #define E820_SIZE    0x500
 #define E820_BASE    0x504
