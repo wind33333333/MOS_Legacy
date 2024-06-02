@@ -6,7 +6,7 @@
 
 void  memory_init(unsigned int bsp_flags);
 void * alloc_pages(void);
-int    free_pages(void * addr);
+unsigned long free_pages(void * addr);
 
 #define E820_SIZE    0x500
 #define E820_BASE    0x504

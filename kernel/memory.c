@@ -88,36 +88,34 @@ __attribute__((section(".init_text"))) void memory_init(unsigned int bsp_flags) 
 
 void *alloc_pages(void) {
     SPIN_LOCK(memory_management_struct.lock);
-
-    if (0 == memory_management_struct.free_pages){
-        memory_management_struct.lock= 0;                                    //解锁
-        return (void *) 0xFFFFFFFFFFFFFFFF;
-    }
-
-    void *page_addr;
-    for (unsigned long i = 0; i < (memory_management_struct.bits_length >> 3); i++) {
-        unsigned long bits_map = *(memory_management_struct.bits_map + i);
-        if (bits_map == 0xFFFFFFFFFFFFFFFF)
-            continue;
-        for(unsigned int j = 0; j < 64; j++){
-            if((bits_map & (1 << j))==0){
-                page_addr = (void *)((i << 18) + (j << PAGE_4K_SHIFT));
-                *(memory_management_struct.bits_map + i) |= (1 << j);
-                memory_management_struct.alloc_pages++;
-                memory_management_struct.free_pages--;
-                memory_management_struct.lock= 0;                                    //解锁
-                return page_addr;
+    if (0 != memory_management_struct.free_pages) {
+        void *page_addr;
+        for (unsigned long i = 0; i < (memory_management_struct.bits_length >> 3); i++) {
+            if (*(memory_management_struct.bits_map + i) != 0xFFFFFFFFFFFFFFFF) {
+                for (unsigned long j = 0; j < 64; j++) {
+                    if ((*(memory_management_struct.bits_map + i) & (1UL << j)) == 0) {
+                        page_addr = (void *) ((i << 18) + (j << PAGE_4K_SHIFT));
+                        *(memory_management_struct.bits_map + i) |= (1UL << j);
+                        memory_management_struct.alloc_pages++;
+                        memory_management_struct.free_pages--;
+                        memory_management_struct.lock = 0;                                    //解锁
+                        return page_addr;
+                    }
+                }
             }
         }
     }
+    memory_management_struct.lock = 0;
+    return (void *)0xFFFFFFFFFFFFFFFF;
 }
 
-int free_pages(void *page_addr) {
-    SPIN_LOCK(memory_management_struct.lock);
 
-    *(memory_management_struct.bits_map + ((unsigned long)page_addr >> PAGE_4K_SHIFT >> 6)) ^= 1UL << ((unsigned long)page_addr >> PAGE_4K_SHIFT) % 64;
-    memory_management_struct.alloc_pages--;
-    memory_management_struct.free_pages++;
-    return 0;
+unsigned long free_pages(void *page_addr) {
+        SPIN_LOCK(memory_management_struct.lock);
+        *(memory_management_struct.bits_map + ((unsigned long) page_addr >> PAGE_4K_SHIFT >> 6)) ^=
+                1UL << ((unsigned long) page_addr >> PAGE_4K_SHIFT) % 64;
+        memory_management_struct.alloc_pages--;
+        memory_management_struct.free_pages++;
+        return 0;
 
-}
+    }
