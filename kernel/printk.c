@@ -288,14 +288,7 @@ int  vsprintf(char *buf, const char *fmt, va_list args) {
 
 */
 int color_printk(unsigned int FRcolor, unsigned int BKcolor, const char *fmt, ...) {
-    __asm__ __volatile__ (
-            "mov $1,%%bl   \n\t"
-            "1:\tmov $0,%%al   \n\t"
-            "lock           \n\t"
-            "cmpxchg %%bl,%0 \n\t"
-            "jnz 1b          \n\t"
-            ::"m"(Pos.lock_print):"%rax", "%rbx");         //锁
-
+    SPIN_LOCK(Pos.lock);
     int i = 0;
     int count = 0;
     int line = 0;
@@ -350,6 +343,6 @@ int color_printk(unsigned int FRcolor, unsigned int BKcolor, const char *fmt, ..
         }
 
     }
-    Pos.lock_print = 0;                                    //解锁
+    Pos.lock = 0;                                    //解锁
     return i;
 }

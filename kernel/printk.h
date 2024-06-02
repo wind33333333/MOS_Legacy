@@ -47,7 +47,7 @@ struct position
 
 	unsigned int FB_addr;
 	unsigned long FB_length;
-    char lock_print;
+    char lock;
 }Pos;
 
 /*

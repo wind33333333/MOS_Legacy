@@ -15,7 +15,7 @@ __attribute__((section(".init_text"))) void pos_init(unsigned int bsp_flags) {
 
         Pos.FB_addr = *(unsigned int *)0x628;
         Pos.FB_length = (Pos.XResolution * Pos.YResolution * 4 + PAGE_4K_SIZE - 1) & PAGE_4K_MASK;
-        Pos.lock_print = 0;
+        Pos.lock = 0;
     }
     return;
 }
