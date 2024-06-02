@@ -85,10 +85,14 @@ __attribute__((section(".init_text"))) void memory_init(unsigned int bsp_flags) 
     return;
 }
 
-void *alloc_pages(void) {
 
-    if (0 == memory_management_struct.free_pages)
+void *alloc_pages(void) {
+    SPIN_LOCK(memory_management_struct.lock);
+
+    if (0 == memory_management_struct.free_pages){
+        memory_management_struct.lock= 0;                                    //解锁
         return (void *) 0xFFFFFFFFFFFFFFFF;
+    }
 
     void *page_addr;
     for (unsigned long i = 0; i < (memory_management_struct.bits_length >> 3); i++) {
@@ -101,6 +105,7 @@ void *alloc_pages(void) {
                 *(memory_management_struct.bits_map + i) |= (1 << j);
                 memory_management_struct.alloc_pages++;
                 memory_management_struct.free_pages--;
+                memory_management_struct.lock= 0;                                    //解锁
                 return page_addr;
             }
         }

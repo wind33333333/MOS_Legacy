@@ -9,6 +9,16 @@ extern unsigned long kernel_memend;
 
 extern unsigned long _start_text;
 
+//自旋锁
+#define SPIN_LOCK(lock) \
+    __asm__ __volatile__ ( \
+        "mov $1,%%bl   \n\t" \
+        "1:\tmov $0,%%al   \n\t" \
+        "lock           \n\t" \
+        "cmpxchg %%bl,%0 \n\t" \
+        "jnz 1b          \n\t" \
+        ::"m"(lock):"%rax", "%rbx")
+
 
 #define NULL 0
 
