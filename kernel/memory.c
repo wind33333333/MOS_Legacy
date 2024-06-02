@@ -113,7 +113,9 @@ void *alloc_pages(void) {
 ///物理页释放器
 unsigned long free_pages(void *page_addr) {
     SPIN_LOCK(memory_management_struct.lock);
-    if (page_addr > (memory_management_struct.e820[memory_management_struct.e820_length-1].address+memory_management_struct.e820[memory_management_struct.e820_length-1].length))
+    if (page_addr >
+        (memory_management_struct.e820[memory_management_struct.e820_length - 1].address +
+         memory_management_struct.e820[memory_management_struct.e820_length - 1].length))
         return -1;
 
     *(memory_management_struct.bits_map + ((unsigned long) page_addr >> PAGE_4K_SHIFT >> 6)) ^=

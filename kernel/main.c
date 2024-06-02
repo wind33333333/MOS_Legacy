@@ -24,14 +24,6 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
 
     pos_init(bsp_flags);                           //初始化输出控制台
     memory_init(bsp_flags);                        //初始化内存管理器
-
-//    void * p= alloc_pages();
-    free_pages((void *)0x240000000);
-/*    for(int i=0;i<=1000;i++){
-        color_printk(ORANGE, BLACK,"papgs: %#018lX\talloc: %ld\tfree: %ld\t\n",alloc_pages(),memory_management_struct.alloc_pages,memory_management_struct.free_pages);
-    }
-    while (1)*/
-
     gdt_init(bsp_flags);                           //初始化GDT
     tss_init(cpu_id);                              //初始化TSS
     papg_init(bsp_flags);                          //初始化内核页表
