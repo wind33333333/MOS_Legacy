@@ -9,14 +9,14 @@ __attribute__((section(".init_text"))) void gdt_init(unsigned int bsp_flags) {
         memory_management_struct.kernel_end = gdt_ptr.base;
         gdt_ptr.base -= (gdt_ptr.limit & PAGE_4K_MASK)/sizeof(long);     //创建gdt指针结构
 
-        *gdt_ptr.base = 0;          /*0	NULL descriptor		       	00*/
-        *(gdt_ptr.base+1)=0;        /*1	KERNEL	Code	64-bit	Segment	08*/
-        *(gdt_ptr.base+2)=0;        /*2	KERNEL	Data	64-bit	Segment	10*/
-        *(gdt_ptr.base+3)=0;        /*3	USER	Code	64-bit	Segment	18*/
-        *(gdt_ptr.base+4)=0;        /*4	USER	Data	64-bit	Segment	20*/
-        *(gdt_ptr.base+5)=0;        /*5	KERNEL	Code	32-bit	Segment	28*/
-        *(gdt_ptr.base+6)=0;        /*6	KERNEL	Data	32-bit	Segment	30*/
-        *(gdt_ptr.base+7)=0;
+        *(gdt_ptr.base+0) = 0;        /*0	NULL descriptor		       	00*/
+        *(gdt_ptr.base+1) = 0;        /*1	KERNEL	Code	64-bit	Segment	08*/
+        *(gdt_ptr.base+2) = 0;        /*2	KERNEL	Data	64-bit	Segment	10*/
+        *(gdt_ptr.base+3) = 0;        /*3	USER	Code	64-bit	Segment	18*/
+        *(gdt_ptr.base+4) = 0;        /*4	USER	Data	64-bit	Segment	20*/
+        *(gdt_ptr.base+5) = 0;        /*5	KERNEL	Code	32-bit	Segment	28*/
+        *(gdt_ptr.base+6) = 0;        /*6	KERNEL	Data	32-bit	Segment	30*/
+        *(gdt_ptr.base+7) = 0;
 
 
     }
