@@ -12,4 +12,6 @@ struct gdt{
 
 __attribute__((section(".init_data"))) struct gdt gdt_ptr={0,0};
 
+
+
 #endif
