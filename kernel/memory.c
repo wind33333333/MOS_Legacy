@@ -111,3 +111,13 @@ void *alloc_pages(void) {
         }
     }
 }
+
+int free_pages(void *page_addr) {
+    SPIN_LOCK(memory_management_struct.lock);
+
+    *(memory_management_struct.bits_map + ((unsigned long)page_addr >> PAGE_4K_SHIFT >> 6)) ^= 1UL << ((unsigned long)page_addr >> PAGE_4K_SHIFT) % 64;
+    memory_management_struct.alloc_pages--;
+    memory_management_struct.free_pages++;
+    return 0;
+
+}

@@ -26,9 +26,10 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
     memory_init(bsp_flags);                        //初始化内存管理器
 
 
-    //void * p= alloc_pages();
-/*    for(int i=0;i<100;i++){
-        color_printk(ORANGE, BLACK,"papgs=%#018lX\n",alloc_pages());
+    void * p= alloc_pages();
+    free_pages(p);
+/*    for(int i=0;i<=100;i++){
+        color_printk(ORANGE, BLACK,"papgs: %#018lX\talloc: %ld\tfree: %ld\t\n",alloc_pages(),memory_management_struct.alloc_pages,memory_management_struct.free_pages);
     }
     while (1)*/
 
