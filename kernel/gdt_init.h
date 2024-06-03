@@ -3,7 +3,7 @@
 #include "lib.h"
 #include "memory.h"
 
-void    gdt_init(unsigned int bsp_flags);
+void    gdt_init(void);
 
 struct _gdt_ptr {
     unsigned short limit;

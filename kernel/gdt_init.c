@@ -1,6 +1,6 @@
 #include "gdt_init.h"
 
-__attribute__((section(".init_text"))) void gdt_init(unsigned int bsp_flags) {
+__attribute__((section(".init_text"))) void gdt_init(void) {
     if (bsp_flags) {
         gdt_ptr.limit = (cpu_num * 16 + 0x50 + 0xFFF & PAGE_4K_MASK) - 1;
         for(unsigned int i = (gdt_ptr.limit+1) >> PAGE_4K_SHIFT; i != 0; i--){

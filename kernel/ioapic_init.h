@@ -1,6 +1,7 @@
 #ifndef __IOAPIC_H__
 #define __IOAPIC_H__
+#include "lib.h"
 
-void ioapic_init(unsigned int bsp_flags);
+void ioapic_init(void);
 
 #endif

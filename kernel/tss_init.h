@@ -3,11 +3,11 @@
 #include "lib.h"
 #include "memory.h"
 
-void    tss_init(unsigned int bsp_flags,unsigned int cpu_id);
+void    tss_init(unsigned int cpu_id);
 
 struct _tss64_ptr{
     unsigned long limit;
-    unsigned long *base;
+    struct _tss64 *base;
 };
 
 __attribute__((section(".init_data"))) struct _tss64_ptr tss64_ptr = {0,0};

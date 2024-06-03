@@ -4,7 +4,7 @@
 #include "printk.h"
 #include "lib.h"
 
-void  memory_init(unsigned int bsp_flags);
+void  memory_init(void);
 void * alloc_pages(void);
 unsigned long free_pages(void * addr);
 

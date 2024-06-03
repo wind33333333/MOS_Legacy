@@ -3,6 +3,6 @@
 #include "printk.h"
 #include "lib.h"
 
-void ap_init(unsigned int bsp_flags,unsigned int cpu_id);
+void ap_init(unsigned int cpu_id);
 
 #endif

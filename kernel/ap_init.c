@@ -1,7 +1,7 @@
 #include "ap_init.h"
 
 //多核处理器初始化
-__attribute__((section(".init_text"))) void ap_init(unsigned int bsp_flags, unsigned int cpu_id) {
+__attribute__((section(".init_text"))) void ap_init(unsigned int cpu_id) {
     if (bsp_flags) {
         color_printk(GREEN, BLACK, "CPU Cores Num: %d\n", cpu_num);
         __asm__ __volatile__ (

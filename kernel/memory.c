@@ -2,7 +2,7 @@
 #include "printk.h"
 
 
-__attribute__((section(".init_text"))) void memory_init(unsigned int bsp_flags) {
+__attribute__((section(".init_text"))) void memory_init() {
 
     if (bsp_flags) {
         unsigned int x = 0;

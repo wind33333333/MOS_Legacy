@@ -52,7 +52,7 @@
 
 */
 
-void sys_vector_init(unsigned int bsp_flags);
+void sys_vector_init(void);
 
 
 #endif

@@ -1,5 +1,6 @@
 #ifndef __IDT_H__
 #define __IDT_H__
+#include "lib.h"
 
 struct idt_desc_struct {
     unsigned short offset_low;  // Offset bits 0-15
@@ -15,6 +16,6 @@ extern struct idt_desc_struct IDT_Table[256];
 
 extern void ignore_int(void);
 
-void idt_init(unsigned int bsp_flags, unsigned long intfnuc);
+void idt_init(unsigned long intfnuc);
 
 #endif
