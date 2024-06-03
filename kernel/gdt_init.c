@@ -17,8 +17,10 @@ __attribute__((section(".init_text"))) void gdt_init(unsigned int bsp_flags) {
         *(gdt_ptr.base+5) = CODE32_0;        /*5	KERNEL	Code	32-bit	Segment	28*/
         *(gdt_ptr.base+6) = DATA32_0;        /*6	KERNEL	Data	32-bit	Segment	30*/
         *(gdt_ptr.base+7) = 0;
-
-
     }
+
+    __asm__ __volatile__(
+            "lgdt (%0)  \n\t"
+            ::"r"(&gdt_ptr):);
     return;
 }

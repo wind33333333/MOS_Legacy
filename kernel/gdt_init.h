@@ -28,7 +28,7 @@ __attribute__((section(".init_data"))) struct gdt gdt_ptr={0,0};
 #define DPL_0      0UL << 45
 #define DPL_3      3UL <<45
 #define P          1UL << 47
-#define LIMIT32    (0xFUL << 48) | 0xFFFF
+#define LIMIT32    0xFUL << 48 | 0xFFFF
 #define L          1UL << 53
 #define DB         1UL << 54
 #define G          1UL << 55
