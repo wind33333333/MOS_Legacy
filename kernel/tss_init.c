@@ -10,6 +10,7 @@ __attribute__((section(".init_text"))) void tss_init(unsigned int bsp_flags,unsi
         tss64_ptr.base -= (tss64_ptr.limit & PAGE_4K_MASK)/sizeof(long);             //创建tss_tables指针
 
 
+
     }
 
     return;
