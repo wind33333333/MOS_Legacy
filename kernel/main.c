@@ -25,7 +25,7 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
     pos_init(bsp_flags);                           //初始化输出控制台
     memory_init(bsp_flags);                        //初始化内存管理器
     gdt_init(bsp_flags);                           //初始化GDT
-    tss_init(cpu_id);                              //初始化TSS
+    tss_init(bsp_flags,cpu_id);                              //初始化TSS
     papg_init(bsp_flags);                          //初始化内核页表
     idt_init(bsp_flags, ignore_int);        //初始化中断描述符表
     apic_init();                                   //初始化apic

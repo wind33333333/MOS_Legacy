@@ -76,6 +76,8 @@ _start:
     add        %rbx,%rax
     movabs     %rax,kernel_memend
 
+
+
 ///////////計算分頁目錄表需要的內存空間
     movabs     kernel_memend,%rax
     movabs     $VBASEADDR,%rbx
