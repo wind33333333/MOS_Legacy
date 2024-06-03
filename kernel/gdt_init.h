@@ -23,7 +23,6 @@ __attribute__((section(".init_data"))) struct gdt gdt_ptr={0,0};
 #define TYPE_DATA64 0x2UL <<40
 #define TYPE_CODE32 0xAUL <<40
 #define TYPE_DATA32 0x2UL <<40
-#define TYPE_TSSGATE 0x9UL <<40
 #define TYPE_CALLGATE 0xCUL <<40
 #define S          1UL << 44
 #define DPL_0      0UL << 45
