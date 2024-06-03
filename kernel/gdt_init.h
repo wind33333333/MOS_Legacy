@@ -5,12 +5,12 @@
 
 void    gdt_init(unsigned int bsp_flags);
 
-struct gdt{
+struct _gdt_ptr {
     unsigned short limit;
     unsigned long *base;
 } __attribute__((packed));
 
-__attribute__((section(".init_data"))) struct gdt gdt_ptr={0,0};
+__attribute__((section(".init_data"))) struct _gdt_ptr gdt_ptr={0,0};
 
 #define CODE64_0 TYPE_CODE64 | DPL_0 | S | P | L
 #define DATA64_0 TYPE_DATA64 | DPL_0 | S | P
