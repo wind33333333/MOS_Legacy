@@ -32,10 +32,9 @@ __attribute__((section(".init_text"))) void tss_init(unsigned int cpu_id) {
     tss_ptr.base[cpu_id].reserved3 = 0;
     tss_ptr.base[cpu_id].iomap_base = 0;
 
-    *(gdt_ptr.base + GDT_HEADER_SIZE + cpu_id) = TSS_DESCRIPTOR_L(tss_ptr.base+cpu_id);
-    *(gdt_ptr.base + GDT_HEADER_SIZE + cpu_id+1) = TSS_DESCRIPTOR_H(tss_ptr.base+cpu_id);
+    *(gdt_ptr.base + GDT_HEADER_SIZE + cpu_id*2) = TSS_DESCRIPTOR_L(tss_ptr.base+cpu_id);
+    *(gdt_ptr.base + GDT_HEADER_SIZE + cpu_id*2 + 1) = TSS_DESCRIPTOR_H(tss_ptr.base+cpu_id);
 
-    BOCHS_DG();
     __asm__ __volatile__(
             "ltr    %w0 \n\t"
             ::"r"((cpu_id<<4)+GDT_HEADER_SIZE*8):);
