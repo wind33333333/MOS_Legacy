@@ -2,7 +2,7 @@
 
 __attribute__((section(".init_text"))) void gdt_init(void) {
     if (bsp_flags) {
-        gdt_ptr.limit = (cpu_num * 16 + 0x50 + 0xFFF & PAGE_4K_MASK) - 1;
+        gdt_ptr.limit = (cpu_num * 16 + GDT_HEADER_SIZE*8 + 0xFFF & PAGE_4K_MASK) - 1;
         for(unsigned int i = (gdt_ptr.limit+1) >> PAGE_4K_SHIFT; i != 0; i--){
             gdt_ptr.base = Phy_To_Virt(alloc_pages());              //分配GDT内存
         }

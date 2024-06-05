@@ -1,6 +1,12 @@
 #ifndef __GATE_H__
 #define __GATE_H__
 
+#define TYPE_CALL   0xC
+#define TYPE_INT    0xE
+#define TYPE_TRAP   0xF
+
+
+
 struct desc_struct 
 {
 	unsigned char x[8];
@@ -15,9 +21,7 @@ extern struct desc_struct GDT_Table[];
 extern struct gate_struct IDT_Table1[];
 extern unsigned int TSS64_Table[26];
 
-/*
 
-*/
 
 #define _set_gate(gate_selector_addr,attr,ist,code_addr)	\
 do								\
@@ -44,58 +48,33 @@ do								\
 }while(0)
 
 
-/*
 
-*/
-
-#define load_TR(n) 							\
-do{									\
-	__asm__ __volatile__(	"ltr	%%ax"				\
-				:					\
-				:"a"(n << 3)				\
-				:"memory");				\
-}while(0)
-
-/*
-
-*/
 
  void set_intr_gate(unsigned int n,unsigned char ist,void * addr)
 {
 	_set_gate(IDT_Table1 + n , 0x8E , ist , addr);	//P,DPL=0,TYPE=E
 }
 
-/*
 
-*/
 
  void set_trap_gate(unsigned int n,unsigned char ist,void * addr)
 {
 	_set_gate(IDT_Table1 + n , 0x8F , ist , addr);	//P,DPL=0,TYPE=F
 }
 
-/*
-
-*/
 
  void set_system_gate(unsigned int n,unsigned char ist,void * addr)
 {
 	_set_gate(IDT_Table1 + n , 0xEF , ist , addr);	//P,DPL=3,TYPE=F
 }
 
-/*
 
-*/
 
  void set_system_intr_gate(unsigned int n,unsigned char ist,void * addr)	//int3
 {
 	_set_gate(IDT_Table1 + n , 0xEE , ist , addr);	//P,DPL=3,TYPE=E
 }
 
-
-/*
-
-*/
 
 void set_tss64(unsigned long rsp0,unsigned long rsp1,unsigned long rsp2,unsigned long ist1,unsigned long ist2,unsigned long ist3,
 unsigned long ist4,unsigned long ist5,unsigned long ist6,unsigned long ist7)
