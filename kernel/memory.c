@@ -72,7 +72,7 @@ __attribute__((section(".init_text"))) void memory_init() {
                 memory_management_struct.total_pages - memory_management_struct.alloc_pages;
 
         color_printk(ORANGE, BLACK,
-                     "bits_map: %#018lx \tbits_size: %#018lX \tbits_length: %#018lX\n",
+                     "bits_map: %#018lX \tbits_size: %#018lX \tbits_length: %#018lX\n",
                      memory_management_struct.bits_map, memory_management_struct.bits_size,
                      memory_management_struct.bits_length);
         color_printk(ORANGE, BLACK, "OS Can Used Total 4K PAGEs: %ld \tAlloc: %ld \tFree: %ld\n",
