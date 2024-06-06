@@ -84,40 +84,55 @@ __attribute__((section(".init_text"))) void memory_init() {
 
 
 ////物理页分配器
-void *alloc_pages(void) {
+void *alloc_pages(unsigned long required_length) {
     SPIN_LOCK(memory_management_struct.lock);
-    if (0 != memory_management_struct.free_pages) {
-        void *page_addr;
-        for (unsigned long i = 0; i < (memory_management_struct.bits_length >> 3); i++) {
-            if (*(memory_management_struct.bits_map + i) != 0xFFFFFFFFFFFFFFFF) {
-                for (unsigned long j = 0; j < 64; j++) {
-                    if ((*(memory_management_struct.bits_map + i) & (1UL << j)) == 0) {
-                        page_addr = (void *) ((i << 18) + (j << PAGE_4K_SHIFT));
-                        *(memory_management_struct.bits_map + i) |= (1UL << j);
-                        memory_management_struct.alloc_pages++;
-                        memory_management_struct.free_pages--;
-                        memory_management_struct.lock = 0;                                    //解锁
-                        return page_addr;
-                    }
-                }
+
+    if (memory_management_struct.free_pages < required_length || required_length == 0) {
+        memory_management_struct.lock = 0;
+        return (void *) -1;
+    }
+
+    unsigned long start_idx = 0;
+    unsigned long current_length = 0;
+
+    for (unsigned long i = 0; i < memory_management_struct.bits_length; i++) {
+        if ((memory_management_struct.bits_map[i / 64] & (1UL << (i % 64))) ==
+            0) { // 位图的某一位为0，表示该页空闲
+            if (current_length == 0) {
+                start_idx = i;
             }
+            current_length++;
+            if (current_length == required_length) {
+                for (unsigned long j = 0; j < required_length; j++) {
+                    (memory_management_struct.bits_map[(start_idx+j) / 64] |= (1UL << ((start_idx+j) % 64)));
+                }
+                memory_management_struct.alloc_pages += required_length;
+                memory_management_struct.free_pages -= required_length;
+                memory_management_struct.lock = 0;
+                return (void *) (start_idx << PAGE_4K_SHIFT); // 找到连续空闲块，返回起始索引
+            }
+        } else {
+            current_length = 0; // 找到1，重置当前连续空闲块长度
         }
     }
+
     memory_management_struct.lock = 0;
-    return (void *) -1;
+    return (void *) -1; // 没有找到足够大的连续内存块
 }
 
+
 ///物理页释放器
-unsigned long free_pages(void *page_addr) {
+int free_pages(void *pages_addr,unsigned long required_length) {
     SPIN_LOCK(memory_management_struct.lock);
-    if (page_addr >
+    if ((pages_addr+(required_length << PAGE_4K_SHIFT)) >
         (memory_management_struct.e820[memory_management_struct.e820_length - 1].address +
          memory_management_struct.e820[memory_management_struct.e820_length - 1].length))
         return -1;
 
-    *(memory_management_struct.bits_map + ((unsigned long) page_addr >> PAGE_4K_SHIFT >> 6)) ^=
-            1UL << ((unsigned long) page_addr >> PAGE_4K_SHIFT) % 64;
-    memory_management_struct.alloc_pages--;
-    memory_management_struct.free_pages++;
+    for (unsigned long i = 0; i < required_length; i++) {
+        (memory_management_struct.bits_map[(((unsigned long) pages_addr >> PAGE_4K_SHIFT)+i) / 64] ^= (1UL << (((unsigned long) pages_addr >> PAGE_4K_SHIFT)+i) % 64));
+    }
+    memory_management_struct.alloc_pages -= required_length;
+    memory_management_struct.free_pages += required_length;
     return 0;
 }

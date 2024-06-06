@@ -12,7 +12,7 @@ struct _gdt_ptr {
 
 __attribute__((section(".init_data"))) struct _gdt_ptr gdt_ptr={0,0};
 
-#define GDT_HEADER_SIZE 10
+#define TSS_START 10
 
 #define CODE64_0 TYPE_CODE64 | DPL_0 | S | P | L
 #define DATA64_0 TYPE_DATA64 | DPL_0 | S | P

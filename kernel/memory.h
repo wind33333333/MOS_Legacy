@@ -5,8 +5,8 @@
 #include "lib.h"
 
 void  memory_init(void);
-void * alloc_pages(void);
-unsigned long free_pages(void * addr);
+void * alloc_pages(unsigned long required_length);
+int free_pages(void *pages_addr,unsigned long required_length);
 
 #define E820_SIZE    0x500
 #define E820_BASE    0x504
