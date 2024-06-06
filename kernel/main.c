@@ -24,11 +24,6 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
 
     pos_init();                                  //初始化输出控制台
     memory_init();                               //初始化内存管理器
-
-//    *(unsigned char *)0xffff800000141030 = 0xf;
-//    void *p = alloc_pages(100);
-//    free_pages(p, 100);
-
     gdt_init();                                  //初始化GDT
     tss_init(cpu_id);                            //初始化TSS
     papg_init();                                 //初始化内核页表
