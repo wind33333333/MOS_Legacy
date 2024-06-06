@@ -35,7 +35,7 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
     ap_init(cpu_id);                             //初始化ap核
 
 
-
+    color_printk(YELLOW,BLACK,"Kernelstart: %#018lX Kernelend: %#018lX \n",memory_management_struct.kernel_start,memory_management_struct.kernel_end);
 //  __asm__ __volatile__ ("int $0 \n\t":: :);
 
 //  int i = 1/0;
