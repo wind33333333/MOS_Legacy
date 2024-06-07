@@ -16,6 +16,8 @@ extern struct idt_desc_struct IDT_Table[256];
 
 extern void ignore_int(void);
 
+extern int IDT_POINTER;
+
 void idt_init(unsigned long intfnuc);
 
 #endif

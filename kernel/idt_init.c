@@ -13,5 +13,9 @@ __attribute__((section(".init_text"))) void idt_init(unsigned long intfnuc) {
             p_idt[i].zero=0;
         }
     }
+
+    __asm__ __volatile__(
+            "lidt (%0)  \n\t"
+            ::"r"(&IDT_POINTER):);
     return;
 }

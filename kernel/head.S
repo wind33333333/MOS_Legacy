@@ -40,6 +40,7 @@ kernel_stack_init:
 //===============================初始化程序数据=================================================
 .section    .init_data, "wa"
 
+    .global   IDT_POINTER
     IDT_POINTER:
     IDT_LIMIT:	.word	IDT_END - IDT_Table - 1
     IDT_BASE:	.quad	IDT_Table
