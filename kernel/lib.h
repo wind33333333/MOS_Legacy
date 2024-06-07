@@ -3,11 +3,17 @@
 
 
 #define BOCHS_DG()    __asm__ __volatile__ ("xchg %%bx,%%bx \n\t":: :);
+
+#define PML4_VBASE    0xFFFFFFFFFFFFF000     //pml4虚拟地址基址
+#define PDPT_VBASE    0xFFFFFFFFFFE00000     //pdpt虚拟地址基址
+#define PD_VBASE      0xFFFFFFFFC0000000     //pd虚拟地址基址
+#define PT_VBASE      0xFFFFFF8000000000     //pt虚拟地址基址
+
 extern unsigned int bsp_flags;
 extern unsigned int cpu_num;
 extern unsigned long kernel_memend;
-
 extern unsigned long _start_text;
+
 
 //自旋锁
 #define SPIN_LOCK(lock) \
