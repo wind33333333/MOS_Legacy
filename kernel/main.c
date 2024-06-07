@@ -24,20 +24,15 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
 
     pos_init();                                  //初始化输出控制台
     memory_init();                               //初始化内存管理器
-
-    *(char *)0xffff800000141032 = 3;
-    void *p = alloc_pages(100);
-    free_pages(p,100);
-
     gdt_init();                                  //初始化GDT
     tss_init(cpu_id);                            //初始化TSS
-    papg_init();                                 //初始化内核页表
     idt_init(ignore_int);                 //初始化中断描述符表
     apic_init();                                 //初始化apic
     sys_vector_init();                           //初始化系中断列程
     acpi_init();                                 //初始化acpi
     ioapic_init();                               //初始化ioapic
     ap_init(cpu_id);                             //初始化ap核
+    papg_init();                                 //初始化内核页表
 
 
     color_printk(YELLOW,BLACK,"Kernelstart: %#018lX Kernelend: %#018lX \n",memory_management_struct.kernel_start,memory_management_struct.kernel_end);
