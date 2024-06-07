@@ -27,6 +27,7 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
 
     *(char *)0xffff800000141032 = 3;
     void *p = alloc_pages(100);
+    free_pages(p,100);
 
     gdt_init();                                  //初始化GDT
     tss_init(cpu_id);                            //初始化TSS

@@ -114,7 +114,8 @@ void *alloc_pages(unsigned long required_length) {
 
             if (current_length == required_length) {
                 for (unsigned long y = 0; y < required_length; y++) {
-                    (memory_management_struct.bits_map[(start_idx + y) / 64] |= (1UL << ((start_idx + y) % 64)));
+                    (memory_management_struct.bits_map[(start_idx + y) / 64] |= (1UL
+                            << ((start_idx + y) % 64)));
                 }
 
                 memory_management_struct.alloc_pages += required_length;
@@ -128,7 +129,6 @@ void *alloc_pages(unsigned long required_length) {
     memory_management_struct.lock = 0;
     return (void *) -1; // 没有找到足够大的连续内存块
 }
-
 
 
 ///物理页释放器
