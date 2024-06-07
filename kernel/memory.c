@@ -102,59 +102,33 @@ void *alloc_pages(unsigned long required_length) {
         }
 
         for (unsigned long j = 0; j < 64; j++) {
-            if ((memory_management_struct.bits_map[i] & (1UL << j)) == 0) {
-                if (current_length == 0) {
-                    start_idx = i * 64 + j;
-                }
-                current_length++;
-                if (current_length == required_length) {
-                    for (unsigned long y = 0; y < required_length; y++) {
-                        (memory_management_struct.bits_map[(start_idx + y) / 64] |= (1UL
-                                << ((start_idx + y) % 64)));
-                    }
-                    memory_management_struct.alloc_pages += required_length;
-                    memory_management_struct.free_pages -= required_length;
-                    memory_management_struct.lock = 0;
-                    return (void *) (start_idx << PAGE_4K_SHIFT); // 找到连续空闲块，返回起始索引
-                }
-            } else {
+            if (memory_management_struct.bits_map[i] & (1UL << j)) {
                 current_length = 0;
+                continue;
+            }
+
+            if (current_length == 0)
+                start_idx = i * 64 + j;
+
+            current_length++;
+
+            if (current_length == required_length) {
+                for (unsigned long y = 0; y < required_length; y++) {
+                    (memory_management_struct.bits_map[(start_idx + y) / 64] |= (1UL << ((start_idx + y) % 64)));
+                }
+
+                memory_management_struct.alloc_pages += required_length;
+                memory_management_struct.free_pages -= required_length;
+                memory_management_struct.lock = 0;
+                return (void *) (start_idx << PAGE_4K_SHIFT); // 找到连续空闲块，返回起始索引
             }
         }
     }
+
     memory_management_struct.lock = 0;
     return (void *) -1; // 没有找到足够大的连续内存块
 }
 
-
-
-/*
-    if ((memory_management_struct.bits_map[i / 64] & (1UL << (i % 64))) ==
-        0) { // 位图的某一位为0，表示该页空闲
-        if (current_length == 0) {
-            start_idx = i;
-        }
-        current_length++;
-        if (current_length == required_length) {
-            for (unsigned long j = 0; j < required_length; j++) {
-                (memory_management_struct.bits_map[(start_idx + j) / 64] |= (1UL
-                        << ((start_idx + j) % 64)));
-            }
-            memory_management_struct.alloc_pages += required_length;
-            memory_management_struct.free_pages -= required_length;
-            memory_management_struct.lock = 0;
-            return (void *) (start_idx << PAGE_4K_SHIFT); // 找到连续空闲块，返回起始索引
-        }
-    } else {
-        current_length = 0; // 找到1，重置当前连续空闲块长度
-    }
-}
-
-memory_management_struct.
-lock = 0;
-return (void *) -1; // 没有找到足够大的连续内存块
-}
-*/
 
 
 ///物理页释放器

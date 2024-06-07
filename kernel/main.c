@@ -26,7 +26,7 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
     memory_init();                               //初始化内存管理器
 
     *(char *)0xffff800000141032 = 3;
-    void *p = alloc_pages(20);
+    void *p = alloc_pages(100);
 
     gdt_init();                                  //初始化GDT
     tss_init(cpu_id);                            //初始化TSS
