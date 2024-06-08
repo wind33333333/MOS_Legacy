@@ -6,7 +6,7 @@ __attribute__((section(".init_text"))) void gdt_init(void) {
         gdt_ptr.base = Phy_To_Virt(alloc_pages((gdt_ptr.limit + 1) >> PAGE_4K_SHIFT));              //分配GDT内存
         memory_management_struct.kernel_end = gdt_ptr.base;
 
-        *(gdt_ptr.base + 0) = 0;        /*0	NULL descriptor		       	00*/
+        *(gdt_ptr.base + 0) = 0;               /*0	NULL descriptor		       	00*/
         *(gdt_ptr.base + 1) = CODE64_0;        /*1	KERNEL	Code	64-bit	Segment	08*/
         *(gdt_ptr.base + 2) = DATA64_0;        /*2	KERNEL	Data	64-bit	Segment	10*/
         *(gdt_ptr.base + 3) = CODE64_3;        /*3	USER	Code	64-bit	Segment	18*/
