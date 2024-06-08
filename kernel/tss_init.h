@@ -4,17 +4,23 @@
 #include "memory.h"
 #include "gdt_init.h"
 
-#define TSS_DESCRIPTOR_L(ADDR)  \
+#define SET_TSS_L(BASE)  \
     (TSS_TYPE | P | TSS_LIMIT | DPL_0 | \
-    (((unsigned long)(ADDR) & 0x000000000000FFFF) << 16) | \
-    (((unsigned long)(ADDR) >> 16) & 0x00000000000000FF) << 32 | \
-    (((unsigned long)(ADDR) >> 24) & 0x00000000000000FF) << 56)
+    (((unsigned long)(BASE) & 0x000000000000FFFF) << 16) | \
+    (((unsigned long)(BASE) >> 16) & 0x00000000000000FF) << 32 | \
+    (((unsigned long)(BASE) >> 24) & 0x00000000000000FF) << 56)
 
-#define TSS_DESCRIPTOR_H(ADDR)  (unsigned long)(ADDR) >> 32
+#define SET_TSS_H(BASE)  (unsigned long)(BASE) >> 32
+
+#define SET_TSS(GDTBASE,NUM,BASE) \
+               do { \
+               GDTBASE[NUM*2] = SET_TSS_L(BASE); \
+               GDTBASE[NUM*2+1] = SET_TSS_H(BASE); \
+               }while(0)
+
 
 #define TSS_TYPE    0x9UL << 40
 #define TSS_LIMIT   (0x67UL & 0xFFFF) | ((0x67UL >> 16)<<48)
-
 
 
 void    tss_init(unsigned int cpu_id);

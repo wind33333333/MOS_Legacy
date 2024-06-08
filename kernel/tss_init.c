@@ -22,9 +22,7 @@ __attribute__((section(".init_text"))) void tss_init(unsigned int cpu_id) {
             tss_ptr.base[i].reserved3 = 0;
             tss_ptr.base[i].iomap_base = 0;
 
-            gdt_ptr.base[TSS_START + i * 2] = TSS_DESCRIPTOR_L(tss_ptr.base + i);
-            gdt_ptr.base[TSS_START + i * 2 + 1] = TSS_DESCRIPTOR_H(tss_ptr.base + i);
-
+            SET_TSS(gdt_ptr.base,TSS_START + i,tss_ptr.base + i);
             memory_management_struct.kernel_end = tss_ptr.base[i].ist1;
         }
     }

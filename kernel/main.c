@@ -1,7 +1,7 @@
 #include "lib.h"
 #include "printk.h"
-#include "gate.h"
-#include "trap.h"
+//#include "gate.h"
+//#include "trap.h"
 #include "ioapic_init.h"
 #include "ap_init.h"
 #include "acpi_init.h"
@@ -28,7 +28,7 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
     tss_init(cpu_id);                            //初始化TSS
     idt_init(ignore_int);                 //初始化中断描述符表
     apic_init();                                 //初始化apic
-    sys_vector_init();                           //初始化系中断列程
+//    sys_vector_init();                           //初始化系中断列程
     acpi_init();                                 //初始化acpi
     ioapic_init();                               //初始化ioapic
     ap_init(cpu_id);                             //初始化ap核

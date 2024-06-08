@@ -12,11 +12,6 @@ struct desc_struct
 	unsigned char x[8];
 };
 
-struct gate_struct
-{
-	unsigned char x[16];
-};
-
 extern struct desc_struct GDT_Table[];
 extern struct gate_struct IDT_Table1[];
 extern unsigned int TSS64_Table[26];
