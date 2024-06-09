@@ -1,9 +1,4 @@
 #include "trap.h"
-#include "gate.h"
-
-/*
-
-*/
 
 void do_divide_error(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -13,9 +8,6 @@ void do_divide_error(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_debug(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -25,9 +17,6 @@ void do_debug(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_nmi(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -37,9 +26,6 @@ void do_nmi(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_int3(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -49,9 +35,6 @@ void do_int3(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_overflow(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -61,9 +44,6 @@ void do_overflow(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_bounds(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -73,9 +53,6 @@ void do_bounds(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_undefined_opcode(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -85,9 +62,6 @@ void do_undefined_opcode(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_dev_not_available(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -97,9 +71,6 @@ void do_dev_not_available(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_double_fault(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -109,9 +80,6 @@ void do_double_fault(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_coprocessor_segment_overrun(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -122,9 +90,6 @@ void do_coprocessor_segment_overrun(unsigned long rsp, unsigned long error_code)
     while (1);
 }
 
-/*
-
-*/
 
 void do_invalid_TSS(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -152,9 +117,6 @@ void do_invalid_TSS(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_segment_not_present(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -183,9 +145,6 @@ void do_segment_not_present(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_stack_segment_fault(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -214,9 +173,6 @@ void do_stack_segment_fault(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_general_protection(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -245,9 +201,6 @@ void do_general_protection(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_page_fault(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -285,9 +238,6 @@ void do_page_fault(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_x87_FPU_error(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -297,9 +247,6 @@ void do_x87_FPU_error(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_alignment_check(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -309,9 +256,6 @@ void do_alignment_check(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_machine_check(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -321,9 +265,6 @@ void do_machine_check(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_SIMD_exception(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -333,9 +274,6 @@ void do_SIMD_exception(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
-
-*/
 
 void do_virtualization_exception(unsigned long rsp, unsigned long error_code) {
     unsigned long *p = NULL;
@@ -346,9 +284,8 @@ void do_virtualization_exception(unsigned long rsp, unsigned long error_code) {
     while (1);
 }
 
-/*
 
-*/
+/*
 
 __attribute__((section(".init_text"))) void sys_vector_init(void) {
     if(bsp_flags) {
@@ -376,6 +313,8 @@ __attribute__((section(".init_text"))) void sys_vector_init(void) {
 
         //set_system_gate(SYSTEM_CALL_VECTOR,7,system_call);
     }
+
     return;
 }
+*/
 
