@@ -23,7 +23,7 @@
 #define TSS_LIMIT   (0x67UL & 0xFFFF) | ((0x67UL >> 16)<<48)
 
 
-void    tss_init(unsigned int cpu_id);
+void tss_init(unsigned int cpu_id);
 
 struct _tss_ptr{
     unsigned long limit;
