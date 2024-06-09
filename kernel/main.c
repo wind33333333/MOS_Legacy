@@ -13,7 +13,6 @@
 #include "tss_init.h"
 #include "papg_init.h"
 
-
 __attribute__((section(".init_text"))) void Kernel_init(void) {
 
     unsigned int cpu_id;
