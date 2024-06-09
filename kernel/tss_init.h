@@ -10,7 +10,7 @@
     (((unsigned long)(BASE) >> 16) & 0x00000000000000FF) << 32 | \
     (((unsigned long)(BASE) >> 24) & 0x00000000000000FF) << 56)
 
-#define SET_TSS_H(BASE)  (unsigned long)(BASE) >> 32
+#define SET_TSS_H(BASE)  ((unsigned long)(BASE) >> 32)
 
 #define SET_TSS(GDTBASE,NUM,BASE) \
                do { \
@@ -19,7 +19,7 @@
                }while(0)
 
 
-#define TSS_TYPE    0x9UL << 40
+#define TSS_TYPE    (0x9UL << 40)
 #define TSS_LIMIT   (0x67UL & 0xFFFF) | ((0x67UL >> 16)<<48)
 
 
