@@ -3,7 +3,7 @@
 #include "lib.h"
 #include "gdt_init.h"
 
-#define SET_GATE_L(OFFSET,IST,TYPE) (IST | TYPE | SEL_CODE64 | DPL_0 | ((unsigned long)(OFFSET) & 0x000000000000FFFF) | (((unsigned long)(OFFSET) >> 16) << 48))
+#define SET_GATE_L(OFFSET,IST,TYPE) (IST | TYPE | SEL_CODE64 | DPL_0 | P | ((unsigned long)(OFFSET) & 0x000000000000FFFF) | (((unsigned long)(OFFSET) >> 16) << 48))
 #define SET_GATE_H(OFFSET) ((unsigned long)(OFFSET) >> 32)
 #define SET_GATE(BASE,NUM,OFFSET,IST,TYPE) \
                 do{\
