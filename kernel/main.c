@@ -25,9 +25,8 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
     memory_init();                               //初始化内存管理器
     gdt_init();                                  //初始化GDT
     tss_init(cpu_id);                            //初始化TSS
-    idt_init(ignore_int);                 //初始化中断描述符表
+    idt_init(ignore_int);                 //初始化IDT
     apic_init();                                 //初始化apic
-//    sys_vector_init();                           //初始化系中断列程
     acpi_init();                                 //初始化acpi
     ioapic_init();                               //初始化ioapic
     ap_init(cpu_id);                             //初始化ap核
