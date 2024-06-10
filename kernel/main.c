@@ -1,7 +1,5 @@
 #include "lib.h"
 #include "printk.h"
-//#include "gate.h"
-//#include "trap.h"
 #include "ioapic_init.h"
 #include "ap_init.h"
 #include "acpi_init.h"
