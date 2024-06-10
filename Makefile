@@ -18,6 +18,7 @@ CFLAGS+= -nostdlib		# 不需要标准库
 CFLAGS+= -mcmodel=large #大内存模型
 CFLAGS+= -fno-stack-protector	# 不需要栈保护
 CFLAGS+= -g						#开启调试符号
+#CFLAGS += -O3                  # 使用 -O3 优化选项
 CFLAGS:=$(strip ${CFLAGS})
 
 all: clean $(BUILD)/boot.bin $(BUILD)/loader.bin ${BUILD}/system ${BUILD}/kernel.bin HDDimg
