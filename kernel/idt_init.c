@@ -1,7 +1,7 @@
 #include "idt_init.h"
 #include "trap.h"
 
-__attribute__((section(".init_text"))) void idt_init(unsigned long intfnuc) {
+__attribute__((section(".init_text"))) void idt_init(void) {
     if (bsp_flags) {
         //初始化中断向量表
         for (int i = 0; i < 256; i++) {

@@ -21,9 +21,9 @@ _start:
     mov        $0x4000*3,%rax
     mul        %rbx
     mov        %rax,%rbx
-    movabs     kernel_memend,%rax
+    movabs     kenelstack_top,%rax
     add        %rbx,%rax
-    movabs     %rax,kernel_memend
+    movabs     %rax,kenelstack_top
     movabs     %rax,kernel_base_stack   //内核栈顶
 
 ////////////////开辟内存bitmap空间
@@ -37,10 +37,10 @@ _start:
     add        $0xFFF,%eax
     and        $0xffff000,%eax          //+0x1000对齐4K
     mov        %rax,%rbx
-    movabs     kernel_memend,%rax
+    movabs     kenelstack_top,%rax
     movabs     %rax,GDT_BASE            //初始化gdt指针
     add        %rbx,%rax
-    movabs     %rax,kernel_memend
+    movabs     %rax,kenelstack_top
     dec        %rbx
     mov        %rbx,%rax
     movabs     %ax,GDT_LIMIT
@@ -71,15 +71,15 @@ _start:
     add        $0xFFF,%eax
     and        $0xffff000,%eax          //+0x1000对齐4K
     mov        %rax,%rbx
-    movabs     kernel_memend,%rax
+    movabs     kenelstack_top,%rax
     movabs     %rax,TSS_BASE               //初始化TSS_table指针
     add        %rbx,%rax
-    movabs     %rax,kernel_memend
+    movabs     %rax,kenelstack_top
 
 
 
 ///////////計算分頁目錄表需要的內存空間
-    movabs     kernel_memend,%rax
+    movabs     kenelstack_top,%rax
     movabs     $VBASEADDR,%rbx
     sub        %rbx,%rax
     movabs     %rax,pml4e_pbase                  //pdpte起始物理地址
@@ -104,11 +104,11 @@ j2:
     add        %rax,%r8
     loop       pg_num
     shl        $12,%r8                     //長度=1-3頁表數量*4k
-    movabs     $kernel_memend,%rax
+    movabs     $kenelstack_top,%rax
     add        %r8,(%rax)                  //內核結束長度
 
 ///////////////////計算內核pml4e、pdpte、pde、pte數量
-    movabs     kernel_memend,%rax
+    movabs     kenelstack_top,%rax
     movabs     $VBASEADDR,%rbx
     sub        %rbx,%rax
     mov        $0x0,%rdx
@@ -323,8 +323,8 @@ TSS_BASE:       .quad	0
 
 kernel_base_stack:	.quad	0
 
-.globl kernel_memend
-kernel_memend:   .quad   _end
+.globl kenelstack_top
+kenelstack_top:   .quad   _end
 
 .globl cpu_num
 cpu_num:         .quad   0

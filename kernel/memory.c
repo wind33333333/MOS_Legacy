@@ -29,7 +29,7 @@ __attribute__((section(".init_text"))) void memory_init() {
         //bits map construction init
         totalmem = memory_management_struct.e820[memory_management_struct.e820_length - 1].address +
                    memory_management_struct.e820[memory_management_struct.e820_length - 1].length;
-        memory_management_struct.bits_map = (unsigned long *) kernel_memend;
+        memory_management_struct.bits_map = (unsigned long *) kenelstack_top;
         memory_management_struct.bits_size = totalmem >> PAGE_4K_SHIFT;
         memory_management_struct.bits_length =
                 (memory_management_struct.bits_size + 63) / 8 & 0xFFFFFFFFFFFFFFF8;
@@ -52,7 +52,7 @@ __attribute__((section(".init_text"))) void memory_init() {
         //kernel_end结束地址加上bit map对齐4K地址
         memory_management_struct.kernel_start = &_start_text;
         memory_management_struct.kernel_end =
-                kernel_memend + (memory_management_struct.bits_length + 0xfff) & 0xFFFFFFFFFFFFF000;
+                kenelstack_top + (memory_management_struct.bits_length + 0xfff) & 0xFFFFFFFFFFFFF000;
 
         //把内核1M开始到kernel_end地址bit map置1，标记为已使用
         memset(memory_management_struct.bits_map + ((0x100000 >> PAGE_4K_SHIFT) >> 6), 0xFF,

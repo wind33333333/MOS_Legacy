@@ -22,16 +22,16 @@ _start:
     movabs     cpu_num,%eax
     shl        $14,%rax                 //每个核心分配16k栈
     mov        %rax,%rbx
-    movabs     kernel_memend,%rax
+    movabs     kenelstack_top,%rax
     add        %rbx,%rax
-    movabs     %rax,kernel_memend       //内核栈顶
+    movabs     %rax,kenelstack_top       //内核栈顶
 
 //===============================初始化多核内核栈
 kernel_stack_init:
     mov     $0x802,%ecx
     rdmsr                           //获取APIC ID
     shl     $14,%rax                //每个核心分配16k栈
-    movabs  $kernel_memend,%rbx
+    movabs  $kenelstack_top,%rbx
     mov     (%rbx),%rsp
     sub     %rax,%rsp               //计算每个内核栈 栈顶=VBASESTACK-(APIC ID*16K)
 
@@ -45,8 +45,8 @@ kernel_stack_init:
     IDT_LIMIT:	.word	IDT_END - IDT_Table - 1
     IDT_BASE:	.quad	IDT_Table
 
-    .globl kernel_memend
-    kernel_memend:   .quad   _end
+    .globl kenelstack_top
+    kenelstack_top:   .quad   _end
 
     .globl cpu_num
     cpu_num:         .int   0
@@ -60,7 +60,8 @@ kernel_stack_init:
 //========================================正式内核代码=================================================
 
 .section    .text, "ax"
-//======================默认中断处理程序========================
+
+//默认中断处理程序
 .globl ignore_int
 ignore_int:
 	cld
@@ -137,7 +138,7 @@ int_msg:    .asciz "Unknown interrupt or fault at RIP\n"
 
 
 //========================================正式内核数据=================================================
-	.section    .data, "wa"
+.section    .data, "wa"
 
     .globl IDT_Table1
     IDT_Table1:
@@ -151,9 +152,3 @@ int_msg:    .asciz "Unknown interrupt or fault at RIP\n"
     	.quad	0
     	.fill	0xFF8-(. -__PML4T),1,0
     	.quad   (__PML4T- VBASEADDR)+0x7
-
-
-    .globl	TSS64_Table
-    TSS64_Table:
-    	.fill  0x10000,1,0
-    TSS64_END:
