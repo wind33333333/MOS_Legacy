@@ -13,6 +13,12 @@
 
 __attribute__((section(".init_text"))) void Kernel_init(void) {
 
+    BOCHS_DG();
+    __asm__ __volatile__(
+            "mov $0, %%eax \n\t"
+            "cpuid         \n\t"
+            :"=b"(cpu_info.manufacturer_name[0]),"=d"(cpu_info.manufacturer_name[1]),"=c"(cpu_info.manufacturer_name[2])::);
+
     unsigned int cpu_id;
     GET_CPUID(cpu_id);                           //获取当前cpu的id
     pos_init();                                  //初始化输出控制台

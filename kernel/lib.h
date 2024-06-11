@@ -4,6 +4,10 @@
 
 #define BOCHS_DG()    __asm__ __volatile__ ("xchg %%bx,%%bx \n\t":: :);
 
+struct {
+    unsigned int manufacturer_name[4];
+}cpu_info;
+
 #define GET_CPUID(CPUID) \
         do {             \
         __asm__ __volatile__ (              \
@@ -22,7 +26,6 @@ extern unsigned int bsp_flags;
 extern unsigned int cpu_num;
 extern unsigned long kenelstack_top;
 extern unsigned long _start_text;
-
 
 //自旋锁
 #define SPIN_LOCK(lock) \
