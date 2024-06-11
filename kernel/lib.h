@@ -9,7 +9,7 @@
         __asm__ __volatile__ (              \
             "movl $0x802,%%ecx   \n\t"      \
             "rdmsr               \n\t"      \
-            :"=a"((CPUID))::"%rcx", "%rdx"); \
+            :"=a"(CPUID)::"%rcx", "%rdx"); \
             } while(0)
 
 
