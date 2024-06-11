@@ -4,6 +4,15 @@
 
 #define BOCHS_DG()    __asm__ __volatile__ ("xchg %%bx,%%bx \n\t":: :);
 
+#define GET_CPUID(CPUID) \
+        do {             \
+        __asm__ __volatile__ (              \
+            "movl $0x802,%%ecx   \n\t"      \
+            "rdmsr               \n\t"      \
+            :"=a"((CPUID))::"%rcx", "%rdx"); \
+            } while(0)
+
+
 #define PML4_VBASE    0xFFFFFFFFFFFFF000     //pml4虚拟地址基址
 #define PDPT_VBASE    0xFFFFFFFFFFE00000     //pdpt虚拟地址基址
 #define PD_VBASE      0xFFFFFFFFC0000000     //pd虚拟地址基址

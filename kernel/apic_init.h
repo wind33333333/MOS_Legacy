@@ -3,4 +3,8 @@
 
 void apic_init(void);
 
+struct cpu_info {
+    unsigned char name[17];
+};
+
 #endif

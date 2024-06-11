@@ -14,11 +14,7 @@
 __attribute__((section(".init_text"))) void Kernel_init(void) {
 
     unsigned int cpu_id;
-    __asm__ __volatile__ (
-            "movl $0x802,%%ecx   \n\t"
-            "rdmsr               \n\t"
-            :"=a"(cpu_id)::"%rcx", "%rdx");
-
+    GET_CPUID(cpu_id);                           //获取当前cpu的id
     pos_init();                                  //初始化输出控制台
     memory_init();                               //初始化内存管理器
     gdt_init();                                  //初始化GDT
