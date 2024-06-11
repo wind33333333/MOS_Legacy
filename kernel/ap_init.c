@@ -3,7 +3,7 @@
 //多核处理器初始化
 __attribute__((section(".init_text"))) void ap_init(unsigned int cpu_id) {
     if (bsp_flags) {
-        color_printk(GREEN, BLACK, "CPU Cores Num: %d\n", cpu_info.num);
+        color_printk(GREEN, BLACK, "%s  %d Cores \n", cpu_info.model_name,cpu_info.num);
         __asm__ __volatile__ (
                 "mov $0x00,	%%rdx	\n\t"
                 "mov $0xC4500,%%rax	\n\t"   //bit8-10投递模式init101 ，bit14 1 ，bit18-19投递目标11所有处理器（不包括自身）
@@ -18,7 +18,6 @@ __attribute__((section(".init_text"))) void ap_init(unsigned int cpu_id) {
                 "mov $0x50000,%%rcx	\n\t"       //延时
                 "2:\tloop 2b	\n\t"
                 "wrmsr	\n\t"
-
                 :: :"%rax", "%rcx", "%rdx");
     }
     color_printk(GREEN, BLACK, "CPU%d init successful\n", cpu_id);

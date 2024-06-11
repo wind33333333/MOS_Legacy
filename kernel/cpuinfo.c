@@ -19,7 +19,6 @@ void get_cpuinfo(unsigned int *p){
                 "movb $0, 12(%%edi) \n\t"
                 ::"D"(&cpu_info.manufacturer_name):"%rax", "%rbx", "%rcx", "%rdx");
 
-        BOCHS_DG();
         __asm__ __volatile__(
                 "mov $0x80000002, %%eax \n\t"
                 "cpuid         \n\t"
@@ -44,8 +43,6 @@ void get_cpuinfo(unsigned int *p){
 
                 "mov $0, 48(%%edi) \n\t"
                 ::"D"(&cpu_info.model_name):"%rax", "%rbx", "%rcx", "%rdx");
-
-        color_printk(YELLOW, BLACK, "%s \n", cpu_info.model_name);
     }
         return;
 }
