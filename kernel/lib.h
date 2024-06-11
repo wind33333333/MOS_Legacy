@@ -15,8 +15,6 @@ extern unsigned long kenelstack_top;
 extern unsigned long _start_text;
 
 
-
-
 //自旋锁
 #define SPIN_LOCK(lock) \
     do {                \
