@@ -14,9 +14,8 @@
 
 __attribute__((section(".init_text"))) void Kernel_init(void) {
     unsigned int cpu_id;
-
     pos_init();                                  //初始化输出控制台
-    get_cpuinfo(&cpu_id);
+    get_cpuinfo(&cpu_id);                     //获取cpu信息
     memory_init();                               //初始化内存管理器
     gdt_init();                                  //初始化GDT
     tss_init(cpu_id);                            //初始化TSS
