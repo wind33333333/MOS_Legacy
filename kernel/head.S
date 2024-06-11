@@ -11,15 +11,15 @@ _start:
     movabs  %eax,bsp_flags
     jz      kernel_stack_init
 
-//===============================cpu_num=cpu数量
+//===============================cpuinfo.num=cpu数量
     mov        $1,%eax
     cpuid
     shr        $16,%ebx         //右移16位得到cpu数量
     mov        %ebx,%eax
-    movabs     %eax,cpu_num
+    movabs     %eax,cpu_info
 
 //===============================开辟多核栈空间
-    movabs     cpu_num,%eax
+    movabs     cpu_info,%eax
     shl        $14,%rax                 //每个核心分配16k栈
     mov        %rax,%rbx
     movabs     kenelstack_top,%rax
@@ -47,9 +47,6 @@ kernel_stack_init:
 
     .globl kenelstack_top
     kenelstack_top:   .quad   _end
-
-    .globl cpu_num
-    cpu_num:         .int   0
 
     .globl bsp_flags
     bsp_flags:       .int   0

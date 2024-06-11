@@ -4,26 +4,11 @@
 
 #define BOCHS_DG()    __asm__ __volatile__ ("xchg %%bx,%%bx \n\t":: :);
 
-struct {
-    unsigned int manufacturer_name[4];
-}cpu_info;
-
-#define GET_CPUID(CPUID) \
-        do {             \
-        __asm__ __volatile__ (              \
-            "movl $0x802,%%ecx   \n\t"      \
-            "rdmsr               \n\t"      \
-            :"=a"(CPUID)::"%rcx", "%rdx"); \
-            } while(0)
-
-
 #define PML4_VBASE    0xFFFFFFFFFFFFF000     //pml4虚拟地址基址
 #define PDPT_VBASE    0xFFFFFFFFFFE00000     //pdpt虚拟地址基址
 #define PD_VBASE      0xFFFFFFFFC0000000     //pd虚拟地址基址
 #define PT_VBASE      0xFFFFFF8000000000     //pt虚拟地址基址
 
-extern unsigned int bsp_flags;
-extern unsigned int cpu_num;
 extern unsigned long kenelstack_top;
 extern unsigned long _start_text;
 

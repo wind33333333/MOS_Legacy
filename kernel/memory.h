@@ -3,6 +3,7 @@
 
 #include "printk.h"
 #include "lib.h"
+#include "cpuinfo.h"
 
 void  memory_init(void);
 void * alloc_pages(unsigned long required_length);

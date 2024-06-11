@@ -50,7 +50,7 @@ __attribute__((section(".init_text"))) void memory_init() {
         }
 
         //kernel_end结束地址加上bit map对齐4K地址
-        memory_management_struct.kernel_start = &_start_text;
+        memory_management_struct.kernel_start = _start_text;
         memory_management_struct.kernel_end =
                 kenelstack_top + (memory_management_struct.bits_length + 0xfff) & 0xFFFFFFFFFFFFF000;
 

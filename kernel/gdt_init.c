@@ -2,7 +2,7 @@
 
 __attribute__((section(".init_text"))) void gdt_init(void) {
     if (bsp_flags) {
-        gdt_ptr.limit = (cpu_num * 16 + TSS_START * 8 + 0xFFF & PAGE_4K_MASK) - 1;
+        gdt_ptr.limit = (cpu_info.num * 16 + TSS_START * 8 + 0xFFF & PAGE_4K_MASK) - 1;
         gdt_ptr.base = Phy_To_Virt(alloc_pages((gdt_ptr.limit + 1) >> PAGE_4K_SHIFT));              //分配GDT内存
         memory_management_struct.kernel_end = (unsigned long)gdt_ptr.base;
 

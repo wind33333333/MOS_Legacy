@@ -9,15 +9,15 @@ _start:
     jz kernel_stack_init
 
 
-//////////////////////cpu_num=cpu数量
+//////////////////////cpuinfo.num=cpu数量
     mov        $1,%eax
     cpuid
     shr        $16,%ebx
     mov        %rbx,%rax
-    movabs     %rax,cpu_num
+    movabs     %rax,cpuinfo.num
 
 //////////////////开辟多核栈空间
-    movabs     cpu_num,%rax
+    movabs     cpuinfo.num,%rax
     mov        $0x4000*3,%rax
     mul        %rbx
     mov        %rax,%rbx
@@ -31,7 +31,7 @@ _start:
 
 
 /////////////////////开辟数GDT內存空間
-    movabs     cpu_num,%rax
+    movabs     cpuinfo.num,%rax
     shl        $4,%eax                   //tss描述符=cpu数量*16
     add        $0x50,%eax              //GDT长度=80字节预留+tss描述符长度
     add        $0xFFF,%eax
@@ -65,7 +65,7 @@ _start:
 
 
 ///////////开辟tss_table內存空間
-    movabs     cpu_num,%rax
+    movabs     cpuinfo.num,%rax
     mov        $104,%rbx
     mul        %rbx
     add        $0xFFF,%eax
@@ -326,8 +326,8 @@ kernel_base_stack:	.quad	0
 .globl kenelstack_top
 kenelstack_top:   .quad   _end
 
-.globl cpu_num
-cpu_num:         .quad   0
+.globl cpuinfo.num
+cpuinfo.num:         .quad   0
 
 pml4e_bak:   .fill    512,8,0
 
