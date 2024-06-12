@@ -6,12 +6,12 @@
 
 void    gdt_init(void);
 
-struct _gdt_ptr {
+typedef struct {
     unsigned short limit;
     unsigned long *base;
-} __attribute__((packed));
+} __attribute__((packed)) _gdt_ptr;
 
-__attribute__((section(".init_data"))) struct _gdt_ptr gdt_ptr={0,0};
+__attribute__((section(".init_data"))) _gdt_ptr gdt_ptr={0,0};
 
 #define TSS_START 10
 

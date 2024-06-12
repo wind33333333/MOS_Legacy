@@ -25,12 +25,12 @@
 
 void tss_init(unsigned int cpu_id);
 
-struct _tss_ptr{
+typedef struct {
     unsigned long limit;
     struct _tss *base;
-};
+} _tss_ptr;
 
-__attribute__((section(".init_data"))) struct _tss_ptr tss_ptr = {0,0};
+__attribute__((section(".init_data"))) _tss_ptr tss_ptr = {0,0};
 
 struct _tss{
     unsigned int    reserved0;
