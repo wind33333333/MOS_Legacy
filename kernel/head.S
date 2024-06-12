@@ -11,7 +11,7 @@ _start:
     movabs  %eax,bsp_flags
     jz      kernel_stack_init
 
-//===============================cpuinfo.num=cpu数量
+//===============================cpu_info.croes_num=cpu数量
     mov        $1,%eax
     cpuid
     shr        $16,%ebx         //右移16位得到cpu数量
