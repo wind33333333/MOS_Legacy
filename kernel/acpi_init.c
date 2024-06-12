@@ -16,15 +16,18 @@ __attribute__((section(".init_text"))) void acpi_init(void) {
         }
 
         for (unsigned int i = 0; i < (rsdt->Length - 36) / 4; i++) {
-            unsigned int *entry = (unsigned int *) rsdt->Entry[i];
-            if (*entry == 0x43495041) {  //"ACPI"
-                madt = (MADT *) entry;
-                color_printk(YELLOW, BLACK, "ACPI: %#018lX  ", madt);
-
-            } else if (*entry == 0x54455048) {  //"HPET"
-                hpet = (HPET *) entry;
-                color_printk(YELLOW, BLACK, "HPET: %#018lX  \n", hpet);
+            switch (*(unsigned int *)rsdt->Entry[i]) {
+                case 0x43495041:        //"APIC"
+                    madt = (MADT *)rsdt->Entry[i];
+                    color_printk(YELLOW, BLACK, "ACPI: %#018lX  ", madt);
+                    break;
+                case 0x54455048:   //"HPET"
+                    hpet = (HPET *)rsdt->Entry[i];
+                    color_printk(YELLOW, BLACK, "HPET: %#018lX  \n", hpet);
+                    break;
             }
+
+
         }
 
     }
