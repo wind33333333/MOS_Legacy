@@ -47,6 +47,7 @@ void get_cpuinfo(unsigned int *p){
                 "mov $0, 48(%%edi) \n\t"
                 ::"D"(&cpu_info.model_name):"%rax", "%rbx", "%rcx", "%rdx");
 
+        // 获取CPU频率
         __asm__ __volatile__(
                 "mov $0x16, %%eax \n\t"
                 "cpuid         \n\t"
