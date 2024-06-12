@@ -7,7 +7,7 @@
 void get_cpuinfo(unsigned int *p);
 
 struct {
-    unsigned int num;
+    unsigned int cores_num;
     char manufacturer_name[13];
     char model_name[49];
     unsigned long frequency;

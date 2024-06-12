@@ -2,10 +2,10 @@
 
 __attribute__((section(".init_text"))) void tss_init(unsigned int cpu_id) {
     if (bsp_flags) {
-        tss_ptr.limit = (cpu_info.num * 104 + 0xFFF) & PAGE_4K_MASK;
+        tss_ptr.limit = (cpu_info.cores_num * 104 + 0xFFF) & PAGE_4K_MASK;
         tss_ptr.base = Phy_To_Virt(alloc_pages(tss_ptr.limit >> PAGE_4K_SHIFT));   //分配tss_tables内存
 
-        for (int i = 0; i < cpu_info.num; i++) {
+        for (int i = 0; i < cpu_info.cores_num; i++) {
             tss_ptr.base[i].reserved0 = 0;
             tss_ptr.base[i].rsp0 = (unsigned long) Phy_To_Virt(alloc_pages(4) + PAGE_4K_SIZE * 4);
             tss_ptr.base[i].rsp1 = 0;
