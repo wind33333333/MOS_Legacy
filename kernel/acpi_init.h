@@ -22,18 +22,30 @@ typedef struct {
 
 // 定义RSDT结构
 typedef struct {
-    char Signature[4];
-    unsigned int Length;
-    unsigned char Revision;
-    unsigned char Checksum;
-    char OEMID[6];
-    char OEMTableID[8];
-    unsigned int OEMRevision;
-    unsigned int CreatorID;
-    unsigned int CreatorRevision;
-    unsigned int Entry[];
+    char Signature[4];                      // 必须为 "RSDT"
+    unsigned int Length;                     // 表的长度，包括表头
+    unsigned char Revision;                  // 表的修订版本
+    unsigned char Checksum;                 // 检验和
+    char OEMID[6];                          // OEM ID
+    char OEMTableID[8];                     // OEM表ID
+    unsigned int OEMRevision;               // OEM表修订版
+    unsigned int CreatorID;                 // 表的创建者ID
+    unsigned int CreatorRevision;           // 表的创建者修订版
+    unsigned int Entry[];                   // ACPI表指针数组（RSDT为32位指针，XSDT为64位指针）
 } __attribute__((packed)) rsdt_struct;
 
-
+// 定义XSDT结构
+typedef struct {
+    char Signature[4];                  // 必须为 "XSDT"
+    unsigned int Length;                // 表的长度，包括表头
+    unsigned char Revision;             // 表的修订版本
+    unsigned char Checksum;             // 检验和
+    char OEMID[6];                      // OEM ID
+    char OEMTableID[8];                 // OEM表ID
+    unsigned int OEMRevision;           // OEM表修订版
+    unsigned int CreatorID;             // 表的创建者ID
+    unsigned int CreatorRevision;       // 表的创建者修订版
+    unsigned long Entry[];              // ACPI表指针数组（64位指针）
+} __attribute__((packed)) xsdt_struct;
 
 #endif
