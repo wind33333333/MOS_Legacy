@@ -3,6 +3,8 @@
 #include "lib.h"
 #include "printk.h"
 #include "cpuinfo.h"
+#include "ioapic_init.h"
+#include "hpet.h"
 
 void acpi_init(void);
 
@@ -48,6 +50,15 @@ typedef struct {
     unsigned long Entry[];              // ACPI表指针数组（64位指针）
 } __attribute__((packed)) XSDT;
 
+//定义IOAPIC结构
+typedef struct {
+    unsigned char type;
+    unsigned char length;
+    unsigned char ioapic_id;
+    unsigned char reserved;
+    unsigned int ioapic_address;
+}__attribute__((packed)) IOAPIC;
+
 // 定义MADT结构
 typedef struct {
     char Signature[4];                  // 必须为 "APIC"
@@ -61,6 +72,7 @@ typedef struct {
     unsigned int CreatorRevision;       // 表的创建者修订版
     unsigned int LocalAPICAddress;      // 本地APIC的物理地址
     unsigned int Flags;                 // 标志
+    IOAPIC ioapic[];                    // IOAPIC表
 } __attribute__((packed)) MADT;
 
 

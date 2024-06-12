@@ -5,4 +5,6 @@
 
 void ioapic_init(void);
 
+void *ioapic_baseaddr=0;
+
 #endif

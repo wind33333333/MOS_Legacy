@@ -16,20 +16,27 @@ __attribute__((section(".init_text"))) void acpi_init(void) {
         }
 
         for (unsigned int i = 0; i < (rsdt->Length - 36) / 4; i++) {
-            switch (*(unsigned int *)rsdt->Entry[i]) {
+            switch (*(unsigned int *) rsdt->Entry[i]) {
                 case 0x43495041:        //"APIC"
-                    madt = (MADT *)rsdt->Entry[i];
+                    madt = (MADT *) rsdt->Entry[i];
                     color_printk(YELLOW, BLACK, "ACPI: %#018lX  ", madt);
                     break;
-                case 0x54455048:   //"HPET"
-                    hpet = (HPET *)rsdt->Entry[i];
+                case 0x54455048:        //"HPET"
+                    hpet = (HPET *) rsdt->Entry[i];
+                    hpet_baseaddr = hpet->BaseAddressUpper;
                     color_printk(YELLOW, BLACK, "HPET: %#018lX  \n", hpet);
                     break;
             }
-
-
         }
 
+        for (unsigned int i = 0; i < (madt->Length - 44) / 8; i++) {
+            if(madt->ioapic[i].type == 1){
+                ioapic_baseaddr=madt->ioapic[i].ioapic_address;
+                color_printk(YELLOW, BLACK, "IOAPIC ADDR: %#018lX  HPET ADDR: %#018lX\n", ioapic_baseaddr,hpet_baseaddr);
+            }
+
+        }
     }
+
     return;
 }
