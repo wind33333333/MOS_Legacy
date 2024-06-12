@@ -22,17 +22,9 @@
 #define TSS_TYPE    (0x9UL << 40)
 #define TSS_LIMIT   (0x67UL & 0xFFFF) | ((0x67UL >> 16)<<48)
 
-
 void tss_init(unsigned int cpu_id);
 
 typedef struct {
-    unsigned long limit;
-    struct _tss *base;
-} _tss_ptr;
-
-__attribute__((section(".init_data"))) _tss_ptr tss_ptr = {0,0};
-
-struct _tss{
     unsigned int    reserved0;
     unsigned long   rsp0;
     unsigned long   rsp1;
@@ -48,7 +40,13 @@ struct _tss{
     unsigned long   reserved2;
     unsigned short  reserved3;
     unsigned short  iomap_base;
-} __attribute__((packed));
+} __attribute__((packed)) _tss;
 
+typedef struct {
+    unsigned long limit;
+    _tss * base;
+} _tss_ptr;
+
+__attribute__((section(".init_data"))) _tss_ptr tss_ptr = {0,0};
 
 #endif
