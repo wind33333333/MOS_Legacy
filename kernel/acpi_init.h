@@ -17,7 +17,7 @@ typedef struct {
     unsigned long XsdtAddress;           // XSDT的物理地址（仅在ACPI 2.0中使用）
     unsigned char ExtendedChecksum;      // 扩展校验和（仅在ACPI 2.0中使用）
     unsigned char Reserved[3];           // 保留，必须为0
-} __attribute__((packed)) rsdp_struct;
+} __attribute__((packed)) RSDP;
 
 
 // 定义RSDT结构
@@ -32,7 +32,7 @@ typedef struct {
     unsigned int CreatorID;                 // 表的创建者ID
     unsigned int CreatorRevision;           // 表的创建者修订版
     unsigned int Entry[];                   // ACPI表指针数组（RSDT为32位指针，XSDT为64位指针）
-} __attribute__((packed)) rsdt_struct;
+} __attribute__((packed)) RSDT;
 
 // 定义XSDT结构
 typedef struct {
@@ -46,6 +46,43 @@ typedef struct {
     unsigned int CreatorID;             // 表的创建者ID
     unsigned int CreatorRevision;       // 表的创建者修订版
     unsigned long Entry[];              // ACPI表指针数组（64位指针）
-} __attribute__((packed)) xsdt_struct;
+} __attribute__((packed)) XSDT;
+
+// 定义MADT结构
+typedef struct {
+    char Signature[4];                  // 必须为 "APIC"
+    unsigned int Length;                // 表的长度，包括表头
+    unsigned char Revision;             // 表的修订版本
+    unsigned char Checksum;             // 检验和
+    char OEMID[6];                      // OEM ID
+    char OEMTableID[8];                 // OEM表ID
+    unsigned int OEMRevision;           // OEM表修订版
+    unsigned int CreatorID;             // 表的创建者ID
+    unsigned int CreatorRevision;       // 表的创建者修订版
+    unsigned int LocalAPICAddress;      // 本地APIC的物理地址
+    unsigned int Flags;                 // 标志
+} __attribute__((packed)) MADT;
+
+
+// 定义HPET结构
+typedef struct {
+    char Signature[4];                      // 必须为 "HPET"
+    unsigned int Length;                    // 表的长度，包括表头
+    unsigned char Revision;                 // 表的修订版本
+    unsigned char Checksum;                 // 校验和
+    char OEMID[6];                          // OEM ID
+    char OEMTableID[8];                     // OEM表ID
+    unsigned int OEMRevision;               // OEM表修订版
+    unsigned int CreatorID;                 // 表的创建者ID
+    unsigned int CreatorRevision;           // 表的创建者修订版
+    unsigned int EventTimerBlockID;         // 事件计时器块ID
+    unsigned int BaseAddressLower;          // 基地址低32位
+    unsigned int BaseAddressUpper;          // 基地址高32位（可选）
+    unsigned char HpetNumber;               // HPET的编号
+    unsigned short MinimumClockTick;        // 最小时钟周期，以飞秒为单位
+    unsigned char PageProtection;           // 页保护属性
+} __attribute__((packed)) HPET;
+
+
 
 #endif
