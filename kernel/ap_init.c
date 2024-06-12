@@ -3,7 +3,7 @@
 //多核处理器初始化
 __attribute__((section(".init_text"))) void ap_init(unsigned int cpu_id) {
     if (bsp_flags) {
-        color_printk(GREEN, BLACK, "%s  %d Cores \n", cpu_info.model_name,cpu_info.cores_num);
+        color_printk(GREEN, BLACK, "CPU Manufacturer: %s\tmodel: %s\tFrequency: %ldMhz\tCores: %d\n",cpu_info.manufacturer_name, cpu_info.model_name,cpu_info.frequency,cpu_info.cores_num);
         __asm__ __volatile__ (
                 "mov $0x00,	%%rdx	\n\t"
                 "mov $0xC4500,%%rax	\n\t"   //bit8-10投递模式init101 ，bit14 1 ，bit18-19投递目标11所有处理器（不包括自身）
