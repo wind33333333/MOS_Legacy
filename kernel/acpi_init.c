@@ -26,9 +26,17 @@ __attribute__((section(".init_text"))) void acpi_init(void) {
             }
         }
 
-        for (unsigned int i = 0; i < (madt->Length - 44) / 8; i++) {
-            if (madt->ioapic[i].type == 1) {
-                ioapic_baseaddr = (unsigned int *) madt->ioapic[i].ioapic_address;
+        for (unsigned int i = 0; i < (madt->Length - 44) / 2; i++) {
+            IOAPIC *ioapic = 0;
+            InterruptSourceOverride *isr = 0;
+
+            if ((madt->Header[i].Type == 1) && (madt->Header[i].Length == 0xC)) {
+                ioapic = (IOAPIC *) &madt->Header[i];
+                ioapic_baseaddr = (unsigned int *) ioapic->ioapic_address;
+            } else if ((madt->Header[i].Type == 2) && (madt->Header[i].Length == 0xA)) {
+                isr = (InterruptSourceOverride *) &madt->Header[i];
+                irq_to_gsi[i].IRQ = isr[i].Source;
+                irq_to_gsi[i].GSI = isr[i].GlobalSystemInterrupt;
             }
         }
 
@@ -37,9 +45,15 @@ __attribute__((section(".init_text"))) void acpi_init(void) {
         color_printk(YELLOW, BLACK, "APIC: %#018lX \tIOAPIC ADDR: %#018lX\n", madt,
                      ioapic_baseaddr);
         color_printk(YELLOW, BLACK, "HPET: %#018lX \tHPET ADDR: %#018lX\n", hpet, hpet_baseaddr);
+
+        for (int i = 0; i < 24; ++i) {
+            if ((irq_to_gsi[i].IRQ = 0x0) && (irq_to_gsi[i].GSI = 0x0))
+                break;
+            color_printk(YELLOW, BLACK, "IRQ: %d \tGSI: %d\n", irq_to_gsi[i].IRQ,
+                         irq_to_gsi[i].GSI);
+
+        }
+
+        return;
     }
-
-    return;
 }
-
-#pragma clang diagnostic pop

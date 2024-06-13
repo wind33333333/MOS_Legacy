@@ -8,6 +8,13 @@
 
 void acpi_init(void);
 
+typedef struct {
+    unsigned int IRQ;
+    unsigned int GSI;
+}IRQTOGSI;
+
+IRQTOGSI irq_to_gsi[24] = {0};
+
 // 定义RSDP结构
 typedef struct {
     char Signature[8];                   // 必须为 "RSD PTR "
@@ -50,14 +57,28 @@ typedef struct {
     unsigned long Entry[];              // ACPI表指针数组（64位指针）
 } __attribute__((packed)) XSDT;
 
+// APIC结构的公共头部
+typedef struct {
+    unsigned char Type;            // APIC结构的类型
+    unsigned char Length;          // APIC结构的长度
+}__attribute__((packed)) APICHeader;
+
 //定义IOAPIC结构
 typedef struct {
-    unsigned char type;
-    unsigned char length;
+    APICHeader Header;              // APIC结构的公共头部
     unsigned char ioapic_id;
     unsigned char reserved;
     unsigned int ioapic_address;
 }__attribute__((packed)) IOAPIC;
+
+// 中断源覆盖结构
+typedef struct {
+    APICHeader Header;              // APIC结构的公共头部
+    unsigned char Bus;
+    unsigned char Source;
+    unsigned int GlobalSystemInterrupt;
+    unsigned short Flags;
+}__attribute__((packed)) InterruptSourceOverride;
 
 // 定义MADT结构
 typedef struct {
@@ -72,7 +93,7 @@ typedef struct {
     unsigned int CreatorRevision;       // 表的创建者修订版
     unsigned int LocalAPICAddress;      // 本地APIC的物理地址
     unsigned int Flags;                 // 标志
-    IOAPIC ioapic[];                    // IOAPIC表
+    APICHeader Header[];                // APIC结构的公共头部
 } __attribute__((packed)) MADT;
 
 
