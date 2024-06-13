@@ -3,9 +3,9 @@
 __attribute__((section(".init_text"))) void acpi_init(void) {
     if (bsp_flags) {
         RSDP *rsdp = (RSDP *) 0xe0000;
-        RSDT *rsdt;
-        MADT *madt;
-        HPET *hpet;
+        RSDT *rsdt = (RSDT *) 0;
+        MADT *madt = (MADT *) 0;
+        HPET *hpet = (HPET *) 0;
 
         for (; rsdp < 0x100000; rsdp = (unsigned long *) rsdp + 2) {
             if (*(unsigned long *) rsdp == 0x2052545020445352) {  //'RSD PTR '
