@@ -1,5 +1,8 @@
 #include "acpi_init.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wint-to-pointer-cast"
+
 __attribute__((section(".init_text"))) void acpi_init(void) {
     if (bsp_flags) {
         RSDT *rsdt;
@@ -23,16 +26,17 @@ __attribute__((section(".init_text"))) void acpi_init(void) {
                     break;
                 case 0x54455048:        //"HPET"
                     hpet = (HPET *) rsdt->Entry[i];
-                    hpet_baseaddr = hpet->BaseAddressUpper;
+                    hpet_baseaddr = (unsigned int *) hpet->BaseAddressUpper;
                     color_printk(YELLOW, BLACK, "HPET: %#018lX  \n", hpet);
                     break;
             }
         }
 
         for (unsigned int i = 0; i < (madt->Length - 44) / 8; i++) {
-            if(madt->ioapic[i].type == 1){
-                ioapic_baseaddr=madt->ioapic[i].ioapic_address;
-                color_printk(YELLOW, BLACK, "IOAPIC ADDR: %#018lX  HPET ADDR: %#018lX\n", ioapic_baseaddr,hpet_baseaddr);
+            if (madt->ioapic[i].type == 1) {
+                ioapic_baseaddr = (unsigned int *) madt->ioapic[i].ioapic_address;
+                color_printk(YELLOW, BLACK, "IOAPIC ADDR: %#018lX  HPET ADDR: %#018lX\n",
+                             ioapic_baseaddr, hpet_baseaddr);
             }
 
         }
@@ -40,3 +44,5 @@ __attribute__((section(".init_text"))) void acpi_init(void) {
 
     return;
 }
+
+#pragma clang diagnostic pop
