@@ -15,8 +15,6 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
 
     if(bsp_flags) {
         __asm__ __volatile__(
-                "mov $0xFEC00000,%%rdi      \n\t"
-                "mov $0xFEC00010,%%rsi      \n\t"
                 /*
                 "movl $0x0,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
@@ -25,6 +23,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov (%%rsi),%%eax                 \n\t"                   //设置ioapic id
                 "mfence                     \n\t"
                 */
+
                 "mov $0x10000,%%rax         \n\t"
                 "movl $0x10,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
@@ -173,12 +172,12 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mfence                     \n\t"
                 "mov %%eax,(%%rsi)                 \n\t"
                 "mfence                     \n\t"
-                "shr $32,%%rax      \n\t"
+                "shr $32,%%rax                \n\t"
                 "movl $0x2F,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
                 "mov %%eax,(%%rsi)                  \n\t" //从SATA中断
                 "mfence                     \n\t"
-                :: :"%rax", "%rcx", "%rdx");
+                ::"D"(ioapic_baseaddr),"S"((unsigned long)ioapic_baseaddr+0x10):"%rax", "%rcx", "%rdx");
     }
     return;
 }

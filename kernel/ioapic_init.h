@@ -2,9 +2,10 @@
 #define __IOAPIC_H__
 #include "lib.h"
 #include "cpuinfo.h"
+#include "hpet.h"
 
 void ioapic_init(void);
 
-void *ioapic_baseaddr=0;
+unsigned int *ioapic_baseaddr= 0;
 
 #endif
