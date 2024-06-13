@@ -1,8 +1,5 @@
 #include "acpi_init.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wint-to-pointer-cast"
-
 __attribute__((section(".init_text"))) void acpi_init(void) {
     if (bsp_flags) {
         RSDP *rsdp = (RSDP *) 0xe0000;
