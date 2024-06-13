@@ -13,7 +13,7 @@ typedef struct {
     unsigned int GSI;
 }IRQTOGSI;
 
-IRQTOGSI irq_to_gsi[24] = {0};
+IRQTOGSI irq_to_gsi[24] = {0,0};
 
 // 定义RSDP结构
 typedef struct {
