@@ -29,14 +29,14 @@ __attribute__((section(".init_text"))) void acpi_init(void) {
         IOAPIC *ioapic = 0;
         InterruptSourceOverride *isr = 0;
         unsigned int j =0;
-        for (unsigned int i = 0; i < (madt->Length - 44) / 2; i++) {
+        for (unsigned int i = 0; i < ((madt->Length - 44) / 2); i++) {
             if ((madt->Header[i].Type == 1) && (madt->Header[i].Length == 0xC)) {
                 ioapic = (IOAPIC *) &madt->Header[i];
                 ioapic_baseaddr = (unsigned int *) ioapic->ioapic_address;
             } else if ((madt->Header[i].Type == 2) && (madt->Header[i].Length == 0xA)) {
                 isr = (InterruptSourceOverride *) &madt->Header[i];
-                irq_to_gsi[j].IRQ = isr[j].Source;
-                irq_to_gsi[j].GSI = isr[j].GlobalSystemInterrupt;
+                irq_to_gsi[j].IRQ = isr->Source;
+                irq_to_gsi[j].GSI = isr->GlobalSystemInterrupt;
                 j++;
             }
         }
