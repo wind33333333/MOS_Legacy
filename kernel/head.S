@@ -97,8 +97,8 @@ ignore_int:
 	callq	color_printk
 	addq	$0x8,	%rsp
 
-Loop:
-	jmp	Loop
+
+//	jmp	.
 
 	popq	%rax
 	movq	%rax,	%ds

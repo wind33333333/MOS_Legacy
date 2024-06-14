@@ -4,6 +4,19 @@ void hpet_init(void) {
 
     if (bsp_flags) {
 
+        __asm__ __volatile__ (
+                "mov    $0x34,%%al \n\t"
+                "out    %%al,$0x43 \n\t"
+
+                "mov    $0,%%al \n\t"
+                "out    %%al,$0x40 \n\t"
+                "out    %%al,$0x40 \n\t"
+                "out    %%al,$0x41 \n\t"
+                "out    %%al,$0x41 \n\t"
+                "out    %%al,$0x42 \n\t"
+                "out    %%al,$0x42 \n\t"
+                :::"%rax");
+
         HPET_Registers hpetRegisters = {
                 .GCAP_ID = (unsigned long *)Phy_To_Virt(hpet_baseaddr+0),
                 .GEN_CONF = (unsigned long*)Phy_To_Virt(hpet_baseaddr+0x10),
@@ -29,7 +42,7 @@ void hpet_init(void) {
 
         color_printk(YELLOW, BLACK, "HPET Clock Frequency: %dMhz \n", (*hpetRegisters.GCAP_ID >> 32) / 1000 / 1000);
 
-        *hpetRegisters.TIM0_COMP = 0xFFFFFFFF;
+        *hpetRegisters.TIM0_COMP = 0xFFFFFFF;
         *hpetRegisters.TIM0_CONF = ((2UL << 9) | (1UL << 6) | (1Ul << 3) | (1UL << 2));
         *hpetRegisters.GEN_CONF = 0;
 

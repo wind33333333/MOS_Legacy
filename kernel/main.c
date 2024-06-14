@@ -13,6 +13,7 @@
 #include "cpuinfo.h"
 
 __attribute__((section(".init_text"))) void Kernel_init(void) {
+
     unsigned int cpu_id;
     pos_init();                                  //初始化输出控制台
     get_cpuinfo(&cpu_id);                     //获取cpu信息
