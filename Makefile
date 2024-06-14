@@ -41,7 +41,7 @@ ${BUILD}/kernel.bin: ${BUILD}/system
 ${BUILD}/system: ${BUILD}/head.o ${BUILD}/main.o ${BUILD}/printk.o ${BUILD}/trap_entry.o ${BUILD}/trap.o \
  				${BUILD}/ioapic_init.o ${BUILD}/ap_init.o ${BUILD}/acpi_init.o ${BUILD}/pos_init.o \
 				${BUILD}/idt_init.o ${BUILD}/apic_init.o ${BUILD}/memory.o ${BUILD}/gdt_init.o \
-				${BUILD}/tss_init.o ${BUILD}/papg_init.o ${BUILD}/cpuinfo.o
+				${BUILD}/tss_init.o ${BUILD}/papg_init.o ${BUILD}/cpuinfo.o ${BUILD}/hpet.o
 	ld -b elf64-x86-64 -z muldefs -o $@ $^ -T $(KERNEL)/Kernel.lds
 
 $(BUILD)/%.o: $(BUILD)/%.s
