@@ -14,6 +14,31 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
     */
 
     if(bsp_flags) {
+
+        __asm__ __volatile__ (
+                "mov    $0x30,%%al \n\t"
+                "out    %%al,$0x43 \n\t"
+                "mov    $0,%%al \n\t"
+                "out    %%al,$0x40 \n\t"            //禁用8054计时器0
+                "out    %%al,$0x40 \n\t"
+
+                "mov    $0x70,%%al \n\t"
+                "out    %%al,$0x43 \n\t"
+                "mov    $0,%%al \n\t"
+                "out    %%al,$0x41 \n\t"            //禁用8054计时器1
+                "out    %%al,$0x41 \n\t"
+
+                "mov    $0xB0,%%al \n\t"
+                "out    %%al,$0x43 \n\t"
+                "mov    $0,%%al \n\t"
+                "out    %%al,$0x42 \n\t"            //禁用8054计时器2
+                "out    %%al,$0x42 \n\t"
+
+                "mov $0xFF,%%al \n\t"
+                "out %%al,$0x21 \n\t"
+                "out %%al,$0xA1 \n\t"               //禁用主从8259A
+                :::"%rax");
+
         __asm__ __volatile__(
                 /*
                 "movl $0x0,(%%rdi)                  \n\t"
@@ -40,7 +65,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mfence                     \n\t"
                 "mov %%eax,(%%rsi)                 \n\t"
                 "mfence                     \n\t"
-                "shr $32,%%rax      \n\t"
+                "shr $32,%%rax               \n\t"
                 "movl $0x13,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
                 "mov %%eax,(%%rsi)                  \n\t"          //ps2键盘中断
@@ -62,7 +87,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mfence                     \n\t"
                 "mov %%eax,(%%rsi)                 \n\t"
                 "mfence                     \n\t"
-                "shr $32,%%rax      \n\t"
+                "shr $32,%%rax              \n\t"
                 "movl $0x17,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
                 "mov %%eax,(%%rsi)                  \n\t"          //串口2中断
@@ -73,7 +98,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mfence                     \n\t"
                 "mov %%eax,(%%rsi)                 \n\t"
                 "mfence                     \n\t"
-                "shr $32,%%rax      \n\t"
+                "shr $32,%%rax              \n\t"
                 "movl $0x19,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
                 "mov %%eax,(%%rsi)                  \n\t"        //串口1中断

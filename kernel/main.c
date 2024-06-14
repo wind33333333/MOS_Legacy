@@ -21,10 +21,10 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
     gdt_init();                                  //初始化GDT
     tss_init(cpu_id);                            //初始化TSS
     idt_init();                                  //初始化IDT
-    apic_init();                                 //初始化apic
     acpi_init();                                 //初始化acpi
     ioapic_init();                               //初始化ioapic
     hpet_init();
+    apic_init();                                 //初始化apic
 //    ap_init(cpu_id);                             //初始化ap核
 //    papg_init();                                 //初始化内核页表
 
