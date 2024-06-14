@@ -50,7 +50,7 @@ __attribute__((section(".init_text"))) void acpi_init(void) {
         for (int i = 0; i < 24; ++i) {
             if ((irq_to_gsi[i].IRQ == 0x0) && (irq_to_gsi[i].GSI == 0x0))
                 break;
-            color_printk(YELLOW, BLACK, "IRQ: %d  ->  GSI: %d\n", irq_to_gsi[i].IRQ,
+            color_printk(YELLOW, BLACK, "IRQ#%d -> GSI#%d\n", irq_to_gsi[i].IRQ,
                          irq_to_gsi[i].GSI);
 
         }
