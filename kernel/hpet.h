@@ -6,7 +6,7 @@
 #include "printk.h"
 #include "memory.h"
 
-unsigned long hpet_baseaddr=0;
+unsigned long hpet_baseaddr = 0;
 
 typedef struct {
     unsigned long *GCAP_ID;      // 000h ~ 007h 整体机能寄存器

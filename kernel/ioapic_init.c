@@ -7,7 +7,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
      * 数据寄存器0xFEC00010 32bit
      * EOI寄存器0xFEC00040 32bit bit0-7
      * 索引0 ioapic id寄存器 读写 32bit bit24-27
-     * 索引1 ioapic版本寄存器 读 32bit bit0-7apic版本 bit16-23 +1可用rtc寄存器数
+     * 索引1 ioapic版本寄存器 读 32bit bit0-7apic版本 bit16-23 +1可用rte寄存器数
      * 索引0x10-0x11 中断投递寄存器0 读写 0x10低32bit 0x11高32bit bit0-7中断号 bit16中断屏蔽位 bit56-63 local apic id
      * ...
      * 索引0x3E-0x3F 中断投递寄存器23 读写
@@ -35,7 +35,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov %%eax,(%%rsi)                  \n\t"           //主8259A中断
                 "mfence                     \n\t"
 
-                "mov $0x000000000000021,%%rax         \n\t"
+                "mov $0x00021,%%rax         \n\t"
                 "movl $0x12,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
                 "mov %%eax,(%%rsi)                 \n\t"
@@ -46,7 +46,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov %%eax,(%%rsi)                  \n\t"          //ps2键盘中断
                 "mfence                     \n\t"
 
-                "mov $0x10000,%%rax         \n\t"
+                "mov $0x000022,%%rax         \n\t"
                 "movl $0x14,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
                 "mov %%eax,(%%rsi)                 \n\t"
@@ -54,7 +54,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "shr $32,%%rax      \n\t"
                 "movl $0x15,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"          //
+                "mov %%eax,(%%rsi)                  \n\t"          //时钟 HPTE
                 "mfence                     \n\t"
 
                 "mov $0x10000,%%rax         \n\t"

@@ -27,9 +27,14 @@ void hpet_init(void) {
                 .TIM7_COMP = (unsigned long *)Phy_To_Virt(hpet_baseaddr+0x1E8),
                 };
 
-        color_printk(YELLOW, BLACK, "HPET: %#018lX \n", *hpetRegisters.MAIN_CNT);
         color_printk(YELLOW, BLACK, "HPET Clock Frequency: %dMhz \n", (*hpetRegisters.GCAP_ID >> 32) / 1000 / 1000);
-        return;
-    }
 
+        *hpetRegisters.TIM0_COMP = 0xFFFFFFFF;
+        *hpetRegisters.TIM0_CONF = ((2UL << 9) | (1UL << 6) | (1Ul << 3) | (1UL << 2));
+        *hpetRegisters.GEN_CONF = 0;
+
+
+
+    }
+    return;
 }
