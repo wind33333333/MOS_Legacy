@@ -4,8 +4,28 @@ __attribute__((section(".init_text"))) void apic_init(void) {
     __asm__ __volatile__ (
             "mov $0xFF,%%al \n\t"
             "out %%al,$0x21 \n\t"
-            "out %%al,$0xA1 \n\t"            //禁用主从8259A
+            "out %%al,$0xA1 \n\t"               //禁用主从8259A
 
+            "mov    $0x30,%%al \n\t"
+            "out    %%al,$0x43 \n\t"
+            "mov    $0,%%al \n\t"
+            "out    %%al,$0x40 \n\t"            //禁用8054计时器0
+            "out    %%al,$0x40 \n\t"
+
+            "mov    $0x70,%%al \n\t"
+            "out    %%al,$0x43 \n\t"
+            "mov    $0,%%al \n\t"
+            "out    %%al,$0x41 \n\t"            //禁用8054计时器1
+            "out    %%al,$0x41 \n\t"
+
+            "mov    $0xB0,%%al \n\t"
+            "out    %%al,$0x43 \n\t"
+            "mov    $0,%%al \n\t"
+            "out    %%al,$0x42 \n\t"            //禁用8054计时器2
+            "out    %%al,$0x42 \n\t"
+            :::"%rax");
+
+    __asm__ __volatile__ (
             "movl $0x1b,%%ecx \n\t"          //IA32_APIC_BASE=0x1b 寄存器
             "rdmsr \n\t"
             "or   $0xc00,%%eax \n\t"         //bit10启用x2apic ,bit11启用xapic

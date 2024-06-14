@@ -54,7 +54,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "shr $32,%%rax      \n\t"
                 "movl $0x15,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"          //时钟 HPTE
+                "mov %%eax,(%%rsi)                  \n\t"          //8254定时器0/HPTE定时器0
                 "mfence                     \n\t"
 
                 "mov $0x10000,%%rax         \n\t"
@@ -120,7 +120,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "shr $32,%%rax      \n\t"
                 "movl $0x21,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"   //CMOS RTC中断
+                "mov %%eax,(%%rsi)                  \n\t"   //CMOS RTC中断/HPTE定时器1
                 "mfence                     \n\t"
 
                 "mov $0x10000,%%rax     \n\t"
@@ -131,7 +131,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "shr $32,%%rax      \n\t"
                 "movl $0x27,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"  //
+                "mov %%eax,(%%rsi)                  \n\t"  //HPTE定时器2
                 "mfence                     \n\t"
 
                 "mov $0x10000,%%rax     \n\t"
@@ -142,7 +142,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "shr $32,%%rax      \n\t"
                 "movl $0x29,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"  //ps2鼠标中断
+                "mov %%eax,(%%rsi)                  \n\t"  //ps2鼠标 /HPET定时器3
                 "mfence                     \n\t"
 
                 "mov $0x10000,%%rax         \n\t"
@@ -153,7 +153,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "shr $32,%%rax      \n\t"
                 "movl $0x2B,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"  //协处理器中断
+                "mov %%eax,(%%rsi)                  \n\t"  //FERR/DMA
                 "mfence                     \n\t"
 
                 "mov $0x10000,%%rax             \n\t"
