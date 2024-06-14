@@ -31,6 +31,7 @@ typedef struct {
     unsigned long *TIM7_COMP;    // 1E8h ~ 1EFh 定时器7对比寄存器
 } HPET_Registers;
 
+HPET_Registers hpetRegisters = {0};
 
 void hpet_init(void);
 
