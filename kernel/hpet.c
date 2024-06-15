@@ -28,7 +28,7 @@ void hpet_init(void) {
         color_printk(YELLOW, BLACK, "HPET Clock Frequency: %dMhz \n",
                      (*hpetRegisters.GCAP_ID >> 32) / 1000 / 1000);
 
-        *hpetRegisters.GEN_CONF = 1;
+        *hpetRegisters.GEN_CONF = 0;
         io_mfence();
 
         *hpetRegisters.TIM0_CONF = ((0UL << 9) | (1UL << 6) | (1Ul << 3) | (1UL << 2));

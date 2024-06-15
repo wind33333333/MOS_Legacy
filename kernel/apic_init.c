@@ -14,7 +14,7 @@ __attribute__((section(".init_text"))) void apic_init(void) {
 
             "movl $0x832,%%ecx \n\t"         //定时器寄存器
             "movl $0x0,%%edx \n\t"
-            "movl $0x700F0,%%eax \n\t"       //bit0-7中断向量号,bit16屏蔽标志 0未屏蔽 1屏蔽,bit17 18 00一次计数 01周期计数 10TSC-Deadline
+            "movl $0x500F0,%%eax \n\t"       //bit0-7中断向量号,bit16屏蔽标志 0未屏蔽 1屏蔽,bit17 18 00/一次计数 01/周期计数 10/TSC-Deadline
             "wrmsr \n\t"
 
             "movl $0x83E,%%ecx \n\t"         //分频器寄存器
@@ -27,12 +27,11 @@ __attribute__((section(".init_text"))) void apic_init(void) {
             "movl $0xA00000,%%eax \n\t"
             "wrmsr \n\t"
 
-            /*
-            "mov $0x6E0,%%ecx \n\t"          //IA32_TSC_DEADLINE寄存器 TSC-Deadline定时模式
             "rdtscp \n\t"
-            "add $0xA000000,%%eax \n\t"
+            "add $0xA00000,%%eax \n\t"
+            "mov $0x6E0,%%ecx \n\t"          //IA32_TSC_DEADLINE寄存器 TSC-Deadline定时模式
             "wrmsr \n\t"
-            */
+
 
             /*
             //qemu操作CMCI寄存器会报错暂时禁用
