@@ -14,7 +14,6 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
     */
 
     if(bsp_flags) {
-
         __asm__ __volatile__ (
                 "mov $0xFF,%%al \n\t"
                 "out %%al,$0x21 \n\t"
