@@ -29,6 +29,8 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
     ap_init(cpu_id);                             //初始化ap核
     papg_init();                                 //初始化内核页表
 
+
+
     sti();
 
 //    color_printk(YELLOW, BLACK, "Kernelstart: %#018lX Kernelend: %#018lX \n",memory_management_struct.kernel_start, memory_management_struct.kernel_end);

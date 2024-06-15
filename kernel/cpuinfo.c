@@ -1,8 +1,7 @@
 #include "cpuinfo.h"
 
 
-
-void get_cpuinfo(unsigned int *p){
+void get_cpuinfo(unsigned int *p) {
 
     // 获取当前CPU id号
     __asm__ __volatile__ (
@@ -10,7 +9,7 @@ void get_cpuinfo(unsigned int *p){
             "rdmsr               \n\t"
             :"=a"(*p)::"%rcx", "%rdx");
 
-    if(bsp_flags) {
+    if (bsp_flags) {
         // 获取CPU厂商
         __asm__ __volatile__(
                 "mov $0, %%eax \n\t"
@@ -53,8 +52,17 @@ void get_cpuinfo(unsigned int *p){
                 "cpuid         \n\t"
                 "shl $32,%%rdx  \n\t"
                 "or %%rdx,%%rax \n\t"
-                :"=a"(cpu_info.frequency)::"%rbx", "%rcx", "%rdx");
+                :"=a"(cpu_info.fundamental_frequency), "=b"(cpu_info.maximum_frequency), "=c"(cpu_info.bus_frequency)::"%rdx");
+
+//        // 获取CPU TSC频率
+//        __asm__ __volatile__(
+//                "mov    $0x15,%%eax \n\t"
+//                "cpuid              \n\t"
+//                "xchg   %%rax,%%rbx  \n\t"
+//                "mul    %%rcx        \n\t"
+//                "div    %%rbx        \n\t"
+//                :"=a"(cpu_info.tsc_frequency)::"%rcx", "%rbx", "%rdx");
     }
-        return;
+    return;
 }
 

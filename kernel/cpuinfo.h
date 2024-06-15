@@ -10,7 +10,11 @@ struct {
     unsigned int cores_num;
     char manufacturer_name[13];
     char model_name[49];
-    unsigned long frequency;
+    unsigned int fundamental_frequency;
+    unsigned int maximum_frequency;
+    unsigned int bus_frequency;
+    unsigned int tsc_frequency;
+
 }cpu_info;
 
 
