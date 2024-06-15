@@ -29,8 +29,16 @@ void hpet_init(void) {
                      (*hpetRegisters.GCAP_ID >> 32) / 1000 / 1000);
 
         *hpetRegisters.GEN_CONF = 1;
-        *hpetRegisters.TIM0_COMP = 0xFFFFF;
-        *hpetRegisters.TIM0_CONF = ((2UL << 9) | (1UL << 6) | (1Ul << 3) | (1UL << 2));
+        io_mfence();
+
+        *hpetRegisters.TIM0_CONF = ((0UL << 9) | (1UL << 6) | (1Ul << 3) | (1UL << 2));
+        io_mfence();
+
+        *hpetRegisters.TIM0_COMP = 0x989680;
+        io_mfence();
+
+        *hpetRegisters.MAIN_CNT = 0;
+        io_mfence();
 
 
     }

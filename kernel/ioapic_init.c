@@ -16,6 +16,10 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
     if(bsp_flags) {
 
         __asm__ __volatile__ (
+                "mov $0xFF,%%al \n\t"
+                "out %%al,$0x21 \n\t"
+                "out %%al,$0xA1 \n\t"               //禁用主从8259A
+
                 "mov    $0x30,%%al \n\t"
                 "out    %%al,$0x43 \n\t"
                 "mov    $0,%%al \n\t"
@@ -34,9 +38,6 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "out    %%al,$0x42 \n\t"            //禁用8054计时器2
                 "out    %%al,$0x42 \n\t"
 
-                "mov $0xFF,%%al \n\t"
-                "out %%al,$0x21 \n\t"
-                "out %%al,$0xA1 \n\t"               //禁用主从8259A
                 :::"%rax");
 
         __asm__ __volatile__(
