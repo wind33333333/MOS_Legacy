@@ -73,7 +73,6 @@ __attribute__((section(".init_text"))) void apic_init(void) {
             "bts $8,%%eax \n\t"               //bit0-7伪中断号，bit8启用local apic
             "btr $12,%%eax \n\t"              //bit12禁用自动广播EOI
             "wrmsr \n\t"
-            "sti \n\t"
 
             :: :"%rax", "%rcx", "%rdx");
     return;
