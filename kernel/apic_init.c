@@ -20,7 +20,7 @@ __attribute__((section(".init_text"))) void apic_init(void) {
 
             "movl $0x832,%%ecx \n\t"         //定时器寄存器
             "movl $0x0,%%edx \n\t"
-            "movl $0x200F0,%%eax \n\t"       //bit0-7中断向量号,bit16屏蔽标志 0未屏蔽 1屏蔽,bit17 18 00/一次计数 01/周期计数 10/TSC-Deadline
+            "movl $0x300F0,%%eax \n\t"       //bit0-7中断向量号,bit16屏蔽标志 0未屏蔽 1屏蔽,bit17 18 00/一次计数 01/周期计数 10/TSC-Deadline
             "wrmsr \n\t"
 
             "movl $0x83E,%%ecx \n\t"         //分频器寄存器
