@@ -54,14 +54,20 @@ void get_cpuinfo(unsigned int *p) {
                 "or %%rdx,%%rax \n\t"
                 :"=a"(cpu_info.fundamental_frequency), "=b"(cpu_info.maximum_frequency), "=c"(cpu_info.bus_frequency)::"%rdx");
 
-//        // 获取CPU TSC频率
-//        __asm__ __volatile__(
-//                "mov    $0x15,%%eax \n\t"
-//                "cpuid              \n\t"
-//                "xchg   %%rax,%%rbx  \n\t"
-//                "mul    %%rcx        \n\t"
-//                "div    %%rbx        \n\t"
-//                :"=a"(cpu_info.tsc_frequency)::"%rcx", "%rbx", "%rdx");
+        // 获取CPU TSC频率
+        __asm__ __volatile__(
+                "mov    $0x15,%%eax \n\t"
+                "cpuid              \n\t"
+
+                "test   %%eax,%%eax \n\t"
+                "jz     .1         \n\t"
+
+                "xchg   %%rax,%%rbx  \n\t"
+                "mul    %%rcx        \n\t"
+                "div    %%rbx        \n\t"
+
+                ".1:                  \n\t"
+                :"=a"(cpu_info.tsc_frequency)::"%rcx", "%rbx", "%rdx");
     }
     return;
 }
