@@ -78,7 +78,6 @@ __attribute__((section(".init_text"))) void apic_init(void) {
             "movl $0x100f6,%%eax \n\t"        //bit0-7中断号，bit16屏蔽标志 0未屏蔽 1屏蔽
             "wrmsr \n\t"
 
-
             :: :"%rax", "%rcx", "%rdx");
 
 
