@@ -50,11 +50,11 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 */
 
                 "mov $0x10000,%%rax         \n\t"
-                "movl $0x10,(%%rdi)                  \n\t"
+                "movl $0x10,(%%rdi)         \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                 \n\t"
+                "mov %%eax,(%%rsi)          \n\t"
                 "mfence                     \n\t"
-                "shr $32,%%rax      \n\t"
+                "shr $32,%%rax              \n\t"
                 "movl $0x11,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
                 "mov %%eax,(%%rsi)                  \n\t"           //主8259A中断
