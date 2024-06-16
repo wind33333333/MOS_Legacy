@@ -101,6 +101,18 @@ Label_Get_Mem_OK:
 
 	cmp	ax,	004Fh
     je setgdt
+
+	mov	ax,	1301h
+	mov	bx,	008Ch
+	mov	dx,	0400h		;row 4
+	mov	cx,	18
+	push	ax
+	mov	ax,	cs
+	mov ds, ax
+	mov	es,	ax
+	pop	ax
+	mov	bp,	VBEErrMessage
+	int	10h
 setvbeerr:
     hlt
     jmp setvbeerr
@@ -236,5 +248,6 @@ KernelFileName:		        db	"KERNEL  BIN"
 StartGetMemStructMessage:	db	"Start Get Memory Struct (address,size,type)."
 GetMemStructErrMessage:	    db	"Get Memory Struct ERROR"
 GetMemStructOKMessage:	    db	"Get Memory Struct SUCCESSFUL!"
+VBEErrMessage:	            db	"Set VBE Mode ERROR"
 
 
