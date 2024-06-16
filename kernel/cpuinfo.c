@@ -58,14 +58,11 @@ void get_cpuinfo(unsigned int *p) {
         __asm__ __volatile__(
                 "mov    $0x15,%%eax \n\t"
                 "cpuid              \n\t"
-
-                "test   %%eax,%%eax \n\t"
-                "jz     .1         \n\t"
-
+                "test   %%ecx,%%ecx \n\t"
+                "jz     .1         \n\t"            //如果ecx等于0则获取到的tsc频率无效
                 "xchg   %%rax,%%rbx  \n\t"
                 "mul    %%rcx        \n\t"
                 "div    %%rbx        \n\t"
-
                 ".1:                  \n\t"
                 :"=a"(cpu_info.tsc_frequency)::"%rcx", "%rbx", "%rdx");
     }
