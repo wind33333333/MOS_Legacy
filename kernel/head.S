@@ -98,7 +98,7 @@ ignore_int:
 	addq	$0x8,	%rsp
 
 
-//	jmp	.
+	jmp	.
 
 	popq	%rax
 	movq	%rax,	%ds

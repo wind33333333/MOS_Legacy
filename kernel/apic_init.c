@@ -7,6 +7,12 @@ __attribute__((section(".init_text"))) void apic_init(void) {
             "or   $0xc00,%%eax \n\t"         //bit10启用x2apic ,bit11启用xapic
             "wrmsr \n\t"
 
+            "movl $0x80f,%%ecx \n\t"          //SVR寄存器
+            "rdmsr \n\t"
+            "bts $8,%%eax \n\t"               //bit0-7伪中断号，bit8启用local apic
+            "btr $12,%%eax \n\t"              //bit12禁用自动广播EOI
+            "wrmsr \n\t"
+
             "movl $0x808,%%ecx \n\t"         //TPR优先级寄存器
             "movl $0,%%edx \n\t"
             "movl $0x10,%%eax \n\t"
@@ -14,7 +20,7 @@ __attribute__((section(".init_text"))) void apic_init(void) {
 
             "movl $0x832,%%ecx \n\t"         //定时器寄存器
             "movl $0x0,%%edx \n\t"
-            "movl $0x500F0,%%eax \n\t"       //bit0-7中断向量号,bit16屏蔽标志 0未屏蔽 1屏蔽,bit17 18 00/一次计数 01/周期计数 10/TSC-Deadline
+            "movl $0x400F0,%%eax \n\t"       //bit0-7中断向量号,bit16屏蔽标志 0未屏蔽 1屏蔽,bit17 18 00/一次计数 01/周期计数 10/TSC-Deadline
             "wrmsr \n\t"
 
             "movl $0x83E,%%ecx \n\t"         //分频器寄存器
@@ -24,14 +30,19 @@ __attribute__((section(".init_text"))) void apic_init(void) {
 
             "movl $0x838,%%ecx \n\t"         //定时器计数器寄存器
             "movl $0x0,%%edx \n\t"
-            "movl $0xA00000,%%eax \n\t"
+            "movl $0xF000,%%eax \n\t"
             "wrmsr \n\t"
 
             "rdtscp \n\t"
-            "add $0xA00000,%%eax \n\t"
+            "shl $32,%%rdx \n\t"
+            "or %%rdx,%%rax \n\t"
+            "add $0xA0000,%%rax \n\t"
+            "mov %%rax,%%rdx \n\t"
+            "mov $0xFFFFFFFF,%%rcx \n\t"
+            "and %%rcx,%%rax \n\t"
+            "shr $32,%%rdx \n\t"
             "mov $0x6E0,%%ecx \n\t"          //IA32_TSC_DEADLINE寄存器 TSC-Deadline定时模式
             "wrmsr \n\t"
-
 
             /*
             //qemu操作CMCI寄存器会报错暂时禁用
@@ -67,13 +78,9 @@ __attribute__((section(".init_text"))) void apic_init(void) {
             "movl $0x100f6,%%eax \n\t"        //bit0-7中断号，bit16屏蔽标志 0未屏蔽 1屏蔽
             "wrmsr \n\t"
 
-            "movl $0x80f,%%ecx \n\t"          //SVR寄存器
-            "rdmsr \n\t"
-            "bts $8,%%eax \n\t"               //bit0-7伪中断号，bit8启用local apic
-            "btr $12,%%eax \n\t"              //bit12禁用自动广播EOI
-            "wrmsr \n\t"
 
             :: :"%rax", "%rcx", "%rdx");
+
+
     return;
 }
-

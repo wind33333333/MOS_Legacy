@@ -31,6 +31,8 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
 
 
 
+
+
     sti();
 
 //    color_printk(YELLOW, BLACK, "Kernelstart: %#018lX Kernelend: %#018lX \n",memory_management_struct.kernel_start, memory_management_struct.kernel_end);
