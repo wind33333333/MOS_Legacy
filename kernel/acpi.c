@@ -46,6 +46,8 @@ __attribute__((section(".init_text"))) void acpi_init(void) {
         color_printk(YELLOW, BLACK, "APIC: %#018lX \tIOAPIC ADDR: %#018lX\n", madt,
                      ioapic_baseaddr);
 
+        color_printk(YELLOW, BLACK, "HPET: %#018lX \tHPET ADDR: %#018lX\n", hpet, hpet_baseaddr);
+
         for (int i = 0; i < 24; ++i) {
             if ((irq_to_gsi[i].IRQ == 0x0) && (irq_to_gsi[i].GSI == 0x0))
                 break;
@@ -53,7 +55,6 @@ __attribute__((section(".init_text"))) void acpi_init(void) {
                          irq_to_gsi[i].GSI);
 
         }
-        color_printk(YELLOW, BLACK, "HPET: %#018lX \tHPET ADDR: %#018lX\n", hpet, hpet_baseaddr);
 
         return;
     }
