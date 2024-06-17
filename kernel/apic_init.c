@@ -41,7 +41,7 @@ __attribute__((section(".init_text"))) void apic_init(void) {
 //            "mov $0xFFFFFFFF,%%rcx \n\t"
 //            "and %%rcx,%%rax \n\t"
 //            "shr $32,%%rdx \n\t"
-//            "mov $0x6E0,%%ecx \n\t"          //IA32_TSC_DEADLINE寄存器 TSC-Deadline定时模式
+//            "mov $0x6E0,%%ecx \n\t"         //IA32_TSC_DEADLINE寄存器 TSC-Deadline定时模式
 //            "wrmsr \n\t"
 
 
