@@ -1,4 +1,4 @@
-#include "ioapic_init.h"
+#include "ioapic.h"
 
 //初始化ioapic
 __attribute__((section(".init_text"))) void ioapic_init(void) {

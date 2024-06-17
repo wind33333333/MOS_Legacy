@@ -1,4 +1,4 @@
-#include "gdt_init.h"
+#include "gdt.h"
 
 __attribute__((section(".init_text"))) void gdt_init(void) {
     if (bsp_flags) {

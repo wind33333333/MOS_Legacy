@@ -2,7 +2,7 @@
 #define __GDT_INIT_H__
 #include "lib.h"
 #include "memory.h"
-#include "idt_init.h"
+#include "idt.h"
 
 void    gdt_init(void);
 

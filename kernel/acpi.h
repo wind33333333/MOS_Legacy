@@ -3,7 +3,7 @@
 #include "lib.h"
 #include "printk.h"
 #include "cpuinfo.h"
-#include "ioapic_init.h"
+#include "ioapic.h"
 #include "hpet.h"
 
 void acpi_init(void);

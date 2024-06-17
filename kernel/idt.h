@@ -1,7 +1,7 @@
 #ifndef __IDT_H__
 #define __IDT_H__
 #include "lib.h"
-#include "gdt_init.h"
+#include "gdt.h"
 
 #define SET_GATE_L(OFFSET,IST,TYPE) (IST | TYPE | SEL_CODE64 | DPL_0 | P | ((unsigned long)(OFFSET) & 0x000000000000FFFF) | (((unsigned long)(OFFSET) >> 16) << 48))
 #define SET_GATE_H(OFFSET) ((unsigned long)(OFFSET) >> 32)

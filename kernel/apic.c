@@ -1,4 +1,4 @@
-#include "apic_init.h"
+#include "apic.h"
 
 __attribute__((section(".init_text"))) void apic_init(void) {
     __asm__ __volatile__ (

@@ -1,4 +1,4 @@
-#include "idt_init.h"
+#include "idt.h"
 #include "trap.h"
 
 __attribute__((section(".init_text"))) void idt_init(void) {

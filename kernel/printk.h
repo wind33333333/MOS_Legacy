@@ -5,6 +5,12 @@
 #include "font.h"
 #include "linkage.h"
 #include "lib.h"
+#include "memory.h"
+#include "printk.h"
+#include "cpuinfo.h"
+
+void pos_init(void);
+
 
 #define ZEROPAD	1		/* pad with zero */
 #define SIGN	2		/* unsigned/signed long */

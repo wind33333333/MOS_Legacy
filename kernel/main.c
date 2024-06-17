@@ -1,20 +1,18 @@
 #include "lib.h"
 #include "printk.h"
-#include "ioapic_init.h"
-#include "ap_init.h"
-#include "acpi_init.h"
-#include "pos_init.h"
-#include "idt_init.h"
-#include "apic_init.h"
+#include "ioapic.h"
+#include "ap.h"
+#include "acpi.h"
+#include "idt.h"
+#include "apic.h"
 #include "memory.h"
-#include "gdt_init.h"
-#include "tss_init.h"
-#include "papg_init.h"
+#include "gdt.h"
+#include "tss.h"
+#include "papg.h"
 #include "cpuinfo.h"
 #include "hpet.h"
 
 __attribute__((section(".init_text"))) void Kernel_init(void) {
-
     unsigned int cpu_id;
     pos_init();                                  //初始化输出控制台
     get_cpuinfo(&cpu_id);                     //获取cpu信息

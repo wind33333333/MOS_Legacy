@@ -1,4 +1,4 @@
-#include "tss_init.h"
+#include "tss.h"
 
 __attribute__((section(".init_text"))) void tss_init(unsigned int cpu_id) {
     if (bsp_flags) {

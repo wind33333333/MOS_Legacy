@@ -2,7 +2,7 @@
 #define __TSS_INIT_H__
 #include "lib.h"
 #include "memory.h"
-#include "gdt_init.h"
+#include "gdt.h"
 
 #define SET_TSS_L(BASE)  \
     (TSS_TYPE | P | TSS_LIMIT | DPL_0 | \

@@ -1,4 +1,4 @@
-#include "acpi_init.h"
+#include "acpi.h"
 
 __attribute__((section(".init_text"))) void acpi_init(void) {
     if (bsp_flags) {

@@ -1,4 +1,4 @@
-#include "ap_init.h"
+#include "ap.h"
 
 //多核处理器初始化
 __attribute__((section(".init_text"))) void ap_init(unsigned int cpu_id) {
