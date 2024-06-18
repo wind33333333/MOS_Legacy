@@ -1,3 +1,4 @@
+.section    .text, "ax"
 #include "linkage.h"
 
 R15	=	0x00
