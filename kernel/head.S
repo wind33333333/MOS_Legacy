@@ -97,7 +97,6 @@ ignore_int:
 	callq	color_printk
 	addq	$0x8,	%rsp
 
-
 //	jmp	.
 
 	popq	%rax
