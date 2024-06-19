@@ -15,9 +15,9 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
 
     if(bsp_flags) {
         __asm__ __volatile__ (
-                "mov $0xFF,%%al \n\t"
-                "out %%al,$0x21 \n\t"
-                "out %%al,$0xA1 \n\t"               //禁用主从8259A
+                "mov    $0xFF,%%al \n\t"
+                "out    %%al,$0x21 \n\t"
+                "out    %%al,$0xA1 \n\t"               //禁用主从8259A
 
                 "mov    $0x30,%%al  \n\t"
                 "out    %%al,$0x43  \n\t"
@@ -36,7 +36,6 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov    $0,%%al    \n\t"
                 "out    %%al,$0x42 \n\t"            //禁用8054计时器2
                 "out    %%al,$0x42 \n\t"
-
                 :::"%rax");
 
         __asm__ __volatile__(
@@ -45,11 +44,11 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mfence                      \n\t"
                 "movl    $0x1000000,(%%rsi)  \n\t"
                 "mfence                      \n\t"
-                "mov    (%%rsi),%%eax        \n\t"                   //设置ioapic id
+                "mov    (%%rsi),%%eax        \n\t"           //设置ioapic id
                 "mfence                      \n\t"
                 */
 
-                "mov    $0x10000,%%rax       \n\t"
+                "mov    $0x10030,%%rax       \n\t"
                 "movl   $0x10,(%%rdi)        \n\t"
                 "mfence                      \n\t"
                 "mov     %%eax,(%%rsi)       \n\t"
@@ -60,7 +59,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov    %%eax,(%%rsi)        \n\t"           //主8259A中断
                 "mfence                      \n\t"
 
-                "mov    $0x00021,%%rax       \n\t"
+                "mov    $0x00031,%%rax       \n\t"
                 "movl   $0x12,(%%rdi)        \n\t"
                 "mfence                      \n\t"
                 "mov     %%eax,(%%rsi)       \n\t"
@@ -71,7 +70,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov    %%eax,(%%rsi)        \n\t"          //ps2键盘中断
                 "mfence                      \n\t"
 
-                "mov     $0x10022,%%rax      \n\t"
+                "mov     $0x10032,%%rax      \n\t"
                 "movl    $0x14,(%%rdi)       \n\t"
                 "mfence                      \n\t"
                 "mov     %%eax,(%%rsi)       \n\t"
@@ -82,7 +81,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov     %%eax,(%%rsi)       \n\t"          //8254定时器0/HPTE定时器0
                 "mfence                      \n\t"
 
-                "mov     $0x10000,%%rax      \n\t"
+                "mov     $0x10033,%%rax      \n\t"
                 "movl    $0x16,(%%rdi)       \n\t"
                 "mfence                      \n\t"
                 "mov     %%eax,(%%rsi)       \n\t"
@@ -93,7 +92,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov     %%eax,(%%rsi)       \n\t"          //串口2中断
                 "mfence                      \n\t"
 
-                "mov     $0x10000,%%rax      \n\t"
+                "mov     $0x10034,%%rax      \n\t"
                 "movl    $0x18,(%%rdi)       \n\t"
                 "mfence                      \n\t"
                 "mov     %%eax,(%%rsi)       \n\t"
@@ -104,7 +103,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov     %%eax,(%%rsi)       \n\t"        //串口1中断
                 "mfence                      \n\t"
 
-                "mov     $0x10000,%%rax      \n\t"
+                "mov     $0x10035,%%rax      \n\t"
                 "movl    $0x1A,(%%rdi)       \n\t"
                 "mfence                      \n\t"
                 "mov     %%eax,(%%rsi)       \n\t"
@@ -115,7 +114,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov     %%eax,(%%rsi)       \n\t"       //并口2中断
                 "mfence                      \n\t"
 
-                "mov     $0x10000,%%rax      \n\t"
+                "mov     $0x10036,%%rax      \n\t"
                 "movl    $0x1C,(%%rdi)       \n\t"
                 "mfence                      \n\t"
                 "mov %%eax,(%%rsi)           \n\t"
@@ -126,7 +125,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov     %%eax,(%%rsi)       \n\t"          //软驱中断
                 "mfence                      \n\t"
 
-                "mov     $0x10000,%%rax      \n\t"
+                "mov     $0x10037,%%rax      \n\t"
                 "movl    $0x1E,(%%rdi)       \n\t"
                 "mfence                      \n\t"
                 "mov     %%eax,(%%rsi)       \n\t"
@@ -137,7 +136,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov %%eax,(%%rsi)           \n\t"      //并口1中断
                 "mfence                      \n\t"
 
-                "mov     $0x10000,%%rax      \n\t"
+                "mov     $0x10038,%%rax      \n\t"
                 "movl    $0x20,(%%rdi)       \n\t"
                 "mfence                      \n\t"
                 "mov     %%eax,(%%rsi)       \n\t"
@@ -148,7 +147,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov     %%eax,(%%rsi)       \n\t"   //CMOS RTC中断/HPTE定时器1
                 "mfence                      \n\t"
 
-                "mov     $0x10000,%%rax      \n\t"
+                "mov     $0x10039,%%rax      \n\t"
                 "movl    $0x26,(%%rdi)       \n\t"
                 "mfence                      \n\t"
                 "mov     %%eax,(%%rsi)       \n\t"
@@ -159,7 +158,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov     %%eax,(%%rsi)       \n\t"      //HPTE 定时器2
                 "mfence                      \n\t"
 
-                "mov     $0x10000,%%rax      \n\t"
+                "mov     $0x1003A,%%rax      \n\t"
                 "movl    $0x28,(%%rdi)       \n\t"
                 "mfence                      \n\t"
                 "mov     %%eax,(%%rsi)       \n\t"
@@ -170,7 +169,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov     %%eax,(%%rsi)       \n\t"  //ps2鼠标 /HPET定时器3
                 "mfence                      \n\t"
 
-                "mov     $0x10000,%%rax      \n\t"
+                "mov     $0x1003B,%%rax      \n\t"
                 "movl    $0x2A,(%%rdi)       \n\t"
                 "mfence                      \n\t"
                 "mov     %%eax,(%%rsi)       \n\t"
@@ -181,7 +180,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov     %%eax,(%%rsi)       \n\t"  //FERR/DMA
                 "mfence                      \n\t"
 
-                "mov     $0x10000,%%rax      \n\t"
+                "mov     $0x1003C,%%rax      \n\t"
                 "movl    $0x2C,(%%rdi)       \n\t"
                 "mfence                      \n\t"
                 "mov     %%eax,(%%rsi)       \n\t"
@@ -192,7 +191,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov     %%eax,(%%rsi)       \n\t"  //主SATA中断
                 "mfence                      \n\t"
 
-                "mov     $0x10000,%%rax      \n\t"
+                "mov     $0x1003D,%%rax      \n\t"
                 "movl    $0x2E,(%%rdi)       \n\t"
                 "mfence                      \n\t"
                 "mov     %%eax,(%%rsi)       \n\t"
