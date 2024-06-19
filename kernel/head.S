@@ -187,7 +187,6 @@ error_code:
 	pushq	%r14
 	pushq	%r15
 
-	cld
 	movq	ERRCODE(%rsp),	%rsi
 	movq	FUNC(%rsp),	%rdx
 
