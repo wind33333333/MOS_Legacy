@@ -4,7 +4,7 @@
 .section    .init_text, "ax"
 .globl _start
 _start:
-//===============================bsp/ap核
+////////////////////////////bsp/ap核
     movl    $0x1B,%ecx           //IA32_APIC_BASE=0x1b 寄存器
     rdmsr
     or      $0xc00,%eax
@@ -13,14 +13,14 @@ _start:
     movabs  %eax,bsp_flags
     jz      kernel_stack_init
 
-//===============================cpu_info.croes_num=cpu数量
+///////////////////////////cpu_info.croes_num=cpu数量
     mov        $1,%eax
     cpuid
     shr        $16,%ebx         //右移16位得到cpu数量
     mov        %ebx,%eax
     movabs     %eax,cpu_info
 
-//===============================开辟多核栈空间
+///////////////////////////开辟多核栈空间
     movabs     cpu_info,%eax
     shl        $14,%rax                 //每个核心分配16k栈
     mov        %rax,%rbx
@@ -28,7 +28,7 @@ _start:
     add        %rbx,%rax
     movabs     %rax,kenelstack_top       //内核栈顶
 
-//===============================初始化多核内核栈
+///////////////////////////初始化多核内核栈
 kernel_stack_init:
     mov     $0x802,%ecx
     rdmsr                           //获取APIC ID
@@ -51,7 +51,7 @@ kernel_stack_init:
     kenelstack_top:   .quad   _end
 
     .globl bsp_flags
-    bsp_flags:       .int   0
+    bsp_flags:        .int   0
 
     .equ    VBASEADDR,0xffff800000000000      //内核虛擬地址基址
 
@@ -62,7 +62,6 @@ kernel_stack_init:
 ////////////////////////////默认中断处理程序
 .globl ignore_int
 ignore_int:
-	cld
 	pushq	%rax
 	pushq	%rcx
 	pushq	%rdx
