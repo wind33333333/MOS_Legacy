@@ -41,166 +41,166 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
 
         __asm__ __volatile__(
                 /*
-                "movl $0x0,(%%rdi)                  \n\t"
+                "movl   $0x0,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "movl $0x1000000,(%%rsi)                 \n\t"
+                "movl    $0x1000000,(%%rsi)                 \n\t"
                 "mfence                     \n\t"
-                "mov (%%rsi),%%eax                 \n\t"                   //设置ioapic id
+                "mov    (%%rsi),%%eax                 \n\t"                   //设置ioapic id
                 "mfence                     \n\t"
                 */
 
-                "mov $0x10000,%%rax         \n\t"
-                "movl $0x10,(%%rdi)         \n\t"
+                "mov    $0x10000,%%rax         \n\t"
+                "movl   $0x10,(%%rdi)         \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)          \n\t"
+                "mov     %%eax,(%%rsi)          \n\t"
                 "mfence                     \n\t"
-                "shr $32,%%rax              \n\t"
-                "movl $0x11,(%%rdi)                  \n\t"
+                "shr    $32,%%rax              \n\t"
+                "movl   $0x11,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"           //主8259A中断
+                "mov    %%eax,(%%rsi)                  \n\t"           //主8259A中断
                 "mfence                     \n\t"
 
-                "mov $0x00021,%%rax         \n\t"
-                "movl $0x12,(%%rdi)                  \n\t"
+                "mov    $0x00021,%%rax         \n\t"
+                "movl   $0x12,(%%rdi)                  \n\t"
+                "mfence                     \n\t"
+                "mov     %%eax,(%%rsi)                 \n\t"
+                "mfence                     \n\t"
+                "shr    $32,%%rax               \n\t"
+                "movl   $0x13,(%%rdi)                  \n\t"
+                "mfence                     \n\t"
+                "mov    %%eax,(%%rsi)                  \n\t"          //ps2键盘中断
+                "mfence                     \n\t"
+
+                "mov     $0x10022,%%rax         \n\t"
+                "movl    $0x14,(%%rdi)                  \n\t"
+                "mfence                     \n\t"
+                "mov     %%eax,(%%rsi)                 \n\t"
+                "mfence                     \n\t"
+                "shr     $32,%%rax      \n\t"
+                "movl    $0x15,(%%rdi)                  \n\t"
+                "mfence                     \n\t"
+                "mov     %%eax,(%%rsi)                  \n\t"          //8254定时器0/HPTE定时器0
+                "mfence                     \n\t"
+
+                "mov     $0x10000,%%rax         \n\t"
+                "movl    $0x16,(%%rdi)                  \n\t"
+                "mfence                     \n\t"
+                "mov     %%eax,(%%rsi)                 \n\t"
+                "mfence                     \n\t"
+                "shr     $32,%%rax              \n\t"
+                "movl    $0x17,(%%rdi)                  \n\t"
+                "mfence                     \n\t"
+                "mov     %%eax,(%%rsi)                  \n\t"          //串口2中断
+                "mfence                     \n\t"
+
+                "mov     $0x10000,%%rax         \n\t"
+                "movl    $0x18,(%%rdi)                  \n\t"
+                "mfence                     \n\t"
+                "mov     %%eax,(%%rsi)                 \n\t"
+                "mfence                     \n\t"
+                "shr     $32,%%rax              \n\t"
+                "movl    $0x19,(%%rdi)                  \n\t"
+                "mfence                     \n\t"
+                "mov     %%eax,(%%rsi)                  \n\t"        //串口1中断
+                "mfence                     \n\t"
+
+                "mov     $0x10000,%%rax         \n\t"
+                "movl    $0x1A,(%%rdi)                  \n\t"
+                "mfence                     \n\t"
+                "mov     %%eax,(%%rsi)                 \n\t"
+                "mfence                     \n\t"
+                "shr     $32,%%rax      \n\t"
+                "movl    $0x1B,(%%rdi)                  \n\t"
+                "mfence                     \n\t"
+                "mov     %%eax,(%%rsi)                  \n\t"       //并口2中断
+                "mfence                     \n\t"
+
+                "mov     $0x10000,%%rax         \n\t"
+                "movl    $0x1C,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
                 "mov %%eax,(%%rsi)                 \n\t"
                 "mfence                     \n\t"
-                "shr $32,%%rax               \n\t"
-                "movl $0x13,(%%rdi)                  \n\t"
+                "shr     $32,%%rax      \n\t"
+                "movl    $0x1D,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"          //ps2键盘中断
-                "mfence                     \n\t"
-
-                "mov $0x10022,%%rax         \n\t"
-                "movl $0x14,(%%rdi)                  \n\t"
-                "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                 \n\t"
-                "mfence                     \n\t"
-                "shr $32,%%rax      \n\t"
-                "movl $0x15,(%%rdi)                  \n\t"
-                "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"          //8254定时器0/HPTE定时器0
+                "mov     %%eax,(%%rsi)                  \n\t"  //软驱中断
                 "mfence                     \n\t"
 
-                "mov $0x10000,%%rax         \n\t"
-                "movl $0x16,(%%rdi)                  \n\t"
+                "mov     $0x10000,%%rax         \n\t"
+                "movl    $0x1E,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                 \n\t"
+                "mov     %%eax,(%%rsi)                 \n\t"
                 "mfence                     \n\t"
-                "shr $32,%%rax              \n\t"
-                "movl $0x17,(%%rdi)                  \n\t"
-                "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"          //串口2中断
-                "mfence                     \n\t"
-
-                "mov $0x10000,%%rax         \n\t"
-                "movl $0x18,(%%rdi)                  \n\t"
-                "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                 \n\t"
-                "mfence                     \n\t"
-                "shr $32,%%rax              \n\t"
-                "movl $0x19,(%%rdi)                  \n\t"
-                "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"        //串口1中断
-                "mfence                     \n\t"
-
-                "mov $0x10000,%%rax         \n\t"
-                "movl $0x1A,(%%rdi)                  \n\t"
-                "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                 \n\t"
-                "mfence                     \n\t"
-                "shr $32,%%rax      \n\t"
-                "movl $0x1B,(%%rdi)                  \n\t"
-                "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"       //并口2中断
-                "mfence                     \n\t"
-
-                "mov $0x10000,%%rax         \n\t"
-                "movl $0x1C,(%%rdi)                  \n\t"
-                "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                 \n\t"
-                "mfence                     \n\t"
-                "shr $32,%%rax      \n\t"
-                "movl $0x1D,(%%rdi)                  \n\t"
-                "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"  //软驱中断
-                "mfence                     \n\t"
-
-                "mov $0x10000,%%rax         \n\t"
-                "movl $0x1E,(%%rdi)                  \n\t"
-                "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                 \n\t"
-                "mfence                     \n\t"
-                "shr $32,%%rax      \n\t"
-                "movl $0x1F,(%%rdi)                  \n\t"
+                "shr     $32,%%rax      \n\t"
+                "movl    $0x1F,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
                 "mov %%eax,(%%rsi)                  \n\t"  //并口1中断
                 "mfence                     \n\t"
 
-                "mov $0x10000,%%rax         \n\t"
-                "movl $0x20,(%%rdi)                  \n\t"
+                "mov     $0x10000,%%rax         \n\t"
+                "movl    $0x20,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                 \n\t"
+                "mov     %%eax,(%%rsi)                 \n\t"
                 "mfence                     \n\t"
-                "shr $32,%%rax      \n\t"
-                "movl $0x21,(%%rdi)                  \n\t"
+                "shr     $32,%%rax      \n\t"
+                "movl    $0x21,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"   //CMOS RTC中断/HPTE定时器1
-                "mfence                     \n\t"
-
-                "mov $0x10000,%%rax     \n\t"
-                "movl $0x26,(%%rdi)                  \n\t"
-                "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                 \n\t"
-                "mfence                     \n\t"
-                "shr $32,%%rax      \n\t"
-                "movl $0x27,(%%rdi)                  \n\t"
-                "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"  //HPTE定时器2
+                "mov     %%eax,(%%rsi)                  \n\t"   //CMOS RTC中断/HPTE定时器1
                 "mfence                     \n\t"
 
-                "mov $0x10000,%%rax     \n\t"
-                "movl $0x28,(%%rdi)                  \n\t"
+                "mov     $0x10000,%%rax     \n\t"
+                "movl    $0x26,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                 \n\t"
+                "mov     %%eax,(%%rsi)                 \n\t"
                 "mfence                     \n\t"
-                "shr $32,%%rax      \n\t"
-                "movl $0x29,(%%rdi)                  \n\t"
+                "shr     $32,%%rax      \n\t"
+                "movl    $0x27,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"  //ps2鼠标 /HPET定时器3
-                "mfence                     \n\t"
-
-                "mov $0x10000,%%rax         \n\t"
-                "movl $0x2A,(%%rdi)                  \n\t"
-                "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                 \n\t"
-                "mfence                     \n\t"
-                "shr $32,%%rax      \n\t"
-                "movl $0x2B,(%%rdi)                  \n\t"
-                "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"  //FERR/DMA
+                "mov     %%eax,(%%rsi)                  \n\t"  //HPTE定时器2
                 "mfence                     \n\t"
 
-                "mov $0x10000,%%rax             \n\t"
-                "movl $0x2C,(%%rdi)                  \n\t"
+                "mov     $0x10000,%%rax     \n\t"
+                "movl    $0x28,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                 \n\t"
+                "mov     %%eax,(%%rsi)                 \n\t"
                 "mfence                     \n\t"
-                "shr $32,%%rax      \n\t"
-                "movl $0x2D,(%%rdi)                  \n\t"
+                "shr     $32,%%rax      \n\t"
+                "movl    $0x29,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t"  //主SATA中断
+                "mov     %%eax,(%%rsi)                  \n\t"  //ps2鼠标 /HPET定时器3
                 "mfence                     \n\t"
 
-                "mov $0x10000,%%rax                 \n\t"
-                "movl $0x2E,(%%rdi)                  \n\t"
+                "mov     $0x10000,%%rax         \n\t"
+                "movl    $0x2A,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                 \n\t"
+                "mov     %%eax,(%%rsi)                 \n\t"
                 "mfence                     \n\t"
-                "shr $32,%%rax                \n\t"
-                "movl $0x2F,(%%rdi)                  \n\t"
+                "shr     $32,%%rax      \n\t"
+                "movl    $0x2B,(%%rdi)                  \n\t"
                 "mfence                     \n\t"
-                "mov %%eax,(%%rsi)                  \n\t" //从SATA中断
+                "mov     %%eax,(%%rsi)                  \n\t"  //FERR/DMA
+                "mfence                     \n\t"
+
+                "mov     $0x10000,%%rax             \n\t"
+                "movl    $0x2C,(%%rdi)                  \n\t"
+                "mfence                     \n\t"
+                "mov     %%eax,(%%rsi)                 \n\t"
+                "mfence                     \n\t"
+                "shr     $32,%%rax      \n\t"
+                "movl    $0x2D,(%%rdi)                  \n\t"
+                "mfence                     \n\t"
+                "mov     %%eax,(%%rsi)                  \n\t"  //主SATA中断
+                "mfence                     \n\t"
+
+                "mov     $0x10000,%%rax                 \n\t"
+                "movl    $0x2E,(%%rdi)                  \n\t"
+                "mfence                     \n\t"
+                "mov     %%eax,(%%rsi)                 \n\t"
+                "mfence                     \n\t"
+                "shr     $32,%%rax                \n\t"
+                "movl    $0x2F,(%%rdi)                  \n\t"
+                "mfence                     \n\t"
+                "mov     %%eax,(%%rsi)                  \n\t" //从SATA中断
                 "mfence                     \n\t"
                 ::"D"(ioapic_baseaddr),"S"((unsigned long)ioapic_baseaddr+0x10):"%rax", "%rcx", "%rdx");
     }
