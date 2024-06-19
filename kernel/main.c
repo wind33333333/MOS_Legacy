@@ -27,6 +27,7 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
     ap_init(cpu_id);                             //初始化ap核
     papg_init();                                 //初始化内核页表
 
+
     sti();
 
     while (1);

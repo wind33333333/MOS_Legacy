@@ -133,6 +133,28 @@ ignore_int:
 int_msg:    .asciz "Unknown interrupt or fault at RIP\n"
 
 ////////////////////////////0-20异常处理程序入口
+ENTRY(divide_error,do_divide_error,1)
+ENTRY(debug,do_debug,1)
+ENTRY(nmi,do_nmi,1)
+ENTRY(int3,do_int3,1)
+ENTRY(overflow,do_overflow,1)
+ENTRY(bounds,do_bounds,1)
+ENTRY(undefined_opcode,do_undefined_opcode,1)
+ENTRY(dev_not_available,do_dev_not_available,1)
+ENTRY(double_fault,do_double_fault,0)
+ENTRY(coprocessor_segment_overrun,do_coprocessor_segment_overrun,1)
+ENTRY(invalid_TSS,do_invalid_TSS,0)
+ENTRY(segment_not_present,do_segment_not_present,0)
+ENTRY(stack_segment_fault,do_stack_segment_fault,0)
+ENTRY(general_protection,do_general_protection,0)
+ENTRY(page_fault,do_page_fault,0)
+ENTRY(x87_FPU_error,do_x87_FPU_error,1)
+ENTRY(alignment_check,do_alignment_check,0)
+ENTRY(machine_check,do_machine_check,1)
+ENTRY(SIMD_exception,do_SIMD_exception,1)
+ENTRY(virtualization_exception,do_virtualization_exception,1)
+
+////////////////////////中断和异常复用处理程序
 R15	=	0x00
 R14	=	0x08
 R13	=	0x10
@@ -158,13 +180,7 @@ RFLAGS	=	0xa8
 OLDRSP	=	0xb0
 OLDSS	=	0xb8
 
-ENTRY(divide_error)
-	pushq	$0
-	pushq	%rax
-	leaq	do_divide_error(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-
-error_code:
+interrupt_entry:
 	pushq	%rax
 	movq	%es,	%rax
 	pushq	%rax
@@ -220,136 +236,6 @@ error_code:
 	popq	%rax;
 	addq	$0x10,	%rsp;
 	iretq;
-
-
-ENTRY(debug)
-	pushq	$0
-	pushq	%rax
-	leaq	do_debug(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(nmi)
-	pushq	$0
-	pushq	%rax
-	leaq	do_nmi(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(int3)
-	pushq	$0
-	pushq	%rax
-	leaq	do_int3(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(overflow)
-	pushq	$0
-	pushq	%rax
-	leaq	do_overflow(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(bounds)
-	pushq	$0
-	pushq	%rax
-	leaq	do_bounds(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(undefined_opcode)
-	pushq	$0
-	pushq	%rax
-	leaq	do_undefined_opcode(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(dev_not_available)	/* need rewrite */
-	pushq	$0
-	pushq	%rax
-	leaq	do_dev_not_available(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-
-ENTRY(double_fault)
-	pushq	%rax
-	leaq	do_double_fault(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(coprocessor_segment_overrun)
-	pushq	$0
-	pushq	%rax
-	leaq	do_coprocessor_segment_overrun(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(invalid_TSS)
-	pushq	%rax
-	leaq	do_invalid_TSS(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(segment_not_present)
-	pushq	%rax
-	leaq	do_segment_not_present(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(stack_segment_fault)
-	pushq	%rax
-	leaq	do_stack_segment_fault(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(general_protection)
-	pushq	%rax
-	leaq	do_general_protection(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(page_fault)
-	pushq	%rax
-	leaq	do_page_fault(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(x87_FPU_error)
-	pushq	$0
-	pushq	%rax
-	leaq	do_x87_FPU_error(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(alignment_check)
-	pushq	%rax
-	leaq	do_alignment_check(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(machine_check)
-	pushq	$0
-	pushq	%rax
-	leaq	do_machine_check(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(SIMD_exception)
-	pushq	$0
-	pushq	%rax
-	leaq	do_SIMD_exception(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-ENTRY(virtualization_exception)
-	pushq	$0
-	pushq	%rax
-	leaq	do_virtualization_exception(%rip),	%rax
-	xchgq	%rax,	(%rsp)
-	jmp	error_code
-
-////////////////////////中断处理程序入口
 
 
 
