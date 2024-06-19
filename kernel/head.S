@@ -120,8 +120,8 @@ ignore_int:
 
 //	in       $0x60,%al            //读取键盘状态
 
-    mov     $0,%edx
-    mov     $0,%eax
+    xor     %edx,%edx
+    xor     %eax,%eax
     mov     $0x80B,%ecx
     wrmsr                   //给local apic发送EOI
 
