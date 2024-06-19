@@ -16,11 +16,11 @@ extern unsigned long _start_text;
 #define SPIN_LOCK(lock) \
     do {                \
     __asm__ __volatile__ ( \
-        "mov $1,%%bl   \n\t" \
-        "1:\tmov $0,%%al   \n\t" \
-        "lock           \n\t" \
-        "cmpxchg %%bl,%0 \n\t" \
-        "jnz 1b          \n\t" \
+        "mov        $1,%%bl     \n\t" \
+        "1:\txor    %%al,%%al   \n\t" \
+        "lock                   \n\t" \
+        "cmpxchg    %%bl,%0     \n\t" \
+        "jnz        1b          \n\t" \
         ::"m"(lock):"%rax","%rbx"); \
     } while(0)
 
