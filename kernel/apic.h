@@ -32,7 +32,7 @@ void apic_init(void);
 
 
 //定时器计数器寄存器
-#define APIC_SET_TIMER(TIME) \
+#define APIC_SET_COUNTER(TIME) \
         do {                 \
         __asm__ __volatile(                     \
         "movl   $0x838,%%ecx    \n\t"           \
