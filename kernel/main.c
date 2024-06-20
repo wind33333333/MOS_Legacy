@@ -28,10 +28,6 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
     papg_init();                                 //初始化内核页表
 
 
-    unsigned long i = 0xFFF;
-    APIC_SET_COUNTER(i);
-    //APIC_SET_TSCDEADLINE(i);
     sti();
-
     while (1);
 }
