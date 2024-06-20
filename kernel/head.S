@@ -83,6 +83,8 @@ ENTRY(virtualization_exception,do_virtualization_exception,1)
 ////////////////////////中断处理程序入口
 ENTRY(ignore,do_ignore,1)
 ENTRY(keyboard,do_keyboard,1)
+ENTRY(hpet,do_hpet,1)
+ENTRY(apic_timer,do_apic_timer,1)
 
 
 ////////////////////////中断和异常复用处理程序

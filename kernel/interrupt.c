@@ -1,9 +1,26 @@
 #include "interrupt.h"
 
+void do_apic_timer(void) {
+    color_printk(RED,BLACK,"apic timer interrupt\n");
+    EOI();
+    return;
+}
+
+void do_hpet(void) {
+    color_printk(RED,BLACK,"hpet interrupt\n");
+    EOI();
+}
+
+void do_apic_spurious(void) {
+    color_printk(RED,BLACK,"apic spurious interrupt\n");
+    EOI();
+    return;
+}
+
 void do_keyboard(void) {
 
     __asm__ __volatile__("in    $0x60,%%al" :::);
-    color_printk(RED,BLACK,"keyboard\n");
+    color_printk(RED,BLACK,"keyboard interrupt\n");
 
     EOI();
     return;

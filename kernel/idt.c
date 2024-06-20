@@ -31,7 +31,10 @@ __attribute__((section(".init_text"))) void idt_init(void) {
         SET_GATE(IDT_Table,20,virtualization_exception,IST_1,TYPE_TRAP);
 
         //中断
+        SET_GATE(IDT_Table,0x20,apic_timer,IST_1,TYPE_INT);
         SET_GATE(IDT_Table,0x31,keyboard,IST_1,TYPE_INT);
+        SET_GATE(IDT_Table,0x32,hpet,IST_1,TYPE_INT);
+
 
     }
 

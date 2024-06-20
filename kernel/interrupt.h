@@ -7,8 +7,11 @@
 #include "apic.h"
 
 // 定义中断处理函数
-void do_ignore(void);
-void do_keyboard(void);
+void ignore(void);
+void keyboard(void);
+void apic_timer(void);
+void hpet(void);
+
 
 // 定义0-20异常处理函数
 void divide_error();

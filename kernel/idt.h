@@ -29,7 +29,6 @@
 extern long IDT_Table[256];
 extern int IDT_POINTER;
 void idt_init(void);
-void ignore(void);
-void keyboard(void);
+
 
 #endif

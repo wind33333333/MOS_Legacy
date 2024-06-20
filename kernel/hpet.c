@@ -34,7 +34,7 @@ void hpet_init(void) {
         *hpetRegisters.TIM0_CONF = ((0UL << 9) | (1UL << 6) | (1Ul << 3) | (1UL << 2));
         io_mfence();
 
-        *hpetRegisters.TIM0_COMP = 0x989680;
+        *hpetRegisters.TIM0_COMP = 0xFFFFFFF;
         io_mfence();
 
         *hpetRegisters.MAIN_CNT = 0;
