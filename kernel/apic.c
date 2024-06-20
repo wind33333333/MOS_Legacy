@@ -1,9 +1,6 @@
 #include "apic.h"
 
 __attribute__((section(".init_text"))) void apic_init(void) {
-
-    unsigned long time = 0xFFFFF;
-
     __asm__ __volatile__ (
             "movl    $0x1b,%%ecx  \n\t"         //IA32_APIC_BASE=0x1b 寄存器
             "rdmsr                \n\t"
@@ -31,10 +28,6 @@ __attribute__((section(".init_text"))) void apic_init(void) {
             "movl   $0xA,%%eax      \n\t"          //bit013 0:2 1:4 2:8 3:16 8:32 9:64 0xA:128 0xB:1
             "wrmsr                  \n\t"
 
-            "movl   $0x838,%%ecx    \n\t"         //定时器计数器寄存器
-            "movl   $0x0,%%edx      \n\t"
-            "movl   $0xFFFFFF,%%eax   \n\t"
-            "wrmsr                  \n\t"
 
 //            //qemu操作CMCI寄存器会报错暂时禁用
 //            "movl $0x82F,%%ecx \n\t"           //CMCI寄存器
@@ -68,11 +61,8 @@ __attribute__((section(".init_text"))) void apic_init(void) {
             "movl   $0x0,%%edx      \n\t"
             "movl   $0x10026,%%eax  \n\t"          //bit0-7中断号，bit16屏蔽标志 0未屏蔽 1屏蔽
             "wrmsr                  \n\t"
-
-
             :: :"%rax", "%rcx", "%rdx");
 
-    APIC_SET_TSCDEADLINE(time);
 
     return;
 }

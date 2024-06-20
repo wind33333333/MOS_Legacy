@@ -13,7 +13,7 @@ void apic_init(void);
             :::"%rdx","%rax");    \
           } while(0)
 
-
+//IA32_TSC_DEADLINE寄存器 TSC-Deadline定时模式
 #define APIC_SET_TSCDEADLINE(TIME) \
         do {                \
           __asm__ __volatile__( \
@@ -29,5 +29,17 @@ void apic_init(void);
           "wrmsr \n\t"    \
           ::"m"(TIME):"%rax","%rcx","%rdx");  \
           } while(0)
+
+
+//定时器计数器寄存器
+#define APIC_SET_TIMER(TIME) \
+        do {                 \
+        __asm__ __volatile(                     \
+        "movl   $0x838,%%ecx    \n\t"           \
+        "movl   $0x0,%%edx      \n\t"           \
+        "movl   %0,%%eax   \n\t"         \
+        "wrmsr                  \n\t"           \
+        ::"m"(TIME):"%rax")  \
+        } while(0)
 
 #endif
