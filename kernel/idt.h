@@ -2,6 +2,7 @@
 #define __IDT_H__
 #include "lib.h"
 #include "gdt.h"
+#include "interrupt.h"
 
 #define SET_GATE_L(OFFSET,IST,TYPE) (IST | TYPE | SEL_CODE64 | DPL_0 | P | ((unsigned long)(OFFSET) & 0x000000000000FFFF) | (((unsigned long)(OFFSET) >> 16) << 48))
 #define SET_GATE_H(OFFSET) ((unsigned long)(OFFSET) >> 32)
@@ -27,7 +28,8 @@
 
 extern long IDT_Table[256];
 extern int IDT_POINTER;
-void ignore(void);
 void idt_init(void);
+void ignore(void);
+void keyboard(void);
 
 #endif

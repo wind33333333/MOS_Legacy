@@ -1,5 +1,14 @@
 #include "interrupt.h"
 
+void do_keyboard(void) {
+
+    __asm__ __volatile__("in    $0x60,%%al" :::);
+    color_printk(RED,BLACK,"keyboard\n");
+
+    EOI();
+    return;
+}
+
 void do_ignore(void) {
 
     color_printk(RED,BLACK,"Unknown interrupt or fault at RIP\n");

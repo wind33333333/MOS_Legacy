@@ -1,5 +1,4 @@
 #include "idt.h"
-#include "trap.h"
 
 __attribute__((section(".init_text"))) void idt_init(void) {
     if (bsp_flags) {
@@ -30,6 +29,9 @@ __attribute__((section(".init_text"))) void idt_init(void) {
         SET_GATE(IDT_Table,18,machine_check,IST_1,TYPE_TRAP);
         SET_GATE(IDT_Table,19,SIMD_exception,IST_1,TYPE_TRAP);
         SET_GATE(IDT_Table,20,virtualization_exception,IST_1,TYPE_TRAP);
+
+        //中断
+        SET_GATE(IDT_Table,0x31,keyboard,IST_1,TYPE_INT);
 
     }
 
