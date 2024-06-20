@@ -35,11 +35,14 @@ void apic_init(void);
 #define APIC_SET_COUNTER(TIME) \
         do {                 \
         __asm__ __volatile(                     \
-        "movl   $0x838,%%ecx    \n\t"           \
-        "movl   $0x0,%%edx      \n\t"           \
-        "movl   %0,%%eax   \n\t"         \
+        "mov   %0,%%rax   \n\t"                \
+        "mov   %%rax,%%rdx      \n\t"          \
+        "mov   $0xFFFFFFFF,%%rcx  \n\t"               \
+        "and   %%rcx,%%rax  \n\t"    \
+        "shr   $32,%%rdx        \n\t"                       \
+        "mov   $0x838,%%ecx    \n\t"           \
         "wrmsr                  \n\t"           \
-        ::"m"(TIME):"%rax")  \
+        ::"m"(TIME):"%rax","%rcx","%rdx");  \
         } while(0)
 
 #endif
