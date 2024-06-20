@@ -28,14 +28,12 @@ __attribute__((section(".init_text"))) void apic_init(void) {
             "movl   $0xA,%%eax      \n\t"          //bit013 0:2 1:4 2:8 3:16 8:32 9:64 0xA:128 0xB:1
             "wrmsr                  \n\t"
 
-
 //            //qemu操作CMCI寄存器会报错暂时禁用
 //            "movl $0x82F,%%ecx \n\t"           //CMCI寄存器
 //            "movl $0x0,%%edx \n\t"
 //            "movl $0x10021,%%eax \n\t"         //bit0-7中断号，bit8-10投递模式000 fixed, bit16屏蔽标志 0未屏蔽 1屏蔽
 //            "wrmsr \n\t"
 //            "1:\tjmp 1b \n\t"
-
 
             "movl   $0x833,%%ecx    \n\t"          //温度传感寄存器
             "movl   $0x0,%%edx      \n\t"
