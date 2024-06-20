@@ -35,12 +35,12 @@ void apic_init(void);
 //定时器计数器寄存器
 #define APIC_SET_COUNTER(TIME) \
         do {                 \
-        __asm__ __volatile(                     \
-        "mov   %0,%%eax   \n\t"                \
-        "xor   %%rdx ,%%rdx        \n\t"                       \
-        "mov   $0x838,%%ecx    \n\t"           \
-        "wrmsr                  \n\t"           \
-        ::"m"(TIME):"%rax","%rcx","%rdx");  \
+         __asm__ __volatile(                     \
+         "mov   %0,%%eax   \n\t"                \
+         "xor   %%rdx ,%%rdx        \n\t"        \
+         "mov   $0x838,%%ecx    \n\t"           \
+         "wrmsr                  \n\t"           \
+         ::"m"(TIME):"%rax","%rcx","%rdx");  \
         } while(0)
 
 #endif
