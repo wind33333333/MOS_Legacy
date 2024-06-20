@@ -63,8 +63,6 @@ __attribute__((section(".init_text"))) void apic_init(void) {
             "wrmsr                  \n\t"
             :: :"%rax", "%rcx", "%rdx");
 
-    unsigned long time = 0x100000;
-    APIC_SET_COUNTER(time);
 
     return;
 }
