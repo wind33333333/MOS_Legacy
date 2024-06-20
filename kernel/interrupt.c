@@ -1,4 +1,4 @@
-#include "ignore.h"
+#include "interrupt.h"
 
 void do_ignore(void) {
 
