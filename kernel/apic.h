@@ -3,6 +3,7 @@
 
 void apic_init(void);
 
+//中断结束发送EOI
 #define EOI() \
         do {  \
           __asm__ __volatile__( \
