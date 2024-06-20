@@ -27,7 +27,7 @@
 
 extern long IDT_Table[256];
 extern int IDT_POINTER;
-void ignore_int(void);
+void ignore(void);
 void idt_init(void);
 
 #endif

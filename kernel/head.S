@@ -58,80 +58,6 @@ kernel_stack_init:
 
 //========================================正式内核代码=================================================
 .section    .text, "ax"
-
-////////////////////////////默认中断处理程序
-.globl ignore_int
-ignore_int:
-	pushq	%rax
-	pushq	%rcx
-	pushq	%rdx
-	pushq	%rbx
-	pushq	%rbp
-	pushq	%rdi
-	pushq	%rsi
-
-	pushq	%r8
-	pushq	%r9
-	pushq	%r10
-	pushq	%r11
-	pushq	%r12
-	pushq	%r13
-	pushq	%r14
-	pushq	%r15
-
-	movq	%es,	%rax
-	pushq	%rax
-	movq	%ds,	%rax
-	pushq	%rax
-
-	movq	$0x10,	%rax
-	movq	%rax,	%ds
-	movq	%rax,	%es
-
-	movabs	$int_msg,%rax			/* leaq get address */
-	pushq	%rax
-	movq	%rax,	%rdx
-	movq	$0x00000000,	%rsi
-	movq	$0x00ff0000,	%rdi
-	movq	$0,	%rax
-	callq	color_printk
-	addq	$0x8,	%rsp
-
-//	jmp	.
-
-	popq	%rax
-	movq	%rax,	%ds
-	popq	%rax
-	movq	%rax,	%es
-
-	popq	%r15
-	popq	%r14
-	popq	%r13
-	popq	%r12
-	popq	%r11
-	popq	%r10
-	popq	%r9
-	popq	%r8
-
-	popq	%rsi
-	popq	%rdi
-	popq	%rbp
-	popq	%rbx
-
-//	in       $0x60,%al            //读取键盘状态
-
-    xor     %edx,%edx
-    xor     %eax,%eax
-    mov     $0x80B,%ecx
-    wrmsr                   //给local apic发送EOI
-
-	popq	%rdx
-	popq	%rcx
-	popq	%rax
-	iretq
-
-int_msg:    .asciz "Unknown interrupt or fault at RIP\n"
-
 ////////////////////////////0-20异常处理程序入口
 ENTRY(divide_error,do_divide_error,1)
 ENTRY(debug,do_debug,1)
@@ -155,7 +81,7 @@ ENTRY(SIMD_exception,do_SIMD_exception,1)
 ENTRY(virtualization_exception,do_virtualization_exception,1)
 
 ////////////////////////中断处理程序入口
-
+ENTRY(ignore,do_ignore,1)
 
 
 ////////////////////////中断和异常复用处理程序
