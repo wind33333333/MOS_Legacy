@@ -70,7 +70,7 @@ __attribute__((section(".init_text"))) void ioapic_init(void) {
                 "mov    %%eax,(%%rsi)        \n\t"          //ps2键盘中断
                 "mfence                      \n\t"
 
-                "mov     $0x00032,%%rax      \n\t"
+                "mov     $0x10032,%%rax      \n\t"
                 "movl    $0x14,(%%rdi)       \n\t"
                 "mfence                      \n\t"
                 "mov     %%eax,(%%rsi)       \n\t"

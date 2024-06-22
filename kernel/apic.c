@@ -20,12 +20,17 @@ __attribute__((section(".init_text"))) void apic_init(void) {
 
 //            "movl   $0x832,%%ecx    \n\t"         //定时器寄存器
 //            "xorl   %%edx,%%edx     \n\t"
-//            "movl   $0x30020,%%eax  \n\t"         //bit0-7中断向量号,bit16屏蔽标志 0未屏蔽 1屏蔽,bit17 18 00/一次计数 01/周期计数 10/TSC-Deadline
+//            "movl   $0x20020,%%eax  \n\t"         //bit0-7中断向量号,bit16屏蔽标志 0未屏蔽 1屏蔽,bit17 18 00/一次计数 01/周期计数 10/TSC-Deadline
 //            "wrmsr                  \n\t"
 //
 //            "movl   $0x83E,%%ecx    \n\t"         //分频器寄存器
 //            "xorl   %%edx,%%edx     \n\t"
-//            "movl   $0xA,%%eax      \n\t"          //bit013 0:2 1:4 2:8 3:16 8:32 9:64 0xA:128 0xB:1
+//            "movl   $0xA,%%eax      \n\t"         //bit013 0:2 1:4 2:8 3:16 8:32 9:64 0xA:128 0xB:1
+//            "wrmsr                  \n\t"
+//
+//            "mov   $0xFFFF,%%eax     \n\t"
+//            "xor   %%rdx ,%%rdx     \n\t"
+//            "mov   $0x838,%%ecx     \n\t"        /*定时器计数器寄存器*/
 //            "wrmsr                  \n\t"
 
 //            //qemu操作CMCI寄存器会报错暂时禁用
@@ -61,7 +66,45 @@ __attribute__((section(".init_text"))) void apic_init(void) {
             "wrmsr                  \n\t"
             :: :"%rax", "%rcx", "%rdx");
 
-            ENABLE_APIC_TIME(0xFFFF,PERIODIC,0x20);
+    return;
+}
+
+void enable_apic_time (unsigned long time,unsigned int model,unsigned int ivt){
+
+    unsigned int model_ivt = model | ivt;
+    __asm__ __volatile(   \
+         "xorl   %%edx,%%edx     \n\t"
+         "movl   %0,%%eax        \n\t"         /*bit0-7中断向量号,bit16屏蔽标志 0未屏蔽 1屏蔽,bit17 18 00/一次计数 01/周期计数 10/TSC-Deadline*/
+         "movl   $0x832,%%ecx    \n\t"         /*定时器模式配置寄存器*/
+         "wrmsr                  \n\t"
+         ::"a"(model_ivt):"%rcx","%rdx");
+
+    if(model == APIC_TSC_DEADLINE){
+        __asm__ __volatile__(
+         "rdtscp                    \n\t"
+         "shl $32,%%rdx             \n\t"
+         "or %%rdx,%%rax            \n\t"
+         "add %0,%%rax              \n\t"
+         "mov %%rax,%%rdx           \n\t"
+         "mov $0xFFFFFFFF,%%rcx     \n\t"
+         "and %%rcx,%%rax           \n\t"
+         "shr $32,%%rdx             \n\t"
+         "mov $0x6E0,%%ecx          \n\t"
+         "wrmsr                     \n\t"
+          ::"m"(time):"%rax","%rcx","%rdx");
+    } else{
+        __asm__ __volatile__(
+         "xorl   %%edx,%%edx     \n\t"
+         "movl   $0xA,%%eax      \n\t"        /* bit0 bit1 bit3 0:2 1:4 2:8 3:16 8:32 9:64 0xA:128 0xB:1*/
+         "movl   $0x83E,%%ecx    \n\t"        /*分频器寄存器*/
+         "wrmsr                  \n\t"
+
+         "mov   %0,%%eax    \n\t"
+         "xor   %%rdx ,%%rdx     \n\t"
+         "mov   $0x838,%%ecx     \n\t"        /*定时器计数器寄存器*/
+         "wrmsr                  \n\t"
+         ::"m"(time):"%rax","%rcx","%rdx");
+    }
 
     return;
 }
