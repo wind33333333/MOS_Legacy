@@ -92,6 +92,7 @@ void enable_apic_time (unsigned long time,unsigned int model,unsigned int ivt){
          "mov $0x6E0,%%ecx          \n\t"
          "wrmsr                     \n\t"
           ::"m"(time):"%rax","%rcx","%rdx");
+
     } else{
         __asm__ __volatile__(
          "xorl   %%edx,%%edx     \n\t"
