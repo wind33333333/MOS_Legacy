@@ -6,7 +6,27 @@
 #include "printk.h"
 #include "memory.h"
 
+#define ENABLE_HPET_TIMES(TIM_CONF,TIM_COMP,TIME,MODEL) \
+        do {   \
+           (TIM_CONF) = ((0UL << 9) | (1UL << 6) | ((MODEL) << 3) | (1UL << 2)); \
+           io_mfence();                           \
+           (TIM_COMP) = (TIME);                                                  \
+           io_mfence();                                 \
+         }while(0)
+
+#define DISABLE_HPET_TIMES(TIM_CONF) \
+        do {                 \
+           (TIM_CONF) = 0;           \
+           io_mfence();\
+        }while(0)
+
+#define HPET_ONCE 0
+#define HPET_PERIODIC 1
+
+
 unsigned long hpet_baseaddr = 0;
+
+unsigned int hpet_frequency = 0;
 
 typedef struct {
     unsigned long *GCAP_ID;      // 000h ~ 007h 整体机能寄存器

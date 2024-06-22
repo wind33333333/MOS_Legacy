@@ -25,20 +25,15 @@ void hpet_init(void) {
         hpetRegisters.TIM7_CONF = (unsigned long *) Phy_To_Virt(hpet_baseaddr + 0x1E0);
         hpetRegisters.TIM7_COMP = (unsigned long *) Phy_To_Virt(hpet_baseaddr + 0x1E8);
 
-        color_printk(YELLOW, BLACK, "HPET Clock Frequency: %dMhz \n",
-                     (*hpetRegisters.GCAP_ID >> 32) / 1000 / 1000);
-
-        *hpetRegisters.GEN_CONF = 0;
-        io_mfence();
-
-        *hpetRegisters.TIM0_CONF = ((0UL << 9) | (1UL << 6) | (1Ul << 3) | (1UL << 2));
-        io_mfence();
-
-        *hpetRegisters.TIM0_COMP = 0xFFFFFFF;
+        *hpetRegisters.GEN_CONF = 1;
         io_mfence();
 
         *hpetRegisters.MAIN_CNT = 0;
         io_mfence();
+
+        hpet_frequency = *hpetRegisters.GCAP_ID >> 32;
+
+        color_printk(YELLOW, BLACK, "HPET Clock Frequency: %dMhz \n",hpet_frequency/1000/1000);
 
 
     }
