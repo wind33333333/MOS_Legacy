@@ -28,11 +28,6 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
     papg_init();                                 //初始化内核页表
 
 
-
-
-//    BOCHS_DG();
-//    unsigned long i = 0xffff;
-//    APIC_SET_TSCDEADLINE(cpu_info.tsc_frequency);
     sti();
     while (1);
 }

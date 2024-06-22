@@ -6,9 +6,9 @@
 #include "printk.h"
 #include "memory.h"
 
-#define ENABLE_HPET_TIMES(TIM_CONF,TIM_COMP,TIME,MODEL) \
+#define ENABLE_HPET_TIMES(TIM_CONF,TIM_COMP,TIME,MODEL,IRQ) \
         do {   \
-           (TIM_CONF) = ((0UL << 9) | (1UL << 6) | ((MODEL) << 3) | (1UL << 2)); \
+           (TIM_CONF) = (((IRQ) << 9) | (1UL << 6) | ((MODEL) << 3) | (1UL << 2)); \
            io_mfence();                           \
            (TIM_COMP) = (TIME);                                                  \
            io_mfence();                                 \
@@ -20,7 +20,7 @@
            io_mfence();\
         }while(0)
 
-#define HPET_ONCE 0
+#define HPET_ONESHOT 0
 #define HPET_PERIODIC 1
 
 

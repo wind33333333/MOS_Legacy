@@ -13,8 +13,8 @@ void do_apic_timer(void) {
 void do_hpet(void) {
     count++;
     color_printk(RED,BLACK,"hpet interrupt\n");
-    DISABLE_HPET_TIMES(*hpetRegisters.TIM0_CONF);
-    ENABLE_HPET_TIMES(*hpetRegisters.TIM0_CONF,*hpetRegisters.TIM0_COMP,0xFFFFFFF,HPET_PERIODIC);
+//    DISABLE_HPET_TIMES(*hpetRegisters.TIM0_CONF);
+//    ENABLE_HPET_TIMES(*hpetRegisters.TIM0_CONF,*hpetRegisters.TIM0_COMP,0xFFFFFFF,HPET_PERIODIC,0);
 
     EOI();
 }
