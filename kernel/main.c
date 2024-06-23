@@ -31,6 +31,5 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
     //enable_apic_time(0xF000,APIC_TSC_DEADLINE,0x20);
 
     sti();
-
     while (1);
 }
