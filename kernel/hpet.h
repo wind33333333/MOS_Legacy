@@ -6,17 +6,17 @@
 #include "printk.h"
 #include "memory.h"
 
-#define ENABLE_HPET_TIMES(TIM_CONF,TIM_COMP,TIME,MODEL,IRQ) \
+#define ENABLE_HPET_TIMES(TIMS_CONF,TIMS_COMP,TIME,MODEL,IRQ) \
         do {   \
-           (TIM_CONF) = (((IRQ) << 9) | (1UL << 6) | ((MODEL) << 3) | (1UL << 2)); \
+           (TIMS_CONF) = (((IRQ) << 9) | (1UL << 6) | ((MODEL) << 3) | (1UL << 2)); \
            io_mfence();                           \
-           (TIM_COMP) = (TIME);                                                  \
+           (TIMS_COMP) = (TIME);                                                  \
            io_mfence();                                 \
          }while(0)
 
-#define DISABLE_HPET_TIMES(TIM_CONF) \
+#define DISABLE_HPET_TIMES(TIMS_CONF) \
         do {                 \
-           (TIM_CONF) = 0;           \
+           (TIMS_CONF) = 0;           \
            io_mfence();\
         }while(0)
 

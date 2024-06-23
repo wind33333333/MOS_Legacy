@@ -3,7 +3,7 @@
 void do_apic_timer(void) {
     color_printk(RED,BLACK,"apic timer interrupt\n");
 
-   // cpu_info.bus_frequency = MAXNUMBER/count*hpet_frequency*128;
+
     //unsigned long time = 0xFFFF;
    // APIC_SET_TSCDEADLINE(cpu_info.tsc_frequency);
     EOI();
@@ -11,10 +11,8 @@ void do_apic_timer(void) {
 }
 
 void do_hpet(void) {
-    count++;
+
     color_printk(RED,BLACK,"hpet interrupt\n");
-//    DISABLE_HPET_TIMES(*hpetRegisters.TIM0_CONF);
-//    ENABLE_HPET_TIMES(*hpetRegisters.TIM0_CONF,*hpetRegisters.TIM0_COMP,0xFFFFFFF,HPET_PERIODIC,0);
 
     EOI();
     return;

@@ -2,6 +2,9 @@
 #define __ACPI_H__
 
 #include "lib.h"
+#include "hpet.h"
+#include "interrupt.h"
+#include "cpuinfo.h"
 
 void apic_init(void);
 

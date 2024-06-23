@@ -7,8 +7,7 @@
 #include "apic.h"
 #include "hpet.h"
 
-unsigned long count = 0;
-#define MAXNUMBER 0xFFFFFF
+
 
 // 定义中断处理函数
 void ignore(void);
