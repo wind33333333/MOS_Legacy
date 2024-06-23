@@ -66,6 +66,7 @@ void get_cpuinfo(unsigned int *p) {
                 ".1:                 \n\t"
                 :"=a"(cpu_info.tsc_frequency)::"%rcx", "%rbx", "%rdx");
     }
+
     return;
 }
 

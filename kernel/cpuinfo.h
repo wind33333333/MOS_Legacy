@@ -14,7 +14,6 @@ struct {
     unsigned int maximum_frequency;
     unsigned int bus_frequency;
     unsigned int tsc_frequency;
-
 }cpu_info;
 
 
