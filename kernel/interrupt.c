@@ -4,8 +4,8 @@ void do_apic_timer(void) {
     color_printk(RED,BLACK,"apic timer interrupt\n");
 
 
-    //unsigned long time = 0xFFFF;
-   // APIC_SET_TSCDEADLINE(cpu_info.tsc_frequency);
+    unsigned long time = 0xFFFFFFFF;
+    APIC_SET_TSCDEADLINE(time);
     EOI();
     return;
 }

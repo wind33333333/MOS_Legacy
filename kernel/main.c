@@ -27,6 +27,8 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
     ap_init(cpu_id);                             //初始化ap核
     papg_init();                                 //初始化内核页表
 
+    //ENABLE_HPET_TIMES(*hpetRegisters.TIM0_CONF,*hpetRegisters.TIM0_COMP,0x3000000,HPET_PERIODIC,0);
+    enable_apic_time(0x3000000,APIC_TSC_DEADLINE,0x20);
 
     sti();
 

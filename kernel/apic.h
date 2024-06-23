@@ -30,6 +30,21 @@ void apic_init(void);
           :::"%rdx","%rax");    \
           } while(0)
 
+#define APIC_SET_TSCDEADLINE(TIME) \
+        do {                       \
+        __asm__ __volatile__( \
+        "rdtscp                    \n\t" \
+        "shl $32,%%rdx             \n\t" \
+        "or %%rdx,%%rax            \n\t" \
+        "add %0,%%rax              \n\t" \
+        "mov %%rax,%%rdx           \n\t" \
+        "mov $0xFFFFFFFF,%%rcx     \n\t" \
+        "and %%rcx,%%rax           \n\t" \
+        "shr $32,%%rdx             \n\t" \
+        "mov $0x6E0,%%ecx          \n\t" /*IA32_TSC_DEADLINE寄存器 TSC-Deadline定时模式 */ \
+        "wrmsr                     \n\t" \
+        ::"m"(TIME):"%rax","%rcx","%rdx"); \
+        } while(0)
 
 void enable_apic_time (unsigned long time,unsigned int model,unsigned int ivt);
 
