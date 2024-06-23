@@ -28,6 +28,13 @@ void get_cpuinfo(unsigned int *cpu_id,unsigned char *bsp_flags) {
                 "movb   $0, 12(%%edi) \n\t"
                 ::"D"(&cpu_info.manufacturer_name):"%rax", "%rbx", "%rcx", "%rdx");
 
+        // 获取CPU核心数量
+        __asm__ __volatile__(
+                "mov        $1,%%eax    \n\t"
+                "cpuid                  \n\t"
+                "shr        $16,%%ebx   \n\t"         //右移16位得到cpu数量
+                :"=b"(cpu_info.cores_num)::"%rax", "%rcx", "%rdx");
+
         // 获取CPU型号
         __asm__ __volatile__(
                 "mov    $0x80000002, %%eax \n\t"

@@ -12,17 +12,13 @@ _start:
     test     $0x100,%eax         //測試bit8 1bsp 0ap
     jz      kernel_stack_init
 
-///////////////////////////cpu_info.croes_num=cpu数量
+///////////////////////////获取cpu核心数量
     mov        $1,%eax
     cpuid
     shr        $16,%ebx         //右移16位得到cpu数量
-    mov        %ebx,%eax
-    movabs     %eax,cpu_info
 
 ///////////////////////////开辟多核栈空间
-    movabs     cpu_info,%eax
-    shl        $14,%rax                 //每个核心分配16k栈
-    mov        %rax,%rbx
+    shl        $14,%rbx                 //每个核心分配16k栈
     movabs     kenelstack_top,%rax
     add        %rbx,%rax
     movabs     %rax,kenelstack_top       //内核栈顶
