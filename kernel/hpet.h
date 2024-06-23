@@ -23,10 +23,14 @@
 #define HPET_ONESHOT 0
 #define HPET_PERIODIC 1
 
+typedef struct {
+    unsigned long baseaddr;
+    unsigned int frequency;
+    unsigned int timernum;
+}HPET_ATTR;
 
-unsigned long hpet_baseaddr = 0;
+HPET_ATTR hpet_attr = {0};
 
-unsigned int hpet_frequency = 0;
 
 typedef struct {
     unsigned long *GCAP_ID;      // 000h ~ 007h 整体机能寄存器

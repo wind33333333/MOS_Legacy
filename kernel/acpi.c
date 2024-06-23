@@ -21,7 +21,7 @@ __attribute__((section(".init_text"))) void acpi_init(void) {
                     break;
                 case 0x54455048:        //"HPET"
                     hpet = (HPET *) rsdt->Entry[i];
-                    hpet_baseaddr = hpet->BaseAddressUpper;
+                    hpet_attr.baseaddr = hpet->BaseAddressUpper;
                     break;
             }
         }
@@ -46,7 +46,7 @@ __attribute__((section(".init_text"))) void acpi_init(void) {
         color_printk(YELLOW, BLACK, "APIC: %#018lX \tIOAPIC ADDR: %#018lX\n", madt,
                      ioapic_baseaddr);
 
-        color_printk(YELLOW, BLACK, "HPET: %#018lX \tHPET ADDR: %#018lX\n", hpet, hpet_baseaddr);
+        color_printk(YELLOW, BLACK, "HPET: %#018lX \tHPET ADDR: %#018lX\n", hpet, hpet_attr.baseaddr);
 
         for (int i = 0; i < 24; ++i) {
             if ((irq_to_gsi[i].IRQ == 0x0) && (irq_to_gsi[i].GSI == 0x0))
