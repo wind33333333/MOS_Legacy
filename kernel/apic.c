@@ -62,7 +62,7 @@ void enable_apic_time (unsigned long time,unsigned int model,unsigned int ivt){
          "movl   %0,%%eax        \n\t"         /*bit0-7中断向量号,bit16屏蔽标志 0未屏蔽 1屏蔽,bit17 18 00/一次计数 01/周期计数 10/TSC-Deadline*/
          "movl   $0x832,%%ecx    \n\t"         /*定时器模式配置寄存器*/
          "wrmsr                  \n\t"
-         ::"a"(model_ivt):"%rcx","%rdx");
+         ::"m"(model_ivt):"%rcx","%rdx");
 
     if(model == APIC_TSC_DEADLINE){
         __asm__ __volatile__(
