@@ -4,7 +4,7 @@
 #include "printk.h"
 #include "lib.h"
 
-void get_cpuinfo(unsigned int *p);
+void get_cpuinfo(unsigned int *cpu_id,unsigned char *bsp_flags);
 
 struct {
     unsigned int cores_num;
@@ -17,6 +17,5 @@ struct {
 }cpu_info;
 
 
-extern unsigned int bsp_flags;
 
 #endif

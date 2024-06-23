@@ -6,7 +6,7 @@
 #include "ioapic.h"
 #include "hpet.h"
 
-void acpi_init(void);
+void acpi_init(unsigned char bsp_flags);
 
 typedef struct {
     unsigned int IRQ;

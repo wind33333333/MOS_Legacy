@@ -9,7 +9,7 @@
 #include "printk.h"
 #include "cpuinfo.h"
 
-void pos_init(void);
+void pos_init(unsigned char bsp_flags);
 
 
 #define ZEROPAD	1		/* pad with zero */

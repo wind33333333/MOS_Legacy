@@ -7,10 +7,9 @@ _start:
 ////////////////////////////bsp/ap核
     movl    $0x1B,%ecx           //IA32_APIC_BASE=0x1b 寄存器
     rdmsr
-    or      $0xc00,%eax
+    or      $0xc00,%eax          //bit10 X2APIC使能   bit11 APIC全局使能
     wrmsr
-    and     $0x100,%eax          //測試bit8 1bsp 0ap
-    movabs  %eax,bsp_flags
+    test     $0x100,%eax         //測試bit8 1bsp 0ap
     jz      kernel_stack_init
 
 ///////////////////////////cpu_info.croes_num=cpu数量
@@ -49,9 +48,6 @@ kernel_stack_init:
 
     .globl kenelstack_top
     kenelstack_top:   .quad   _end
-
-    .globl bsp_flags
-    bsp_flags:        .int   0
 
     .equ    VBASEADDR,0xffff800000000000      //内核虛擬地址基址
 

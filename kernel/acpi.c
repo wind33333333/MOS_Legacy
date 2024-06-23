@@ -1,6 +1,6 @@
 #include "acpi.h"
 
-__attribute__((section(".init_text"))) void acpi_init(void) {
+__attribute__((section(".init_text"))) void acpi_init(unsigned char bsp_flags) {
     if (bsp_flags) {
         RSDP *rsdp = (RSDP *) 0xe0000;
         RSDT *rsdt = (RSDT *) 0;

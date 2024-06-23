@@ -13,19 +13,20 @@
 #include "hpet.h"
 
 __attribute__((section(".init_text"))) void Kernel_init(void) {
-    unsigned int cpu_id;
-    pos_init();                                  //初始化输出控制台
-    get_cpuinfo(&cpu_id);                     //获取cpu信息
-    memory_init();                               //初始化内存管理器
-    gdt_init();                                  //初始化GDT
-    tss_init(cpu_id);                            //初始化TSS
-    idt_init();                                  //初始化IDT
-    acpi_init();                                 //初始化acpi
-    hpet_init();                                 //初始化hpet
-    ioapic_init();                               //初始化ioapic
+    unsigned int cpu_id = 0;
+    unsigned char bsp_flags = 0;
+    get_cpuinfo(&cpu_id,&bsp_flags);             //获取cpu信息
+    pos_init(bsp_flags);                         //初始化输出控制台
+    memory_init(bsp_flags);                      //初始化内存管理器
+    gdt_init(bsp_flags);                                  //初始化GDT
+    tss_init(cpu_id,bsp_flags);                            //初始化TSS
+    idt_init(bsp_flags);                                  //初始化IDT
+    acpi_init(bsp_flags);                                 //初始化acpi
+    hpet_init(bsp_flags);                                 //初始化hpet
+    ioapic_init(bsp_flags);                               //初始化ioapic
     apic_init();                                 //初始化apic
-    ap_init(cpu_id);                             //初始化ap核
-    papg_init();                                 //初始化内核页表
+    ap_init(cpu_id,bsp_flags);                             //初始化ap核
+    papg_init(bsp_flags);                                 //初始化内核页表
 
     //ENABLE_HPET_TIMES(*hpetRegisters.TIM0_CONF,*hpetRegisters.TIM0_COMP,0x3000000,HPET_PERIODIC,0);
     //enable_apic_time(0xF000,APIC_TSC_DEADLINE,0x20);

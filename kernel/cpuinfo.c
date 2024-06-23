@@ -1,15 +1,23 @@
 #include "cpuinfo.h"
 
 
-void get_cpuinfo(unsigned int *p) {
+void get_cpuinfo(unsigned int *cpu_id,unsigned char *bsp_flags) {
 
     // 获取当前CPU id号
     __asm__ __volatile__ (
             "movl       $0x802,%%ecx   \n\t"
             "rdmsr                     \n\t"
-            :"=a"(*p)::"%rcx", "%rdx");
+            :"=a"(*cpu_id)::"%rcx", "%rdx");
 
-    if (bsp_flags) {
+    // 获取当前CPU的flags
+    __asm__ __volatile__( \
+            "movl    $0x1B,%%ecx  \n\t"          /*IA32_APIC_BASE=0x1b 寄存器*/
+            "rdmsr                \n\t"         //bit10 X2APIC使能   bit11 APIC全局使能
+            "shr     $8,%%eax      \n\t"
+            "and     $1,%%eax      \n\t"
+            :"=a"(*bsp_flags)::);
+
+    if (*bsp_flags) {
         // 获取CPU厂商
         __asm__ __volatile__(
                 "xor    %%eax, %%eax \n\t"
@@ -66,8 +74,6 @@ void get_cpuinfo(unsigned int *p) {
                 ".1:                 \n\t"
                 :"=a"(cpu_info.tsc_frequency)::"%rcx", "%rbx", "%rdx");
 
-        color_printk(GREEN, BLACK, "CPU Manufacturer: %s  Model: %s\n",cpu_info.manufacturer_name, cpu_info.model_name);
-        color_printk(GREEN, BLACK, "CPU Cores: %d  FundamentalFrequency: %ldMhz  MaximumFrequency: %ldMhz  BusFrequency: %ldMhz  TSCFrequency: %ldhz\n",cpu_info.cores_num,cpu_info.fundamental_frequency,cpu_info.maximum_frequency,cpu_info.bus_frequency,cpu_info.tsc_frequency);
     }
 
     return;

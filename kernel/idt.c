@@ -1,6 +1,6 @@
 #include "idt.h"
 
-__attribute__((section(".init_text"))) void idt_init(void) {
+__attribute__((section(".init_text"))) void idt_init(unsigned char bsp_flags) {
     if (bsp_flags) {
         //初始化中断向量表为默认中断
         for (int i = 0; i < 256; i++) {

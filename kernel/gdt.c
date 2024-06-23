@@ -1,6 +1,6 @@
 #include "gdt.h"
 
-__attribute__((section(".init_text"))) void gdt_init(void) {
+__attribute__((section(".init_text"))) void gdt_init(unsigned char bsp_flags) {
     if (bsp_flags) {
         gdt_ptr.limit = (cpu_info.cores_num * 16 + TSS_START * 8 + 0xFFF & PAGE_4K_MASK) - 1;
         gdt_ptr.base = Phy_To_Virt(alloc_pages((gdt_ptr.limit + 1) >> PAGE_4K_SHIFT));              //分配GDT内存

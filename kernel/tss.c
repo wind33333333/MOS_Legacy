@@ -1,6 +1,6 @@
 #include "tss.h"
 
-__attribute__((section(".init_text"))) void tss_init(unsigned int cpu_id) {
+__attribute__((section(".init_text"))) void tss_init(unsigned int cpu_id,unsigned char bsp_flags) {
     if (bsp_flags) {
         tss_ptr.limit = (cpu_info.cores_num * 104 + 0xFFF) & PAGE_4K_MASK;
         tss_ptr.base = (_tss *)Phy_To_Virt(alloc_pages(tss_ptr.limit >> PAGE_4K_SHIFT));   //分配tss_tables内存

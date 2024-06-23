@@ -4,6 +4,6 @@
 #include "lib.h"
 #include "cpuinfo.h"
 
-void ap_init(unsigned int cpu_id);
+void ap_init(unsigned int cpu_id,unsigned char bsp_flags);
 
 #endif

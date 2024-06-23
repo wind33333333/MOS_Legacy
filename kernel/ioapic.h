@@ -4,7 +4,7 @@
 #include "cpuinfo.h"
 #include "hpet.h"
 
-void ioapic_init(void);
+void ioapic_init(unsigned char bsp_flags);
 
 unsigned int *ioapic_baseaddr= 0;
 

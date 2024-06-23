@@ -1,7 +1,7 @@
 #include "ap.h"
 
 //多核处理器初始化
-__attribute__((section(".init_text"))) void ap_init(unsigned int cpu_id) {
+__attribute__((section(".init_text"))) void ap_init(unsigned int cpu_id,unsigned char bsp_flags) {
     if (bsp_flags) {
         __asm__ __volatile__ (
                 "xor %%rdx,	%%rdx	\n\t"
@@ -19,6 +19,8 @@ __attribute__((section(".init_text"))) void ap_init(unsigned int cpu_id) {
                 "wrmsr	\n\t"
                 :: :"%rax", "%rcx", "%rdx");
     }
+    color_printk(GREEN, BLACK, "CPU Manufacturer: %s  Model: %s\n",cpu_info.manufacturer_name, cpu_info.model_name);
+    color_printk(GREEN, BLACK, "CPU Cores: %d  FundamentalFrequency: %ldMhz  MaximumFrequency: %ldMhz  BusFrequency: %ldMhz  TSCFrequency: %ldhz\n",cpu_info.cores_num,cpu_info.fundamental_frequency,cpu_info.maximum_frequency,cpu_info.bus_frequency,cpu_info.tsc_frequency);
     color_printk(GREEN, BLACK, "CPU%d init successful\n", cpu_id);
     return;
 }
