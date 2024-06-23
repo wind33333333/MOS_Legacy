@@ -16,6 +16,7 @@ void apic_init(void);
             :::"%rdx","%rax");    \
           } while(0)
 
+
 #define DISABLE_APIC_TIME() \
         do {  \
           __asm__ __volatile__( \
