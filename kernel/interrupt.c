@@ -3,9 +3,8 @@
 void do_apic_timer(void) {
     color_printk(RED,BLACK,"apic timer interrupt\n");
 
-
-    unsigned long time = 0xFFFFFFFF;
-    APIC_SET_TSCDEADLINE(time);
+//    unsigned long time = 0xF000000;
+//    APIC_SET_TSCDEADLINE(time);
     EOI();
     return;
 }
@@ -13,7 +12,6 @@ void do_apic_timer(void) {
 void do_hpet(void) {
 
     color_printk(RED,BLACK,"hpet interrupt\n");
-
     EOI();
     return;
 }
