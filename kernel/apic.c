@@ -85,7 +85,7 @@ void enable_apic_time (unsigned long time,unsigned int model,unsigned int ivt){
          "movl   $0x83E,%%ecx    \n\t"        /*分频器寄存器*/
          "wrmsr                  \n\t"
 
-         "mov   %0,%%eax    \n\t"
+         "mov   %0,%%eax         \n\t"
          "xor   %%rdx ,%%rdx     \n\t"
          "mov   $0x838,%%ecx     \n\t"        /*定时器计数器寄存器*/
          "wrmsr                  \n\t"
