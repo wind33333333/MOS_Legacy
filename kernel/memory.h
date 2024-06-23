@@ -28,8 +28,7 @@ struct E820
     unsigned int	type;
 }__attribute__((packed));
 
-struct Global_Memory_Descriptor
-{
+typedef struct {
     struct E820 	e820[12];
     unsigned long 	e820_length;
 
@@ -45,8 +44,8 @@ struct Global_Memory_Descriptor
     unsigned long   kernel_end;
 
     unsigned char   lock;
-};
+} Global_Memory_Descriptor;
 
-struct Global_Memory_Descriptor memory_management_struct = {{0},0};
+Global_Memory_Descriptor memory_management_struct = {0};
 
 #endif
