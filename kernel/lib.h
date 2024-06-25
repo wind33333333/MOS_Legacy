@@ -4,11 +4,6 @@
 
 #define BOCHS_DG()    __asm__ __volatile__ ("xchg %%bx,%%bx \n\t":: :);
 
-#define PML4_VBASE    0xFFFFFFFFFFFFF000     //pml4虚拟地址基址
-#define PDPT_VBASE    0xFFFFFFFFFFE00000     //pdpt虚拟地址基址
-#define PD_VBASE      0xFFFFFFFFC0000000     //pd虚拟地址基址
-#define PT_VBASE      0xFFFFFF8000000000     //pt虚拟地址基址
-
 extern unsigned long kenelstack_top;
 extern unsigned long _start_text;
 
