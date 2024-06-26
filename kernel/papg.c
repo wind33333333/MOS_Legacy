@@ -4,6 +4,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
 
     if (bsp_flags) {
         unsigned long papg_num = Virt_To_Phy(memory_management_struct.kernel_end) / 4096;
+        if (Virt_To_Phy(memory_management_struct.kernel_end) % 4096)
 
 
         color_printk(ORANGE, BLACK, "OS Can Used Total 4K PAGEs: %ld \tAlloc: %ld \tFree: %ld\n",
