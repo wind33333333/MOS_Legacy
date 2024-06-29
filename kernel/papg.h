@@ -12,4 +12,6 @@ void papg_init(unsigned char bsp_flags);
 #define PD_VBASE      0xFFFFFFFFC0000000     //pd虚拟地址基址
 #define PT_VBASE      0xFFFFFF8000000000     //pt虚拟地址基址
 
+extern unsigned long __PML4T[512];
+
 #endif

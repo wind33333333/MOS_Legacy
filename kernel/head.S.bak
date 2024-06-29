@@ -199,7 +199,7 @@ pte_loop:
     add        $4096,%rbx
     loop       pte_loop                 //初始化pte
 /*
-    movabs     $PML4_VBASE,%rsi                 //移動到正式pml4e  0x0
+    movabs     $PML4_VBASE,%rsi         //移動到正式pml4e  0x0
     movabs     $__PML4T,%rdi
     movabs     pml4e_num,%rax
     mov        %rax,%rcx
@@ -439,7 +439,7 @@ int_msg:
     __PML4T:
     	.quad	0
     	.fill	0xFF8-(. -__PML4T),1,0
-    	.quad   (__PML4T- VBASEADDR)+0x7
+    	.quad   (__PML4T - VBASEADDR)+0x7
 
 
     .globl	TSS64_Table

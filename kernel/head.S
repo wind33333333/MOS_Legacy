@@ -142,8 +142,6 @@ interrupt_entry:
 //========================================正式内核数据=================================================
 .section    .data, "wa"
 
-    .globl IDT_Table1
-    IDT_Table1:
     .globl IDT_Table
     IDT_Table:
     	.fill  0x1000-(.-IDT_Table),1,0
