@@ -53,8 +53,8 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
         }
 
         for(unsigned int i=0;i<pml4e_num;i++){
-            __PML4T[i] = pml4t_vbase[i];            //修改正式内核PML4T
-            __PML4T[i+256] = pml4t_vbase[i];        //修改正式内核PML4T
+            //__PML4T[i] = pml4t_vbase[i];            //修改正式内核PML4T 低
+            __PML4T[i+256] = pml4t_vbase[i];        //修改正式内核PML4T 高
             pml4t_vbase[i] = pml4_bak[i];           //还原PML4E
         }
 
