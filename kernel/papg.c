@@ -32,28 +32,29 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
         addr = (unsigned long)pml4e_pbaseaddr;
 
         for(unsigned int i=0;i<pml4e_num;i++){
-            pml4_bak[i] = *(unsigned long*)(PML4_VBASE+i*sizeof(unsigned long));  //备份原PML4E
-            *(unsigned long*)(PML4_VBASE+i*sizeof(unsigned long)) = addr | 0x7;  //修改PML4E
+            pml4_bak[i] = pml4t_vbase[i];  //备份原PML4E
+            pml4t_vbase[i] = addr | 0x7;  //修改PML4E
             addr += 4096;
         }
 
         for(unsigned int i=0;i<pdpte_num;i++){
-            *(unsigned long*)(PDPT_VBASE+i*sizeof(unsigned long)) = addr | 0x7;  //修改PDPTE
+            pdptt_vbase[i] = addr | 0x7;  //修改PDPTE
             addr += 4096;
         }
 
         for(unsigned int i=0;i<pde_num;i++){
-            *(unsigned long*)(PD_VBASE+i*sizeof(unsigned long)) = addr | 0x3;  //修改PDE
+            pdt_vbase[i] = addr | 0x3;  //修改PDE
             addr += 4096;
         }
 
         for(unsigned long i=0;i<pte_num;i++){
-            *(unsigned long*)(PT_VBASE+i*sizeof(unsigned long)) = i * 0x1000 | 0x83;  //修改PTE
+            ptt_vbase[i] = i * 0x1000 | 0x83;  //修改PTE
         }
 
         for(unsigned int i=0;i<pml4e_num;i++){
-            *(unsigned long*)(PML4_VBASE+i*sizeof(unsigned long)) = pml4_bak[i];  //还原PML4E
-            __PML4T[i+256] = pml4e_pbaseaddr+i*4096;                              //修改正式内核PML4T
+            __PML4T[i] = pml4t_vbase[i];        //修改正式内核PML4T
+            __PML4T[i+256] = pml4t_vbase[i];        //修改正式内核PML4T
+            pml4t_vbase[i] = pml4_bak[i];  //还原PML4E
         }
 
 
@@ -65,10 +66,10 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
                      memory_management_struct.kernel_start,memory_management_struct.kernel_end);
     }
 
-//    addr = Virt_To_Phy(&__PML4T);
-//    __asm__ __volatile__(
-//            "mov    %%rax,%%cr3 \n\t"
-//            ::"a"(addr):);
+    addr = Virt_To_Phy(&__PML4T);
+    __asm__ __volatile__(
+            "mov    %%rax,%%cr3 \n\t"
+            ::"a"(addr):);
 
     return;
 }

@@ -7,10 +7,10 @@
 
 void papg_init(unsigned char bsp_flags);
 
-#define PML4_VBASE    0xFFFFFFFFFFFFF000     //pml4虚拟地址基址
-#define PDPT_VBASE    0xFFFFFFFFFFE00000     //pdpt虚拟地址基址
-#define PD_VBASE      0xFFFFFFFFC0000000     //pd虚拟地址基址
-#define PT_VBASE      0xFFFFFF8000000000     //pt虚拟地址基址
+unsigned long* pml4t_vbase = (unsigned long*)0xFFFFFFFFFFFFF000;  //pml4虚拟地址基址
+unsigned long* pdptt_vbase = (unsigned long*)0xFFFFFFFFFFE00000;  //pdpt虚拟地址基址
+unsigned long* pdt_vbase = (unsigned long*)0xFFFFFFFFC0000000;    //pd虚拟地址基址
+unsigned long* ptt_vbase = (unsigned long*)0xFFFFFF8000000000;    //pt虚拟地址基址
 
 extern unsigned long __PML4T[512];
 
