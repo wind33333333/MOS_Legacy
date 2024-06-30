@@ -22,7 +22,15 @@ __attribute__((section(".init_text"))) void ap_init(unsigned int cpu_id,unsigned
                 "wrmsr	\n\t"
                 :: :"%rax", "%rcx", "%rdx");
     }
+
     color_printk(GREEN, BLACK, "CPU%d init successful\n", cpu_id);
+
+    cpu_init_num++;
+
+    while(1){
+        if(cpu_init_num == cpu_info.cores_num)
+            break;
+    }
 
     return;
 }
