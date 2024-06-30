@@ -59,6 +59,8 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
         }
 
 
+
+
         color_printk(ORANGE, BLACK, "PML4E: %ld  PDPTE: %ld  PDE: %ld  PTE: %ld  pml4e_pbase: %#018lX\n",pml4e_num,pdpte_num,pde_num,pte_num,pml4e_pbaseaddr);
         color_printk(ORANGE, BLACK, "OS Can Used Total 4K PAGEs: %ld \tAlloc: %ld \tFree: %ld\n",
                      memory_management_struct.total_pages, memory_management_struct.alloc_pages,
