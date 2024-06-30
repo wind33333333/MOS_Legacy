@@ -3,6 +3,7 @@
 __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
 
     unsigned long addr = 0;
+
     if (bsp_flags) {
         unsigned long pml4e_num = 0;
         unsigned long pdpte_num = 0;
@@ -27,7 +28,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
         if (pdpte_num % 512)
             pml4e_num++;
 
-        pml4e_pbaseaddr = (unsigned long)alloc_pages(pml4e_num + pdpte_num + pde_num + pte_num);   //申请内核pml4e、pdpte、pde、pte页表空间
+        pml4e_pbaseaddr = (unsigned long)alloc_pages(pml4e_num + pdpte_num + pde_num);   //申请内核pml4e、pdpte、pde、pte页表空间
 
         addr = (unsigned long)pml4e_pbaseaddr;
 
@@ -52,9 +53,9 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
         }
 
         for(unsigned int i=0;i<pml4e_num;i++){
-            __PML4T[i] = pml4t_vbase[i];        //修改正式内核PML4T
+            __PML4T[i] = pml4t_vbase[i];            //修改正式内核PML4T
             __PML4T[i+256] = pml4t_vbase[i];        //修改正式内核PML4T
-            pml4t_vbase[i] = pml4_bak[i];  //还原PML4E
+            pml4t_vbase[i] = pml4_bak[i];           //还原PML4E
         }
 
 
