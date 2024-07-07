@@ -54,7 +54,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
         }
 
         for (unsigned int i = 0; i < pml4e_num; i++) {
-            //__PML4T[i] = pml4t_vbase[i];            //修改正式内核PML4T 低
+            //    __PML4T[i] = pml4t_vbase[i];            //修改正式内核PML4T 低
             __PML4T[i + 256] = pml4t_vbase[i];        //修改正式内核PML4T 高
             pml4t_vbase[i] = pml4_bak[i];           //还原PML4E
         }
@@ -74,7 +74,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
                 "mov    %%rax,%%cr3 \n\t"
                 ::"a"(addr):);
 
-        phy_to_virt()
+        phy_to_virt(Pos.FB_addr, Pos.FB_length);
 
     }
 
@@ -92,8 +92,8 @@ void phy_to_virt(unsigned long phy_addr, unsigned long phy_len) {
     x = 0;
     y = phy_len / 4096 / 512 / 512 / 512;
     do {
-        if (pml4t_vbase[(phy_addr & 0x0000FFFFFFFFFFFF >> 39) + 256 + x] == 0)
-            pml4t_vbase[(phy_addr & 0x0000FFFFFFFFFFFF >> 39) + 256 +
+        if (pml4t_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 39) + 256 + x] == 0)
+            pml4t_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 39) + 256 +
                         x] = (unsigned long) alloc_pages(
                     1) | 0x7;
         x++;
@@ -102,8 +102,8 @@ void phy_to_virt(unsigned long phy_addr, unsigned long phy_len) {
     x = 0;
     y = phy_len / 4096 / 512 / 512;
     do {
-        if (pdptt_vbase[(phy_addr & 0x0000FFFFFFFFFFFF >> 30) + x] == 0)
-            pdptt_vbase[(phy_addr & 0x0000FFFFFFFFFFFF >> 30) + x] =
+        if (pdptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 30) + 0x20000 + x] == 0)
+            pdptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 30) + 0x20000 + x] =
                     (unsigned long) alloc_pages(1) | 0x7;
         x++;
     } while (x < y);
@@ -111,8 +111,8 @@ void phy_to_virt(unsigned long phy_addr, unsigned long phy_len) {
     x = 0;
     y = phy_len / 4096 / 512;
     do {
-        if (pdt_vbase[(phy_addr & 0x0000FFFFFFFFFFFF >> 21) + x] == 0)
-            pdt_vbase[(phy_addr & 0x0000FFFFFFFFFFFF >> 21) + x] =
+        if (pdt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 21) + 0x4000000 + x] == 0)
+            pdt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 21) + 0x4000000 + x] =
                     (unsigned long) alloc_pages(1) | 0x3;
         x++;
     } while (x < y);
@@ -120,9 +120,9 @@ void phy_to_virt(unsigned long phy_addr, unsigned long phy_len) {
     x = 0;
     y = phy_len / 4096;
     do {
-        if (ptt_vbase[(phy_addr & 0x0000FFFFFFFFFFFF >> 12) + x] == 0)
-            ptt_vbase[(phy_addr & 0x0000FFFFFFFFFFFF >> 12) + x] =
-                    (phy_addr & 0x0000FFFFFFFFFFFF) + x * 4096 | 0x3;
+        if (ptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 12) + 0x800000000 + x] == 0)
+            ptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 12) + 0x800000000 + x] =
+                    (phy_addr & 0x0000FFFFFFFFFFFF) + x * 4096 | 0x83;
         x++;
     } while (x < y);
 
