@@ -54,7 +54,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
         }
 
         for (unsigned int i = 0; i < pml4e_num; i++) {
-            //    __PML4T[i] = pml4t_vbase[i];            //修改正式内核PML4T 低
+            //   __PML4T[i] = pml4t_vbase[i];            //修改正式内核PML4T 低
             __PML4T[i + 256] = pml4t_vbase[i];        //修改正式内核PML4T 高
             pml4t_vbase[i] = pml4_bak[i];           //还原PML4E
         }
@@ -87,44 +87,84 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
 }
 
 void phy_to_virt(unsigned long phy_addr, unsigned long phy_len) {
-    unsigned long x, y;
+    unsigned long y;
 
-    x = 0;
-    y = phy_len / 4096 / 512 / 512 / 512;
-    do {
-        if (pml4t_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 39) + 256 + x] == 0)
-            pml4t_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 39) + 256 +
-                        x] = (unsigned long) alloc_pages(
+    y = phy_len / (4096UL * 512 * 512 * 512);
+    if (phy_len % (4096UL * 512 * 512 * 512))
+        y++;
+    for (unsigned long i = 0; i < y; i++) {
+        if (pml4t_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 39) + i] == 0)
+            pml4t_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 39) +
+                        i] = (unsigned long) alloc_pages(
                     1) | 0x7;
-        x++;
-    } while (x < y);
+    }
 
-    x = 0;
-    y = phy_len / 4096 / 512 / 512;
-    do {
-        if (pdptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 30) + 0x20000 + x] == 0)
-            pdptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 30) + 0x20000 + x] =
+    y = phy_len / (4096UL * 512 * 512);
+    if (phy_len % (4096UL * 512 * 512))
+        y++;
+    for (unsigned long i = 0; i < y; i++) {
+        if (pdptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 30) + i] == 0)
+            pdptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 30) + i] =
                     (unsigned long) alloc_pages(1) | 0x7;
-        x++;
-    } while (x < y);
+    }
 
-    x = 0;
-    y = phy_len / 4096 / 512;
-    do {
-        if (pdt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 21) + 0x4000000 + x] == 0)
-            pdt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 21) + 0x4000000 + x] =
+    y = phy_len / (4096UL * 512);
+    if (phy_len % (4096UL * 512))
+        y++;
+    for (unsigned long i = 0; i < y; i++) {
+        if (pdt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 21) + i] == 0)
+            pdt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 21) + i] =
                     (unsigned long) alloc_pages(1) | 0x3;
-        x++;
-    } while (x < y);
+    }
 
-    x = 0;
     y = phy_len / 4096;
-    do {
-        if (ptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 12) + 0x800000000 + x] == 0)
-            ptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 12) + 0x800000000 + x] =
-                    (phy_addr & 0x0000FFFFFFFFFFFF) + x * 4096 | 0x83;
-        x++;
-    } while (x < y);
+    if (phy_len % 4096)
+        y++;
+    for (unsigned long i = 0; i < y; i++) {
+        if (ptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 12) + i] == 0)
+            ptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 12) + i] =
+                    (phy_addr & 0x0000FFFFFFFFFFFF) + i * 4096 | 0x83;
+    }
+
+/*
+    y = phy_len / (4096UL * 512 * 512 * 512);
+    if (phy_len % (4096UL * 512 * 512 * 512))
+        y++;
+    for (unsigned long i = 0; i < y; i++) {
+        if (pml4t_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 39) + 256 + i] == 0)
+            pml4t_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 39) + 256 +
+                        i] = (unsigned long) alloc_pages(
+                    1) | 0x7;
+    }
+
+    y = phy_len / (4096UL * 512 * 512);
+    if (phy_len % (4096UL * 512 * 512))
+        y++;
+    for (unsigned long i = 0; i < y; i++) {
+        if (pdptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 30) + 0x20000 + i] == 0)
+            pdptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 30) + 0x20000 + i] =
+                    (unsigned long) alloc_pages(1) | 0x7;
+    }
+
+    y = phy_len / (4096UL * 512);
+    if (phy_len % (4096UL * 512))
+        y++;
+    for (unsigned long i = 0; i < y; i++) {
+        if (pdt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 21) + 0x4000000 + i] == 0)
+            pdt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 21) + 0x4000000 + i] =
+                    (unsigned long) alloc_pages(1) | 0x3;
+    }
+
+    y = phy_len / 4096;
+    if (phy_len % 4096)
+        y++;
+    for (unsigned long i = 0; i < y; i++) {
+        if (ptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 12) + 0x800000000 + i] == 0)
+            ptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 12) + 0x800000000 + i] =
+                    (phy_addr & 0x0000FFFFFFFFFFFF) + i * 4096 | 0x83;
+    }
+*/
+
 
 
     return;
