@@ -359,7 +359,7 @@ __attribute__((section(".init_text"))) void pos_init(unsigned char bsp_flags) {
         Pos.XCharSize = 8;
         Pos.YCharSize = 16;
 
-        Pos.FB_addr = *(unsigned int *)0x628;
+        Pos.FB_addr = (unsigned long)Phy_To_Virt(*(unsigned int *)0x628);
         Pos.FB_length = (Pos.XResolution * Pos.YResolution * 4 + PAGE_4K_SIZE - 1) & PAGE_4K_MASK;
         Pos.lock = 0;
     }

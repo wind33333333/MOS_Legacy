@@ -87,83 +87,73 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
 }
 
 void phy_to_virt(unsigned long phy_addr, unsigned long phy_len) {
+
     unsigned long y;
+    unsigned long addr = Virt_To_Phy(phy_addr);
 
-    y = phy_len / (4096UL * 512 * 512 * 512);
+/*    y = phy_len / (4096UL * 512 * 512 * 512);
     if (phy_len % (4096UL * 512 * 512 * 512))
         y++;
     for (unsigned long i = 0; i < y; i++) {
-        if (pml4t_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 39) + i] == 0)
-            pml4t_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 39) +
-                        i] = (unsigned long) alloc_pages(
-                    1) | 0x7;
+        if (pml4t_vbase[(addr >> 39) + i] == 0)
+            pml4t_vbase[(addr >> 39) + i] = (unsigned long) alloc_pages(1) | 0x7;
     }
 
     y = phy_len / (4096UL * 512 * 512);
     if (phy_len % (4096UL * 512 * 512))
         y++;
     for (unsigned long i = 0; i < y; i++) {
-        if (pdptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 30) + i] == 0)
-            pdptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 30) + i] =
-                    (unsigned long) alloc_pages(1) | 0x7;
+        if (pdptt_vbase[(addr >> 30) + i] == 0)
+            pdptt_vbase[(addr >> 30) + i] = (unsigned long) alloc_pages(1) | 0x7;
     }
 
     y = phy_len / (4096UL * 512);
     if (phy_len % (4096UL * 512))
         y++;
     for (unsigned long i = 0; i < y; i++) {
-        if (pdt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 21) + i] == 0)
-            pdt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 21) + i] =
-                    (unsigned long) alloc_pages(1) | 0x3;
+        if (pdt_vbase[(addr >> 21) + i] == 0)
+            pdt_vbase[(addr >> 21) + i] = (unsigned long) alloc_pages(1) | 0x3;
     }
 
     y = phy_len / 4096;
     if (phy_len % 4096)
         y++;
     for (unsigned long i = 0; i < y; i++) {
-        if (ptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 12) + i] == 0)
-            ptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 12) + i] =
-                    (phy_addr & 0x0000FFFFFFFFFFFF) + i * 4096 | 0x83;
-    }
+        if (ptt_vbase[(addr >> 12) + i] == 0)
+            ptt_vbase[(addr >> 12) + i] = addr + i * 4096 | 0x83;
+    }*/
 
-/*
     y = phy_len / (4096UL * 512 * 512 * 512);
     if (phy_len % (4096UL * 512 * 512 * 512))
         y++;
     for (unsigned long i = 0; i < y; i++) {
-        if (pml4t_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 39) + 256 + i] == 0)
-            pml4t_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 39) + 256 +
-                        i] = (unsigned long) alloc_pages(
-                    1) | 0x7;
+        if (pml4t_vbase[(addr >> 39) + 256 + i] == 0)
+            pml4t_vbase[(addr >> 39) + 256 + i] = (unsigned long) alloc_pages(1) | 0x7;
     }
 
     y = phy_len / (4096UL * 512 * 512);
     if (phy_len % (4096UL * 512 * 512))
         y++;
     for (unsigned long i = 0; i < y; i++) {
-        if (pdptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 30) + 0x20000 + i] == 0)
-            pdptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 30) + 0x20000 + i] =
-                    (unsigned long) alloc_pages(1) | 0x7;
+        if (pdptt_vbase[(addr >> 30) + 0x20000 + i] == 0)
+            pdptt_vbase[(addr >> 30) + 0x20000 + i] = (unsigned long) alloc_pages(1) | 0x7;
     }
 
     y = phy_len / (4096UL * 512);
     if (phy_len % (4096UL * 512))
         y++;
     for (unsigned long i = 0; i < y; i++) {
-        if (pdt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 21) + 0x4000000 + i] == 0)
-            pdt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 21) + 0x4000000 + i] =
-                    (unsigned long) alloc_pages(1) | 0x3;
+        if (pdt_vbase[(addr >> 21) + 0x4000000 + i] == 0)
+            pdt_vbase[(addr >> 21) + 0x4000000 + i] = (unsigned long) alloc_pages(1) | 0x3;
     }
 
     y = phy_len / 4096;
     if (phy_len % 4096)
         y++;
     for (unsigned long i = 0; i < y; i++) {
-        if (ptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 12) + 0x800000000 + i] == 0)
-            ptt_vbase[((phy_addr & 0x0000FFFFFFFFFFFF) >> 12) + 0x800000000 + i] =
-                    (phy_addr & 0x0000FFFFFFFFFFFF) + i * 4096 | 0x83;
+        if (ptt_vbase[(addr >> 12) + 0x800000000 + i] == 0)
+            ptt_vbase[(addr >> 12) + 0x800000000 + i] = addr + i * 4096 | 0x83;
     }
-*/
 
 
 

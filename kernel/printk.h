@@ -52,7 +52,7 @@ struct position
 	int XCharSize;
 	int YCharSize;
 
-	unsigned int FB_addr;
+	unsigned long FB_addr;
 	unsigned long FB_length;
     char lock;
 }Pos;
