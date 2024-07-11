@@ -136,13 +136,13 @@ GO_TO_TMP_Protect:
     mov	esp,stackoffset32
 
 ;=======	init temporary page table 0x90000   1G大页
-	mov	dword	[0x90000],	0x91007
-	mov	dword	[0x90800],	0x91007
+	mov	dword	[0x90000],	0x91003
+	mov	dword	[0x90800],	0x91003
 	mov	dword	[0x91000],	    0x00000083      ;1G
 	mov	dword	[0x91000+8],    0x40000083      ;2G
 	mov	dword	[0x91000+16],   0x80000083      ;3G
 	mov	dword	[0x91000+24],   0xC0000083      ;4G
-	mov	dword	[0x90FF8],	    0x90007         ;递归映射 pml4基址0xFFFFFFFFFFFFF000 pdpt基址FFFFFFFFFFE00000
+	mov	dword	[0x90FF8],	    0x90003         ;递归映射 pml4基址0xFFFFFFFFFFFFF000 pdpt基址FFFFFFFFFFE00000
 
 ;=======	load GDTR
 	lgdt	[GdtPtr64]

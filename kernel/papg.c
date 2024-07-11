@@ -57,7 +57,7 @@ void kernel_mount_page(unsigned long phy_addr, unsigned long phy_len) {
         y++;
     for (unsigned long i = 0; i < y; i++) {
         if (kpml4t_vbase[(addr >> 39) + i] == 0) {
-            kpml4t_vbase[(addr >> 39) + i] = (unsigned long) alloc_pages(1) | 0x7;
+            kpml4t_vbase[(addr >> 39) + i] = (unsigned long) alloc_pages(1) | 0x3;
             memset(&kpdptt_vbase[(addr >> 30) + i * 512],0x0,4096);
         }
     }
@@ -67,7 +67,7 @@ void kernel_mount_page(unsigned long phy_addr, unsigned long phy_len) {
         y++;
     for (unsigned long i = 0; i < y; i++) {
         if (kpdptt_vbase[(addr >> 30) + i] == 0) {
-            kpdptt_vbase[(addr >> 30) + i] = (unsigned long) alloc_pages(1) | 0x7;
+            kpdptt_vbase[(addr >> 30) + i] = (unsigned long) alloc_pages(1) | 0x3;
             memset(&kpdt_vbase[(addr >> 30 <<9) + i * 512],0x0,4096);
         }
     }
@@ -89,7 +89,7 @@ void kernel_mount_page(unsigned long phy_addr, unsigned long phy_len) {
     for (unsigned long i = 0; i < y; i++) {
 
         if (kptt_vbase[(addr >> 12) + i] == 0)
-            kptt_vbase[(addr >> 12) + i] = addr + i * 4096 | 0x83;
+            kptt_vbase[(addr >> 12) + i] = addr + i * 4096 | 0x183;
     }
 
     return;
@@ -127,7 +127,7 @@ void user_mount_page(unsigned long phy_addr, unsigned long phy_len) {
     for (unsigned long i = 0; i < y; i++) {
 
         if (updt_vbase[(addr >> 21) + i] == 0) {
-            updt_vbase[(addr >> 21) + i] = (unsigned long) alloc_pages(1) | 0x3;
+            updt_vbase[(addr >> 21) + i] = (unsigned long) alloc_pages(1) | 0x7;
             memset(&uptt_vbase[(addr >> 21 << 9) + i * 512],0x0,4096);
         }
     }
@@ -138,7 +138,7 @@ void user_mount_page(unsigned long phy_addr, unsigned long phy_len) {
     for (unsigned long i = 0; i < y; i++) {
 
         if (uptt_vbase[(addr >> 12) + i] == 0)
-            uptt_vbase[(addr >> 12) + i] = addr + i * 4096 | 0x83;
+            uptt_vbase[(addr >> 12) + i] = addr + i * 4096 | 0x87;
     }
 
     return;
