@@ -151,4 +151,4 @@ interrupt_entry:
     __PML4T:
     	.quad	0
     	.fill	0xFF8-(. -__PML4T),1,0
-    	.quad   (__PML4T- VBASEADDR)+0x7
+    	.quad   (__PML4T- VBASEADDR)+0x3
