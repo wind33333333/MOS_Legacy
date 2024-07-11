@@ -7,6 +7,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
     if (bsp_flags) {
         unsigned long pml4_bak[256] = {0};
         unsigned long pml4e_num = Virt_To_Phy(memory_management_struct.kernel_end) / (4096UL * 512 * 512 * 512);
+
         if(Virt_To_Phy(memory_management_struct.kernel_end) % (4096UL * 512 * 512 * 512))
             pml4e_num++;
 
