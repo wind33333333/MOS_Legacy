@@ -106,7 +106,7 @@ void user_mount_page(unsigned long phy_addr, unsigned long phy_len) {
         y++;
     for (unsigned long i = 0; i < y; i++) {
         if (upml4t_vbase[(addr >> 39) + i] == 0) {
-            upml4t_vbase[(addr >> 39) + i] = (unsigned long) alloc_pages(1) | 0x7;
+            upml4t_vbase[(addr >> 39) + i] = (unsigned long) alloc_pages(1) | 0x3;
             memset(&updptt_vbase[(addr >> 30) + i * 512],0x0,4096);
         }
     }
@@ -116,7 +116,7 @@ void user_mount_page(unsigned long phy_addr, unsigned long phy_len) {
         y++;
     for (unsigned long i = 0; i < y; i++) {
         if (updptt_vbase[(addr >> 30) + i] == 0) {
-            updptt_vbase[(addr >> 30) + i] = (unsigned long) alloc_pages(1) | 0x7;
+            updptt_vbase[(addr >> 30) + i] = (unsigned long) alloc_pages(1) | 0x3;
             memset(&updt_vbase[(addr >> 30 <<9) + i * 512],0x0,4096);
         }
     }
@@ -127,7 +127,7 @@ void user_mount_page(unsigned long phy_addr, unsigned long phy_len) {
     for (unsigned long i = 0; i < y; i++) {
 
         if (updt_vbase[(addr >> 21) + i] == 0) {
-            updt_vbase[(addr >> 21) + i] = (unsigned long) alloc_pages(1) | 0x7;
+            updt_vbase[(addr >> 21) + i] = (unsigned long) alloc_pages(1) | 0x3;
             memset(&uptt_vbase[(addr >> 21 << 9) + i * 512],0x0,4096);
         }
     }
@@ -138,7 +138,7 @@ void user_mount_page(unsigned long phy_addr, unsigned long phy_len) {
     for (unsigned long i = 0; i < y; i++) {
 
         if (uptt_vbase[(addr >> 12) + i] == 0)
-            uptt_vbase[(addr >> 12) + i] = addr + i * 4096 | 0x87;
+            uptt_vbase[(addr >> 12) + i] = addr + i * 4096 | 0x183;
     }
 
     return;
