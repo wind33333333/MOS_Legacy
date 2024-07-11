@@ -6,8 +6,8 @@
 #include "cpuinfo.h"
 
 void papg_init(unsigned char bsp_flags);
-void kphy_to_virt(unsigned long phy_addr, unsigned long phy_len);
-void uphy_to_virt(unsigned long phy_addr, unsigned long phy_len);
+void kernel_mount_page(unsigned long phy_addr, unsigned long phy_len);
+void user_mount_page(unsigned long phy_addr, unsigned long phy_len);
 
 unsigned long* upml4t_vbase = (unsigned long*)0xFFFFFFFFFFFFF000;  //用户pml4虚拟地址基址
 unsigned long* updptt_vbase = (unsigned long*)0xFFFFFFFFFFE00000;  //用户pdpt虚拟地址基址

@@ -5,6 +5,26 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
     unsigned long addr = 0;
 
     if (bsp_flags) {
+        unsigned long pml4_bak[256] = {0};
+        unsigned long pml4e_num = Virt_To_Phy(memory_management_struct.kernel_end) / (4096UL * 512 * 512 * 512);
+        if(Virt_To_Phy(memory_management_struct.kernel_end) % (4096UL * 512 * 512 * 512))
+            pml4e_num++;
+
+        for (unsigned int i = 0; i < pml4e_num; i++) {
+            pml4_bak[i] = upml4t_vbase[i];  //备份原PML4E
+            upml4t_vbase[i] = 0x0UL;        //清除PML4E
+        }
+
+        user_mount_page(0, Virt_To_Phy(memory_management_struct.kernel_end));
+
+        for (unsigned int i = 0; i < pml4e_num; i++) {
+            //   __PML4T[i] = upml4t_vbase[i];            //修改正式内核PML4T 低
+            __PML4T[i + 256] = upml4t_vbase[i];        //修改正式内核PML4T 高
+            upml4t_vbase[i] = pml4_bak[i];           //还原PML4E
+        }
+
+/*
+
         unsigned long pml4e_num = 0;
         unsigned long pdpte_num = 0;
         unsigned long pde_num = 0;
@@ -58,11 +78,12 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
             __PML4T[i + 256] = upml4t_vbase[i];        //修改正式内核PML4T 高
             upml4t_vbase[i] = pml4_bak[i];           //还原PML4E
         }
+*/
 
 
-        color_printk(ORANGE, BLACK,
+/*        color_printk(ORANGE, BLACK,
                      "PML4E: %ld  PDPTE: %ld  PDE: %ld  PTE: %ld  pml4e_pbase: %#018lX\n",
-                     pml4e_num, pdpte_num, pde_num, pte_num, pml4e_pbaseaddr);
+                     pml4e_num, pdpte_num, pde_num, pte_num, pml4e_pbaseaddr);*/
         color_printk(ORANGE, BLACK, "OS Can Used Total 4K PAGEs: %ld \tAlloc: %ld \tFree: %ld\n",
                      memory_management_struct.total_pages, memory_management_struct.alloc_pages,
                      memory_management_struct.free_pages);
@@ -74,7 +95,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
                 "mov    %%rax,%%cr3 \n\t"
                 ::"a"(addr):);
 
-        kphy_to_virt(Pos.FB_addr, Pos.FB_length);
+        kernel_mount_page(Pos.FB_addr, Pos.FB_length);
 
     }
 
@@ -86,7 +107,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
     return;
 }
 
-void kphy_to_virt(unsigned long phy_addr, unsigned long phy_len) {
+void kernel_mount_page(unsigned long phy_addr, unsigned long phy_len) {
 
     unsigned long y;
     unsigned long addr = Virt_To_Phy(phy_addr);
@@ -135,7 +156,7 @@ void kphy_to_virt(unsigned long phy_addr, unsigned long phy_len) {
 }
 
 
-void uphy_to_virt(unsigned long phy_addr, unsigned long phy_len) {
+void user_mount_page(unsigned long phy_addr, unsigned long phy_len) {
 
     unsigned long y;
     unsigned long addr = Virt_To_Phy(phy_addr);
