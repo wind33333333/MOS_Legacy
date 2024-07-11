@@ -107,7 +107,7 @@ void kphy_to_virt(unsigned long phy_addr, unsigned long phy_len) {
     for (unsigned long i = 0; i < y; i++) {
         if (kpdptt_vbase[(addr >> 30) + i] == 0) {
             kpdptt_vbase[(addr >> 30) + i] = (unsigned long) alloc_pages(1) | 0x7;
-            memset(&kpdt_vbase[(addr >> 30 <<9) + i * 512],0xFF,4096);
+            memset(&kpdt_vbase[(addr >> 30 <<9) + i * 512],0x0,4096);
         }
     }
 
@@ -134,5 +134,53 @@ void kphy_to_virt(unsigned long phy_addr, unsigned long phy_len) {
     return;
 }
 
+
+void uphy_to_virt(unsigned long phy_addr, unsigned long phy_len) {
+
+    unsigned long y;
+    unsigned long addr = Virt_To_Phy(phy_addr);
+
+    y = phy_len / (4096UL * 512 * 512 * 512);
+    if (phy_len % (4096UL * 512 * 512 * 512))
+        y++;
+    for (unsigned long i = 0; i < y; i++) {
+        if (upml4t_vbase[(addr >> 39) + i] == 0) {
+            upml4t_vbase[(addr >> 39) + i] = (unsigned long) alloc_pages(1) | 0x7;
+            memset(&updptt_vbase[(addr >> 30) + i * 512],0x0,4096);
+        }
+    }
+
+    y = phy_len / (4096UL * 512 * 512);
+    if (phy_len % (4096UL * 512 * 512))
+        y++;
+    for (unsigned long i = 0; i < y; i++) {
+        if (updptt_vbase[(addr >> 30) + i] == 0) {
+            updptt_vbase[(addr >> 30) + i] = (unsigned long) alloc_pages(1) | 0x7;
+            memset(&updt_vbase[(addr >> 30 <<9) + i * 512],0x0,4096);
+        }
+    }
+
+    y = phy_len / (4096UL * 512);
+    if (phy_len % (4096UL * 512))
+        y++;
+    for (unsigned long i = 0; i < y; i++) {
+
+        if (updt_vbase[(addr >> 21) + i] == 0) {
+            updt_vbase[(addr >> 21) + i] = (unsigned long) alloc_pages(1) | 0x3;
+            memset(&uptt_vbase[(addr >> 21 << 9) + i * 512],0x0,4096);
+        }
+    }
+
+    y = phy_len / 4096;
+    if (phy_len % 4096)
+        y++;
+    for (unsigned long i = 0; i < y; i++) {
+
+        if (uptt_vbase[(addr >> 12) + i] == 0)
+            uptt_vbase[(addr >> 12) + i] = addr + i * 4096 | 0x83;
+    }
+
+    return;
+}
 
 
