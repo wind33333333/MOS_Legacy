@@ -12,16 +12,16 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
             pml4e_num++;
 
         for (unsigned int i = 0; i < pml4e_num; i++) {
-            pml4_bak[i] = upml4t_vbase[i];  //备份原PML4E
-            upml4t_vbase[i] = 0x0UL;        //清除PML4E
+            pml4_bak[i] = pml4t_vbase[i];  //备份原PML4E
+            pml4t_vbase[i] = 0x0UL;        //清除PML4E
         }
 
-        user_mount_page(0, Virt_To_Phy(memory_management_struct.kernel_end));
+        mount_page(0, Virt_To_Phy(memory_management_struct.kernel_end),0x3);
 
         for (unsigned int i = 0; i < pml4e_num; i++) {
-            //   __PML4T[i] = upml4t_vbase[i];            //修改正式内核PML4T 低
-            __PML4T[i + 256] = upml4t_vbase[i];        //修改正式内核PML4T 高
-            upml4t_vbase[i] = pml4_bak[i];           //还原PML4E
+            //   __PML4T[i] = pml4t_vbase[i];            //修改正式内核PML4T 低
+            __PML4T[i + 256] = pml4t_vbase[i];        //修改正式内核PML4T 高
+            pml4t_vbase[i] = pml4_bak[i];             //还原PML4E
         }
 
         color_printk(ORANGE, BLACK, "OS Can Used Total 4K PAGEs: %ld \tAlloc: %ld \tFree: %ld\n",
@@ -35,7 +35,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
                 "mov    %%rax,%%cr3 \n\t"
                 ::"a"(addr):);
 
-        kernel_mount_page(Pos.FB_addr, Pos.FB_length);
+        mount_page(Pos.FB_addr, Pos.FB_length,0x3);
 
     }
 
@@ -47,101 +47,53 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
     return;
 }
 
-void kernel_mount_page(unsigned long phy_addr, unsigned long phy_len) {
+void mount_page(unsigned long addrs, unsigned long len,unsigned long attr) {
 
     unsigned long y;
-    unsigned long addr = Virt_To_Phy(phy_addr);
+    unsigned long addr = addrs & 0xFFFFFFFFFFFFUL;
 
-    y = phy_len / (4096UL * 512 * 512 * 512);
-    if (phy_len % (4096UL * 512 * 512 * 512))
+    y = len / (4096UL * 512 * 512 * 512);
+    if (len % (4096UL * 512 * 512 * 512))
         y++;
     for (unsigned long i = 0; i < y; i++) {
-        if (kpml4t_vbase[(addr >> 39) + i] == 0) {
-            kpml4t_vbase[(addr >> 39) + i] = (unsigned long) alloc_pages(1) | 0x3;
-            memset(&kpdptt_vbase[(addr >> 30) + i * 512],0x0,4096);
+        if (pml4t_vbase[(addr >> 39) + i] == 0) {
+            pml4t_vbase[(addr >> 39) + i] = (unsigned long) alloc_pages(1) | 0x3;
+            memset(&pdptt_vbase[(addr >> 30) + i * 512],0x0,4096);
         }
     }
 
-    y = phy_len / (4096UL * 512 * 512);
-    if (phy_len % (4096UL * 512 * 512))
+    y = len / (4096UL * 512 * 512);
+    if (len % (4096UL * 512 * 512))
         y++;
     for (unsigned long i = 0; i < y; i++) {
-        if (kpdptt_vbase[(addr >> 30) + i] == 0) {
-            kpdptt_vbase[(addr >> 30) + i] = (unsigned long) alloc_pages(1) | 0x3;
-            memset(&kpdt_vbase[(addr >> 30 <<9) + i * 512],0x0,4096);
+        if (pdptt_vbase[(addr >> 30) + i] == 0) {
+            pdptt_vbase[(addr >> 30) + i] = (unsigned long) alloc_pages(1) | 0x3;
+            memset(&pdt_vbase[(addr >> 30 <<9) + i * 512],0x0,4096);
         }
     }
 
-    y = phy_len / (4096UL * 512);
-    if (phy_len % (4096UL * 512))
+    y = len / (4096UL * 512);
+    if (len % (4096UL * 512))
         y++;
     for (unsigned long i = 0; i < y; i++) {
 
-        if (kpdt_vbase[(addr >> 21) + i] == 0) {
-            kpdt_vbase[(addr >> 21) + i] = (unsigned long) alloc_pages(1) | 0x3;
-            memset(&kptt_vbase[(addr >> 21 << 9) + i * 512],0x0,4096);
+        if (pdt_vbase[(addr >> 21) + i] == 0) {
+            pdt_vbase[(addr >> 21) + i] = (unsigned long) alloc_pages(1) | 0x3;
+            memset(&ptt_vbase[(addr >> 21 << 9) + i * 512],0x0,4096);
         }
     }
 
-    y = phy_len / 4096;
-    if (phy_len % 4096)
+    y = len / 4096;
+    if (len % 4096)
         y++;
     for (unsigned long i = 0; i < y; i++) {
 
-        if (kptt_vbase[(addr >> 12) + i] == 0)
-            kptt_vbase[(addr >> 12) + i] = addr + i * 4096 | 0x183;
+        if (ptt_vbase[(addr >> 12) + i] == 0)
+            ptt_vbase[(addr >> 12) + i] = addr + i * 4096 | 0x183;
     }
 
     return;
 }
 
-
-void user_mount_page(unsigned long phy_addr, unsigned long phy_len) {
-
-    unsigned long y;
-    unsigned long addr = Virt_To_Phy(phy_addr);
-
-    y = phy_len / (4096UL * 512 * 512 * 512);
-    if (phy_len % (4096UL * 512 * 512 * 512))
-        y++;
-    for (unsigned long i = 0; i < y; i++) {
-        if (upml4t_vbase[(addr >> 39) + i] == 0) {
-            upml4t_vbase[(addr >> 39) + i] = (unsigned long) alloc_pages(1) | 0x3;
-            memset(&updptt_vbase[(addr >> 30) + i * 512],0x0,4096);
-        }
-    }
-
-    y = phy_len / (4096UL * 512 * 512);
-    if (phy_len % (4096UL * 512 * 512))
-        y++;
-    for (unsigned long i = 0; i < y; i++) {
-        if (updptt_vbase[(addr >> 30) + i] == 0) {
-            updptt_vbase[(addr >> 30) + i] = (unsigned long) alloc_pages(1) | 0x3;
-            memset(&updt_vbase[(addr >> 30 <<9) + i * 512],0x0,4096);
-        }
-    }
-
-    y = phy_len / (4096UL * 512);
-    if (phy_len % (4096UL * 512))
-        y++;
-    for (unsigned long i = 0; i < y; i++) {
-
-        if (updt_vbase[(addr >> 21) + i] == 0) {
-            updt_vbase[(addr >> 21) + i] = (unsigned long) alloc_pages(1) | 0x3;
-            memset(&uptt_vbase[(addr >> 21 << 9) + i * 512],0x0,4096);
-        }
-    }
-
-    y = phy_len / 4096;
-    if (phy_len % 4096)
-        y++;
-    for (unsigned long i = 0; i < y; i++) {
-
-        if (uptt_vbase[(addr >> 12) + i] == 0)
-            uptt_vbase[(addr >> 12) + i] = addr + i * 4096 | 0x183;
-    }
-
-    return;
-}
 
 
