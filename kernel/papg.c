@@ -19,7 +19,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
         mount_page(0, Virt_To_Phy(memory_management_struct.kernel_end),0x3);
 
         for (unsigned int i = 0; i < pml4e_num; i++) {
-            //   __PML4T[i] = pml4t_vbase[i];            //修改正式内核PML4T 低
+            //__PML4T[i] = pml4t_vbase[i];            //修改正式内核PML4T 低
             __PML4T[i + 256] = pml4t_vbase[i];        //修改正式内核PML4T 高
             pml4t_vbase[i] = pml4_bak[i];             //还原PML4E
         }
@@ -51,6 +51,7 @@ void mount_page(unsigned long addrs, unsigned long len,unsigned long attr) {
 
     unsigned long y;
     unsigned long addr = addrs & 0xFFFFFFFFFFFFUL;
+    unsigned long paddr = Virt_To_Phy(addrs);
 
     y = len / (4096UL * 512 * 512 * 512);
     if (len % (4096UL * 512 * 512 * 512))
@@ -58,7 +59,7 @@ void mount_page(unsigned long addrs, unsigned long len,unsigned long attr) {
     for (unsigned long i = 0; i < y; i++) {
         if (pml4t_vbase[(addr >> 39) + i] == 0) {
             pml4t_vbase[(addr >> 39) + i] = (unsigned long) alloc_pages(1) | 0x3;
-            memset(&pdptt_vbase[(addr >> 30) + i * 512],0x0,4096);
+            memset(&pdptt_vbase[(addr >> 39 <<9) + i * 512],0x0,4096);
         }
     }
 
@@ -89,7 +90,7 @@ void mount_page(unsigned long addrs, unsigned long len,unsigned long attr) {
     for (unsigned long i = 0; i < y; i++) {
 
         if (ptt_vbase[(addr >> 12) + i] == 0)
-            ptt_vbase[(addr >> 12) + i] = addr + i * 4096 | 0x183;
+            ptt_vbase[(addr >> 12) + i] = paddr + i * 4096 | 0x183;
     }
 
     return;
