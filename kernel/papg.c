@@ -16,7 +16,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
             pml4t_vbase[i] = 0x0UL;        //清除PML4E
         }
 
-        mount_page(0, Virt_To_Phy(memory_management_struct.kernel_end),0x3);
+        mount_page(0, Virt_To_Phy(memory_management_struct.kernel_end),PAPG_G|PAPG_PAT|PAPG_RW|PAPG_P);
 
         for (unsigned int i = 0; i < pml4e_num; i++) {
             //__PML4T[i] = pml4t_vbase[i];            //修改正式内核PML4T 低
@@ -35,7 +35,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
                 "mov    %%rax,%%cr3 \n\t"
                 ::"a"(addr):);
 
-        mount_page(Pos.FB_addr, Pos.FB_length,0x3);
+        mount_page(Pos.FB_addr, Pos.FB_length,PAPG_G|PAPG_PAT|PAPG_RW|PAPG_P);
 
     }
 
@@ -58,7 +58,7 @@ void mount_page(unsigned long addr, unsigned long len,unsigned long attr) {
         y++;
     for (unsigned long i = 0; i < y; i++) {
         if (pml4t_vbase[(offset >> 39) + i] == 0) {
-            pml4t_vbase[(offset >> 39) + i] = (unsigned long) alloc_pages(1) | 0x3;
+            pml4t_vbase[(offset >> 39) + i] = (unsigned long) alloc_pages(1) | (attr & 0x3F);
             memset(&pdptt_vbase[(offset >> 39 <<9) + i * 512],0x0,4096);
         }
     }
@@ -68,7 +68,7 @@ void mount_page(unsigned long addr, unsigned long len,unsigned long attr) {
         y++;
     for (unsigned long i = 0; i < y; i++) {
         if (pdptt_vbase[(offset >> 30) + i] == 0) {
-            pdptt_vbase[(offset >> 30) + i] = (unsigned long) alloc_pages(1) | 0x3;
+            pdptt_vbase[(offset >> 30) + i] = (unsigned long) alloc_pages(1) | (attr & 0x3F);
             memset(&pdt_vbase[(offset >> 30 <<9) + i * 512],0x0,4096);
         }
     }
@@ -79,7 +79,7 @@ void mount_page(unsigned long addr, unsigned long len,unsigned long attr) {
     for (unsigned long i = 0; i < y; i++) {
 
         if (pdt_vbase[(offset >> 21) + i] == 0) {
-            pdt_vbase[(offset >> 21) + i] = (unsigned long) alloc_pages(1) | 0x3;
+            pdt_vbase[(offset >> 21) + i] = (unsigned long) alloc_pages(1) | (attr & 0x3F);
             memset(&ptt_vbase[(offset >> 21 << 9) + i * 512],0x0,4096);
         }
     }
@@ -90,7 +90,11 @@ void mount_page(unsigned long addr, unsigned long len,unsigned long attr) {
     for (unsigned long i = 0; i < y; i++) {
 
         if (ptt_vbase[(offset >> 12) + i] == 0)
-            ptt_vbase[(offset >> 12) + i] = paddr + i * 4096 | 0x183;
+            ptt_vbase[(offset >> 12) + i] = paddr + i * 4096 | attr;
+    }
+
+    for (int i = 0; i < (len / 4096); ++i) {
+        FULSH_TLB_PAGE(addr + i * 4096);
     }
 
     return;

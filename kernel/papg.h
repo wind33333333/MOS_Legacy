@@ -15,4 +15,19 @@ unsigned long* ptt_vbase = (unsigned long*)0xFFFFFF8000000000;    //pt虚拟地�
 
 extern unsigned long __PML4T[512];
 
+#define FULSH_TLB_PAGE(addr) \
+        do{                     \
+        __asm__ __volatile__("invlpg (%0)"::"r"(addr):"memory"); \
+        }while(0)
+
+#define PAPG_G      1UL<<8
+#define PAPG_PAT    1UL<<7
+#define PAPG_D      1UL<<6
+#define PAPG_A      1UL<<5
+#define PAPG_PCD    1UL<<4
+#define PAPG_PWT    1UL<<3
+#define PAPG_US     1UL<<2
+#define PAPG_RW     1UL<<1
+#define PAPG_P      1UL<<0
+
 #endif
