@@ -6,7 +6,7 @@
 #include "cpuinfo.h"
 
 void papg_init(unsigned char bsp_flags);
-void mount_page(unsigned long addrs, unsigned long len,unsigned long attr);
+void mount_page(unsigned long addr, unsigned long len,unsigned long attr);
 
 unsigned long* pml4t_vbase = (unsigned long*)0xFFFFFFFFFFFFF000;  //pml4虚拟地址基址
 unsigned long* pdptt_vbase = (unsigned long*)0xFFFFFFFFFFE00000;  //pdpt虚拟地址基址
