@@ -7,7 +7,7 @@
 #include "hpet.h"
 
 void papg_init(unsigned char bsp_flags);
-void mount_page(unsigned long addr, unsigned long len,unsigned long attr);
+void mount_page(unsigned long paddr, unsigned long vaddr,unsigned long len, unsigned long attr);
 void umount_page(unsigned long addr, unsigned long len);
 
 unsigned long* pml4t_vbase = (unsigned long*)0xFFFFFFFFFFFFF000;  //pml4虚拟地址基址
@@ -31,5 +31,6 @@ extern unsigned long __PML4T[512];
 #define PAPG_US     1UL<<2
 #define PAPG_RW     1UL<<1
 #define PAPG_P      1UL<<0
+
 
 #endif
