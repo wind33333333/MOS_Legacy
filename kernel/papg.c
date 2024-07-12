@@ -36,6 +36,9 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
                 ::"a"(addr):);
 
         mount_page(Pos.FB_addr, Pos.FB_length,PAPG_G|PAPG_PAT|PAPG_RW|PAPG_P);
+        mount_page((unsigned long )ioapic_baseaddr,4096,PAPG_G|PAPG_PAT|PAPG_PCD|PAPG_PWT|PAPG_RW|PAPG_P);
+        mount_page(hpet_attr.baseaddr,4096,PAPG_G|PAPG_PAT|PAPG_PCD|PAPG_PWT|PAPG_RW|PAPG_P);
+
 
     }
 

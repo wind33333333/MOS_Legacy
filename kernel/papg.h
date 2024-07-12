@@ -4,6 +4,7 @@
 #include "printk.h"
 #include "memory.h"
 #include "cpuinfo.h"
+#include "hpet.h"
 
 void papg_init(unsigned char bsp_flags);
 void mount_page(unsigned long addr, unsigned long len,unsigned long attr);

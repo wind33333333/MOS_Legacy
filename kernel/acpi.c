@@ -21,7 +21,7 @@ __attribute__((section(".init_text"))) void acpi_init(unsigned char bsp_flags) {
                     break;
                 case 0x54455048:        //"HPET"
                     hpet = (HPET *) rsdt->Entry[i];
-                    hpet_attr.baseaddr = hpet->BaseAddressUpper;
+                    hpet_attr.baseaddr = (unsigned long)Phy_To_Virt(hpet->BaseAddressUpper);
                     break;
             }
         }
@@ -32,7 +32,7 @@ __attribute__((section(".init_text"))) void acpi_init(unsigned char bsp_flags) {
         for (unsigned int i = 0; i < ((madt->Length - 44) / 2); i++) {
             if ((madt->Header[i].Type == 1) && (madt->Header[i].Length == 0xC)) {
                 ioapic = (IOAPIC *) &madt->Header[i];
-                ioapic_baseaddr = (unsigned int *) ioapic->ioapic_address;
+                ioapic_baseaddr = Phy_To_Virt((unsigned int *) ioapic->ioapic_address);
             } else if ((madt->Header[i].Type == 2) && (madt->Header[i].Length == 0xA)) {
                 isr = (InterruptSourceOverride *) &madt->Header[i];
                 irq_to_gsi[j].IRQ = isr->Source;

@@ -5,6 +5,7 @@
 #include "lib.h"
 #include "printk.h"
 #include "memory.h"
+#include "ioapic.h"
 
 #define ENABLE_HPET_TIMES(TIMS_CONF,TIMS_COMP,TIME,MODEL,IRQ) \
         do {   \
