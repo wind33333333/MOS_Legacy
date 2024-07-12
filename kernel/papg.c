@@ -129,6 +129,7 @@ void umount_page(unsigned long addr, unsigned long len) {
     if (len % (4096UL * 512))
         y++;
     for (unsigned long i = 0; i < y; i++) {
+        pdt_vbase[(offset >> 21) + i] = 0;
         free_pages((void*)(pdt_vbase[(offset >> 21) + i] & PAGE_4K_MASK), 1);
     }
 
@@ -136,6 +137,7 @@ void umount_page(unsigned long addr, unsigned long len) {
     if (len % (4096UL * 512 * 512))
         y++;
     for (unsigned long i = 0; i < y; i++) {
+        pdptt_vbase[(offset >> 30) + i] = 0;
         free_pages((void *)(pdptt_vbase[(offset >> 30) + i] & PAGE_4K_MASK), 1);
     }
 
@@ -143,6 +145,7 @@ void umount_page(unsigned long addr, unsigned long len) {
     if (len % (4096UL * 512 * 512 * 512))
         y++;
     for (unsigned long i = 0; i < y; i++) {
+        pml4t_vbase[(offset >> 39) + i] = 0;
         free_pages((void *)(pml4t_vbase[(offset >> 39) + i] & PAGE_4K_MASK), 1);
     }
 
