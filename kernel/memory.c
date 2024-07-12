@@ -146,5 +146,6 @@ int free_pages(void *pages_addr, unsigned long required_length) {
     }
     memory_management_struct.alloc_pages -= required_length;
     memory_management_struct.free_pages += required_length;
+    memory_management_struct.lock = 0;
     return 0;
 }
