@@ -44,6 +44,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
                    PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
 
 
+        umount_page(hpet_attr.baseaddr, 4096);
     }
 
     addr = Virt_To_Phy(&__PML4T);
@@ -117,7 +118,7 @@ void umount_page(unsigned long addr, unsigned long len) {
     if (len % 4096)
         y++;
     for (unsigned long i = 0; i < y; i++) {
-            ptt_vbase[(offset >> 12) + i] = 0;
+        ptt_vbase[(offset >> 12) + i] = 0;
     }
 
     for (unsigned long i = 0; i < (len / 4096); i++) {
@@ -128,21 +129,21 @@ void umount_page(unsigned long addr, unsigned long len) {
     if (len % (4096UL * 512))
         y++;
     for (unsigned long i = 0; i < y; i++) {
-        free_pages((void*)pdt_vbase[(offset >> 21) + i],1);
+        free_pages((void*)(pdt_vbase[(offset >> 21) + i] & PAGE_4K_MASK), 1);
     }
 
     y = len / (4096UL * 512 * 512);
     if (len % (4096UL * 512 * 512))
         y++;
     for (unsigned long i = 0; i < y; i++) {
-        free_pages((void*)pdptt_vbase[(offset >> 30) + i],1);
-        }
+        free_pages((void *)(pdptt_vbase[(offset >> 30) + i] & PAGE_4K_MASK), 1);
+    }
 
     y = len / (4096UL * 512 * 512 * 512);
     if (len % (4096UL * 512 * 512 * 512))
         y++;
     for (unsigned long i = 0; i < y; i++) {
-        free_pages((void*)pml4t_vbase[(offset >> 39) + i],1);
+        free_pages((void *)(pml4t_vbase[(offset >> 39) + i] & PAGE_4K_MASK), 1);
     }
 
 
