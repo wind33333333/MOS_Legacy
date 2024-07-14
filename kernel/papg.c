@@ -46,8 +46,8 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
                    PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
 
 
-        mount_page((unsigned long) alloc_pages(0x200000 / 0x1000), 0x300000, 0x200000 / 0x1000,
-                   PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
+        //mount_page((unsigned long) alloc_pages(0x200000 / 0x1000), 0x300000, 0x400,
+         //          PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
         //umount_page(Pos.FB_addr, Pos.FB_length);
     }
 
@@ -82,7 +82,7 @@ void mount_page(unsigned long paddr, unsigned long vaddr, unsigned long len, uns
         }
     }
 
-    y = (len + (512 - 1)) / 512;
+    y = (len + (512UL - 1)) / 512;
     y++;
     for (unsigned long i = 0; i < y; i++) {
         if (pdt_vbase[(offset >> 21) + i] == 0) {
@@ -92,7 +92,6 @@ void mount_page(unsigned long paddr, unsigned long vaddr, unsigned long len, uns
     }
 
     for (unsigned long i = 0; i < len; i++) {
-
         if (ptt_vbase[(offset >> 12) + i] == 0)
             ptt_vbase[(offset >> 12) + i] = (paddr & PAGE_4K_MASK) + i * 4096 | attr;
     }
