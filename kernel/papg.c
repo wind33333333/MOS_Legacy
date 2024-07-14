@@ -18,7 +18,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
         }
 
         mount_page(0, 0,
-                   Virt_To_Phy(memory_management_struct.kernel_end),
+                   Virt_To_Phy(memory_management_struct.kernel_end) / 4096,
                    PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
 
         for (unsigned int i = 0; i < pml4e_num; i++) {
@@ -38,14 +38,16 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
                 "mov    %%rax,%%cr3 \n\t"
                 ::"a"(addr):);
 
-        mount_page(Virt_To_Phy(Pos.FB_addr), Pos.FB_addr, Pos.FB_length,
+        mount_page(Virt_To_Phy(Pos.FB_addr), Pos.FB_addr, Pos.FB_length / 4096,
                    PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
-        mount_page(Virt_To_Phy(ioapic_baseaddr), (unsigned long) ioapic_baseaddr, 4096,
+        mount_page(Virt_To_Phy(ioapic_baseaddr), (unsigned long) ioapic_baseaddr, 1,
                    PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
-        mount_page(Virt_To_Phy(hpet_attr.baseaddr), hpet_attr.baseaddr, 4096,
+        mount_page(Virt_To_Phy(hpet_attr.baseaddr), hpet_attr.baseaddr, 0x1,
                    PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
 
 
+        mount_page((unsigned long) alloc_pages(0x200000 / 0x1000), 0x300000, 0x200000 / 0x1000,
+                   PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
         //umount_page(Pos.FB_addr, Pos.FB_length);
     }
 
@@ -62,9 +64,8 @@ void mount_page(unsigned long paddr, unsigned long vaddr, unsigned long len, uns
     unsigned long y;
     unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
 
-    y = len / (4096UL * 512 * 512 * 512);
-    if (len % (4096UL * 512 * 512 * 512))
-        y++;
+    y = (len + (512UL * 512 * 512 - 1)) / (512UL * 512 * 512);
+    y++;
     for (unsigned long i = 0; i < y; i++) {
         if (pml4t_vbase[(offset >> 39) + i] == 0) {
             pml4t_vbase[(offset >> 39) + i] = (unsigned long) alloc_pages(1) | (attr & 0x3F);
@@ -72,9 +73,8 @@ void mount_page(unsigned long paddr, unsigned long vaddr, unsigned long len, uns
         }
     }
 
-    y = len / (4096UL * 512 * 512);
-    if (len % (4096UL * 512 * 512))
-        y++;
+    y = (len + (512UL * 512 - 1)) / (512UL * 512);
+    y++;
     for (unsigned long i = 0; i < y; i++) {
         if (pdptt_vbase[(offset >> 30) + i] == 0) {
             pdptt_vbase[(offset >> 30) + i] = (unsigned long) alloc_pages(1) | (attr & 0x3F);
@@ -82,28 +82,23 @@ void mount_page(unsigned long paddr, unsigned long vaddr, unsigned long len, uns
         }
     }
 
-    y = len / (4096UL * 512);
-    if (len % (4096UL * 512))
-        y++;
+    y = (len + (512 - 1)) / 512;
+    y++;
     for (unsigned long i = 0; i < y; i++) {
-
         if (pdt_vbase[(offset >> 21) + i] == 0) {
             pdt_vbase[(offset >> 21) + i] = (unsigned long) alloc_pages(1) | (attr & 0x3F);
             memset(&ptt_vbase[(offset >> 21 << 9) + i * 512], 0x0, 4096);
         }
     }
 
-    y = len / 4096;
-    if (len % 4096)
-        y++;
-    for (unsigned long i = 0; i < y; i++) {
+    for (unsigned long i = 0; i < len; i++) {
 
         if (ptt_vbase[(offset >> 12) + i] == 0)
             ptt_vbase[(offset >> 12) + i] = (paddr & PAGE_4K_MASK) + i * 4096 | attr;
     }
 
-    for (unsigned long i = 0; i < (len / 4096); i++) {
-        FULSH_TLB_PAGE((paddr & PAGE_4K_MASK) + i * 4096);
+    for (unsigned long i = 0; i < len; i++) {
+        FULSH_TLB_PAGE((vaddr & PAGE_4K_MASK) + i * 4096);
     }
 
     return;
