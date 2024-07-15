@@ -46,8 +46,8 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
                    PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
 
 
-        //mount_page((unsigned long) alloc_pages(0x200000 / 0x1000), 0x300000, 0x400,
-         //          PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
+        mount_page((unsigned long) alloc_pages(0x200), 0x3FF00000, 0x200,
+                   PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
         //umount_page(Pos.FB_addr, Pos.FB_length);
     }
 
@@ -63,9 +63,9 @@ void mount_page(unsigned long paddr, unsigned long vaddr, unsigned long len, uns
 
     unsigned long y;
     unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
+    //unsigned long aligned_len = len + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL- 1)));
 
     y = (len + (512UL * 512 * 512 - 1)) / (512UL * 512 * 512);
-    y++;
     for (unsigned long i = 0; i < y; i++) {
         if (pml4t_vbase[(offset >> 39) + i] == 0) {
             pml4t_vbase[(offset >> 39) + i] = (unsigned long) alloc_pages(1) | (attr & 0x3F);
@@ -74,7 +74,6 @@ void mount_page(unsigned long paddr, unsigned long vaddr, unsigned long len, uns
     }
 
     y = (len + (512UL * 512 - 1)) / (512UL * 512);
-    y++;
     for (unsigned long i = 0; i < y; i++) {
         if (pdptt_vbase[(offset >> 30) + i] == 0) {
             pdptt_vbase[(offset >> 30) + i] = (unsigned long) alloc_pages(1) | (attr & 0x3F);
@@ -82,8 +81,7 @@ void mount_page(unsigned long paddr, unsigned long vaddr, unsigned long len, uns
         }
     }
 
-    y = (len + (512UL - 1)) / 512;
-    y++;
+    y = ((len + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL- 1)))) + (512UL - 1)) / 512;
     for (unsigned long i = 0; i < y; i++) {
         if (pdt_vbase[(offset >> 21) + i] == 0) {
             pdt_vbase[(offset >> 21) + i] = (unsigned long) alloc_pages(1) | (attr & 0x3F);
