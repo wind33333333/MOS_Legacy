@@ -84,10 +84,10 @@ __attribute__((section(".init_text"))) void memory_init(unsigned char bsp_flags)
 
 
 ////物理页分配器
-void *alloc_pages(unsigned long required_length) {
+void *alloc_pages(unsigned long page_num) {
     SPIN_LOCK(memory_management_struct.lock);
 
-    if (memory_management_struct.free_pages < required_length || required_length == 0) {
+    if (memory_management_struct.free_pages < page_num || page_num == 0) {
         memory_management_struct.lock = 0;
         return (void *) -1;
     }
@@ -112,14 +112,14 @@ void *alloc_pages(unsigned long required_length) {
 
             current_length++;
 
-            if (current_length == required_length) {
-                for (unsigned long y = 0; y < required_length; y++) {
+            if (current_length == page_num) {
+                for (unsigned long y = 0; y < page_num; y++) {
                     (memory_management_struct.bits_map[(start_idx + y) / 64] |= (1UL
                             << ((start_idx + y) % 64)));
                 }
 
-                memory_management_struct.alloc_pages += required_length;
-                memory_management_struct.free_pages -= required_length;
+                memory_management_struct.alloc_pages += page_num;
+                memory_management_struct.free_pages -= page_num;
                 memory_management_struct.lock = 0;
                 return (void *) (start_idx << PAGE_4K_SHIFT); // 找到连续空闲块，返回起始索引
             }
@@ -132,20 +132,20 @@ void *alloc_pages(unsigned long required_length) {
 
 
 ///物理页释放器
-int free_pages(void *pages_addr, unsigned long required_length) {
+int free_pages(void *pages_addr, unsigned long page_num) {
     SPIN_LOCK(memory_management_struct.lock);
-    if ((pages_addr + (required_length << PAGE_4K_SHIFT)) >
+    if ((pages_addr + (page_num << PAGE_4K_SHIFT)) >
         (memory_management_struct.e820[memory_management_struct.e820_length - 1].address +
          memory_management_struct.e820[memory_management_struct.e820_length - 1].length))
         return -1;
 
-    for (unsigned long i = 0; i < required_length; i++) {
+    for (unsigned long i = 0; i < page_num; i++) {
         (memory_management_struct.bits_map[(((unsigned long) pages_addr >> PAGE_4K_SHIFT) + i) /
                                            64] ^= (1UL
                 << (((unsigned long) pages_addr >> PAGE_4K_SHIFT) + i) % 64));
     }
-    memory_management_struct.alloc_pages -= required_length;
-    memory_management_struct.free_pages += required_length;
+    memory_management_struct.alloc_pages -= page_num;
+    memory_management_struct.free_pages += page_num;
     memory_management_struct.lock = 0;
     return 0;
 }

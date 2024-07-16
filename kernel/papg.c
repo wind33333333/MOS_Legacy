@@ -59,12 +59,13 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
     return;
 }
 
-void mount_page(unsigned long paddr, unsigned long vaddr, unsigned long len, unsigned long attr) {
+void mount_page(unsigned long paddr, unsigned long vaddr, unsigned long page_num, unsigned long attr) {
 
     unsigned long y;
     unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
 
-    y = ((len + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 * 512- 1)))) + (512UL * 512 * 512 - 1)) / (512UL * 512 * 512);
+    y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 * 512 - 1)))) +
+         (512UL * 512 * 512 - 1)) / (512UL * 512 * 512);
     for (unsigned long i = 0; i < y; i++) {
         if (pml4t_vbase[(offset >> 39) + i] == 0) {
             pml4t_vbase[(offset >> 39) + i] = (unsigned long) alloc_pages(1) | (attr & 0x3F);
@@ -72,7 +73,8 @@ void mount_page(unsigned long paddr, unsigned long vaddr, unsigned long len, uns
         }
     }
 
-    y = ((len + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512- 1)))) + (512UL * 512 - 1)) / (512UL *512);
+    y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 - 1)))) + (512UL * 512 - 1)) /
+        (512UL * 512);
     for (unsigned long i = 0; i < y; i++) {
         if (pdptt_vbase[(offset >> 30) + i] == 0) {
             pdptt_vbase[(offset >> 30) + i] = (unsigned long) alloc_pages(1) | (attr & 0x3F);
@@ -80,7 +82,7 @@ void mount_page(unsigned long paddr, unsigned long vaddr, unsigned long len, uns
         }
     }
 
-    y = ((len + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL- 1)))) + (512UL - 1)) / 512;
+    y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL - 1)))) + (512UL - 1)) / 512UL;
     for (unsigned long i = 0; i < y; i++) {
         if (pdt_vbase[(offset >> 21) + i] == 0) {
             pdt_vbase[(offset >> 21) + i] = (unsigned long) alloc_pages(1) | (attr & 0x3F);
@@ -88,12 +90,12 @@ void mount_page(unsigned long paddr, unsigned long vaddr, unsigned long len, uns
         }
     }
 
-    for (unsigned long i = 0; i < len; i++) {
+    for (unsigned long i = 0; i < page_num; i++) {
         if (ptt_vbase[(offset >> 12) + i] == 0)
             ptt_vbase[(offset >> 12) + i] = (paddr & PAGE_4K_MASK) + i * 4096 | attr;
     }
 
-    for (unsigned long i = 0; i < len; i++) {
+    for (unsigned long i = 0; i < page_num; i++) {
         FULSH_TLB_PAGE((vaddr & PAGE_4K_MASK) + i * 4096);
     }
 
@@ -101,46 +103,4 @@ void mount_page(unsigned long paddr, unsigned long vaddr, unsigned long len, uns
 }
 
 
-void umount_page(unsigned long addr, unsigned long len) {
 
-    unsigned long y;
-    unsigned long offset = addr & 0xFFFFFFFFFFFFUL;
-
-    y = len / (4096UL * 512 * 512 * 512);
-    if (len % (4096UL * 512 * 512 * 512))
-        y++;
-    for (unsigned long i = 0; i < y; i++) {
-        pml4t_vbase[(offset >> 39) + i] = 0;
-        free_pages((void *) (pml4t_vbase[(offset >> 39) + i] & PAGE_4K_MASK), 1);
-    }
-
-    y = len / (4096UL * 512 * 512);
-    if (len % (4096UL * 512 * 512))
-        y++;
-    for (unsigned long i = 0; i < y; i++) {
-        pdptt_vbase[(offset >> 30) + i] = 0;
-        free_pages((void *) (pdptt_vbase[(offset >> 30) + i] & PAGE_4K_MASK), 1);
-    }
-
-    y = len / (4096UL * 512);
-    if (len % (4096UL * 512))
-        y++;
-    for (unsigned long i = 0; i < y; i++) {
-        pdt_vbase[(offset >> 21) + i] = 0;
-        free_pages((void *) (pdt_vbase[(offset >> 21) + i] & PAGE_4K_MASK), 1);
-    }
-
-    y = len / 4096;
-    if (len % 4096)
-        y++;
-    for (unsigned long i = 0; i < y; i++) {
-        ptt_vbase[(offset >> 12) + i] = 0;
-    }
-
-    for (unsigned long i = 0; i < (len / 4096); i++) {
-        FULSH_TLB_PAGE(addr + i * 4096);
-    }
-
-
-    return;
-}
