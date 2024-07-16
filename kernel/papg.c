@@ -48,7 +48,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
 
         map_pages((unsigned long) alloc_pages(0x200), 0x7FFFFFF000, 0x515,
                   PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
-        unmap_pages(0x7FFFFFF000, Pos.FB_length);
+        unmap_pages(0x7FFFFFF000, 0x515);
     }
 
     addr = Virt_To_Phy(&__PML4T);
