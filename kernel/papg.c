@@ -17,9 +17,9 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
             pml4t_vbase[i] = 0x0UL;        //清除PML4E
         }
 
-        mount_page(0, 0,
-                   Virt_To_Phy(memory_management_struct.kernel_end) / 4096,
-                   PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
+        map_pages(0, 0,
+                  Virt_To_Phy(memory_management_struct.kernel_end) / 4096,
+                  PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
 
         for (unsigned int i = 0; i < pml4e_num; i++) {
             //__PML4T[i] = pml4t_vbase[i];            //修改正式内核PML4T 低
@@ -38,17 +38,17 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
                 "mov    %%rax,%%cr3 \n\t"
                 ::"a"(addr):);
 
-        mount_page(Virt_To_Phy(Pos.FB_addr), Pos.FB_addr, Pos.FB_length / 4096,
-                   PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
-        mount_page(Virt_To_Phy(ioapic_baseaddr), (unsigned long) ioapic_baseaddr, 1,
-                   PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
-        mount_page(Virt_To_Phy(hpet_attr.baseaddr), hpet_attr.baseaddr, 0x1,
-                   PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
+        map_pages(Virt_To_Phy(Pos.FB_addr), Pos.FB_addr, Pos.FB_length / 4096,
+                  PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
+        map_pages(Virt_To_Phy(ioapic_baseaddr), (unsigned long) ioapic_baseaddr, 1,
+                  PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
+        map_pages(Virt_To_Phy(hpet_attr.baseaddr), hpet_attr.baseaddr, 0x1,
+                  PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
 
 
-        mount_page((unsigned long) alloc_pages(0x200), 0x7FFFFFF000, 0x515,
-                   PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
-        //umount_page(Pos.FB_addr, Pos.FB_length);
+        map_pages((unsigned long) alloc_pages(0x200), 0x7FFFFFF000, 0x515,
+                  PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
+        unmap_pages(Pos.FB_addr, Pos.FB_length);
     }
 
     addr = Virt_To_Phy(&__PML4T);
@@ -59,7 +59,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
     return;
 }
 
-void mount_page(unsigned long paddr, unsigned long vaddr, unsigned long page_num, unsigned long attr) {
+void map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num, unsigned long attr) {
 
     unsigned long y;
     unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
@@ -101,6 +101,51 @@ void mount_page(unsigned long paddr, unsigned long vaddr, unsigned long page_num
 
     return;
 }
+
+
+void unmap_pages(unsigned long vaddr, unsigned long page_num) {
+    unsigned long y;
+    unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
+
+    // 处理页表（PTT）
+    for (unsigned long i = 0; i < page_num; i++) {
+        if (ptt_vbase[(offset >> 12) + i] != 0) {
+            ptt_vbase[(offset >> 12) + i] = 0;
+        }
+    }
+
+    y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL - 1)))) + (512UL - 1)) / 512UL;
+    for (unsigned long i = 0; i < y; i++) {
+        if (pdt_vbase[(offset >> 21) + i] != 0) {
+            free_pages((void *)(pdt_vbase[(offset >> 21) + i] & PAGE_4K_MASK), 1);
+            pdt_vbase[(offset >> 21) + i] = 0;
+        }
+    }
+
+    y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 - 1)))) + (512UL * 512 - 1)) / (512UL * 512);
+    for (unsigned long i = 0; i < y; i++) {
+        if (pdptt_vbase[(offset >> 30) + i] != 0) {
+            free_pages((void *)(pdptt_vbase[(offset >> 30) + i] & PAGE_4K_MASK), 1);
+            pdptt_vbase[(offset >> 30) + i] = 0;
+        }
+    }
+
+    y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 * 512 - 1)))) + (512UL * 512 * 512 - 1)) / (512UL * 512 * 512);
+    for (unsigned long i = 0; i < y; i++) {
+        if (pml4t_vbase[(offset >> 39) + i] != 0) {
+            free_pages((void *)(pml4t_vbase[(offset >> 39) + i] & PAGE_4K_MASK), 1);
+            pml4t_vbase[(offset >> 39) + i] = 0;
+        }
+    }
+
+    // 刷新 TLB
+    for (unsigned long i = 0; i < page_num; i++) {
+        FULSH_TLB_PAGE((vaddr & PAGE_4K_MASK) + i * 4096);
+    }
+
+    return;
+}
+
 
 
 
