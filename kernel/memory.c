@@ -156,7 +156,7 @@ void map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num,
     unsigned long y;
     unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
 
-    //PML4 四级页目录表
+    //PML4 映射四级页目录表
     y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 * 512 - 1)))) +
          (512UL * 512 * 512 - 1)) / (512UL * 512 * 512);
     for (unsigned long i = 0; i < y; i++) {
@@ -166,7 +166,7 @@ void map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num,
         }
     }
 
-    //PDPT 页目录指针表
+    //PDPT 映射页目录指针表
     y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 - 1)))) + (512UL * 512 - 1)) /
         (512UL * 512);
     for (unsigned long i = 0; i < y; i++) {
@@ -176,7 +176,7 @@ void map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num,
         }
     }
 
-    //PD 页目录表
+    //PD 映射页目录表
     y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL - 1)))) + (512UL - 1)) / 512UL;
     for (unsigned long i = 0; i < y; i++) {
         if (pdt_vbase[(offset >> 21) + i] == 0) {
@@ -185,7 +185,7 @@ void map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num,
         }
     }
 
-    //PT 页表
+    //PT 映射页表
     for (unsigned long i = 0; i < page_num; i++) {
         if (ptt_vbase[(offset >> 12) + i] == 0)
             ptt_vbase[(offset >> 12) + i] = (paddr & PAGE_4K_MASK) + i * 4096 | attr;
