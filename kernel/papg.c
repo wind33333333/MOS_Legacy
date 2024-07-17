@@ -2,8 +2,6 @@
 
 __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
 
-    unsigned long addr = 0;
-
     if (bsp_flags) {
         unsigned long pml4_bak[256] = {0};
         unsigned long pml4e_num =
@@ -33,8 +31,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
         color_printk(ORANGE, BLACK, "OS StartAddr: %#018lX \tEndAddr: %#018lX \n",
                      memory_management_struct.kernel_start, memory_management_struct.kernel_end);
 
-        addr = Virt_To_Phy(&__PML4T);
-        SET_CR3(addr);
+        SET_CR3(Virt_To_Phy(&__PML4T));
 
         map_pages(Virt_To_Phy(Pos.FB_addr), Pos.FB_addr, Pos.FB_length / 4096,
                   PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
@@ -49,8 +46,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
 //        unmap_pages(0x7FFFFFF000, 0x515);
     }
 
-    addr = Virt_To_Phy(&__PML4T);
-    SET_CR3(addr);
+    SET_CR3(Virt_To_Phy(&__PML4T));
 
     return;
 }
