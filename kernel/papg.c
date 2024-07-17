@@ -86,8 +86,9 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
     }
 
     if(x){
+        unsigned long *addr = (unsigned long*)((unsigned long)&ptt_vbase[(offset >> 12) + page_num] & ~0xFFFUL);
         for (unsigned long i = 0; i < (512-taillength); i++) {
-            ptt_vbase[(offset >> 21 <<9) + page_num + i] = 0;
+            addr[i] = 0;
         }
     }
 
