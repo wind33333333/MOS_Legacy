@@ -105,6 +105,7 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
             } else if(j == 511){
                 free_pages((void *) (pml4t_vbase[(offset >> 39) + i] & PAGE_4K_MASK), 1);
                 pml4t_vbase[(offset >> 39) + i] = 0;
+                break;
             }
         }
     }
