@@ -153,13 +153,13 @@ int free_pages(void *pages_addr, unsigned long page_num) {
 //物理内存映射虚拟内存
 void map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num, unsigned long attr) {
 
-    unsigned long y;
+    unsigned long num;
     unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
 
     //PML4 映射四级页目录表
-    y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 * 512 - 1)))) +
+    num = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 * 512 - 1)))) +
          (512UL * 512 * 512 - 1)) / (512UL * 512 * 512);
-    for (unsigned long i = 0; i < y; i++) {
+    for (unsigned long i = 0; i < num; i++) {
         if (pml4t_vbase[(offset >> 39) + i] == 0) {
             pml4t_vbase[(offset >> 39) + i] = (unsigned long) alloc_pages(1) | (attr & 0xFFFFFFFFFFFFFF7FUL);
             memset(&pdptt_vbase[(offset >> 39 << 9) + i * 512], 0x0, 4096);
@@ -167,9 +167,9 @@ void map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num,
     }
 
     //PDPT 映射页目录指针表
-    y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 - 1)))) + (512UL * 512 - 1)) /
+    num = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 - 1)))) + (512UL * 512 - 1)) /
         (512UL * 512);
-    for (unsigned long i = 0; i < y; i++) {
+    for (unsigned long i = 0; i < num; i++) {
         if (pdptt_vbase[(offset >> 30) + i] == 0) {
             pdptt_vbase[(offset >> 30) + i] = (unsigned long) alloc_pages(1) | (attr & 0xFFFFFFFFFFFFFF7FUL);
             memset(&pdt_vbase[(offset >> 30 << 9) + i * 512], 0x0, 4096);
@@ -177,8 +177,8 @@ void map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num,
     }
 
     //PD 映射页目录表
-    y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL - 1)))) + (512UL - 1)) / 512UL;
-    for (unsigned long i = 0; i < y; i++) {
+    num = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL - 1)))) + (512UL - 1)) / 512UL;
+    for (unsigned long i = 0; i < num; i++) {
         if (pdt_vbase[(offset >> 21) + i] == 0) {
             pdt_vbase[(offset >> 21) + i] = (unsigned long) alloc_pages(1) | (attr & 0xFFFFFFFFFFFFFF7FUL);
             memset(&ptt_vbase[(offset >> 21 << 9) + i * 512], 0x0, 4096);
