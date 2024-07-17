@@ -59,20 +59,17 @@ unsigned long* ptt_vbase = (unsigned long*)0xFFFFFF8000000000;    //pt虚拟地�
 
 extern unsigned long __PML4T[512];
 
-#define INVLPG(addr) \
-        do{                     \
-            __asm__ __volatile__("invlpg (%0) \n\t"::"r"(addr):"memory"); \
-        }while(0)
+#define MFENCE() __asm__ __volatile__ ("mfence":::);
 
-#define SET_CR3(addr) \
-        do{           \
-            __asm__ __volatile__("mov %0,%%cr3 \n\t"::"r"(addr):"memory");              \
-        }while(0)
+#define LFENCE() __asm__ __volatile__ ("lfence":::);
 
-#define GET_CR3(addr) \
-        do{           \
-            __asm__ __volatile__("mov %%cr3,%0 \n\t":"=r"(addr)::"memory");              \
-        }while(0)
+#define SFENCE() __asm__ __volatile__ ("sfence":::);
+
+#define INVLPG(addr) __asm__ __volatile__("invlpg (%0)"::"r"(addr):"memory");
+
+#define SET_CR3(addr) __asm__ __volatile__("mov %0,%%cr3"::"r"(addr):"memory");
+
+#define GET_CR3(addr) __asm__ __volatile__("mov %%cr3,%0":"=r"(addr)::"memory");
 
 
 #define PAPG_G      1UL<<8
