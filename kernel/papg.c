@@ -41,11 +41,12 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
                   PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
 
 
-        map_pages((unsigned long) alloc_pages(0x516), 0x7FFFFFF000, 516,
+        map_pages((unsigned long) alloc_pages(516), 0x7FFFFFF000, 516,
                   PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
+
         BOCHS_DG();
-        //map_pages((unsigned long) alloc_pages(1),0x7FFFE00000,1,PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
-        //map_pages((unsigned long) alloc_pages(1),0x8000204000,1,PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P),
+        map_pages((unsigned long) alloc_pages(1),0x7FFFE00000,1,PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
+        map_pages((unsigned long) alloc_pages(1),0x8000204000,1,PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P),
         unmap_pages(0x7FFFFFF000, 516);
     }
 
