@@ -37,7 +37,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
                   PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
         map_pages(HADDR_TO_LADDR(ioapic_baseaddr), (unsigned long) ioapic_baseaddr, 1,
                   PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
-        map_pages(HADDR_TO_LADDR(hpet_attr.baseaddr), hpet_attr.baseaddr, 0x1,
+        map_pages(HADDR_TO_LADDR(hpet_attr.baseaddr), hpet_attr.baseaddr, 1,
                   PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
 
 
@@ -51,8 +51,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
     return;
 }
 
-void
-map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num, unsigned long attr) {
+void map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num, unsigned long attr) {
 
     unsigned long y;
     unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
