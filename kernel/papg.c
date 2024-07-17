@@ -64,7 +64,6 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
     free_pages((void *)(ptt_vbase[(offset >> 12)] & PAGE_4K_MASK), page_num);
     memset(&ptt_vbase[(offset >> 12)], 0, page_num << 3);
 
-
     //释放页目录 PD
     y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL - 1)))) + (512UL - 1)) / 512UL;
     for (unsigned long i = 0; i < y; i++) {
