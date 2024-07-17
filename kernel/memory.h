@@ -51,4 +51,37 @@ typedef struct {
 
 Global_Memory_Descriptor memory_management_struct = {0};
 
+unsigned long* pml4t_vbase = (unsigned long*)0xFFFFFFFFFFFFF000;  //pml4虚拟地址基址
+unsigned long* pdptt_vbase = (unsigned long*)0xFFFFFFFFFFE00000;  //pdpt虚拟地址基址
+unsigned long* pdt_vbase = (unsigned long*)0xFFFFFFFFC0000000;    //pd虚拟地址基址
+unsigned long* ptt_vbase = (unsigned long*)0xFFFFFF8000000000;    //pt虚拟地址基址
+
+extern unsigned long __PML4T[512];
+
+#define INVLPG(addr) \
+        do{                     \
+            __asm__ __volatile__("invlpg (%0) \n\t"::"r"(addr):"memory"); \
+        }while(0)
+
+#define SET_CR3(addr) \
+        do{           \
+            __asm__ __volatile__("mov %0,%%cr3 \n\t"::"r"(addr):"memory");              \
+        }while(0)
+
+#define GET_CR3(addr) \
+        do{           \
+            __asm__ __volatile__("mov %%cr3,%0 \n\t":"=r"(addr)::"memory");              \
+        }while(0)
+
+
+#define PAPG_G      1UL<<8
+#define PAPG_PAT    1UL<<7
+#define PAPG_D      1UL<<6
+#define PAPG_A      1UL<<5
+#define PAPG_PCD    1UL<<4
+#define PAPG_PWT    1UL<<3
+#define PAPG_US     1UL<<2
+#define PAPG_RW     1UL<<1
+#define PAPG_P      1UL<<0
+
 #endif
