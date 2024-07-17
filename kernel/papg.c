@@ -71,15 +71,13 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
     for (unsigned long i = 0; i < num; i++) {
         for (unsigned long j = 0; j < 512; j++) {
             if(ptt_vbase[(offset >> 21 << 9) + i * 512 + j]) {
-                flags = 0;
                 break;
-            }
-            flags=1;
-        }
-            if (flags) {
+            } else if(j == 511){
                 free_pages((void *)(pdt_vbase[(offset >> 21) + i] & PAGE_4K_MASK), 1);
                 pdt_vbase[(offset >> 21) + i] = 0;
+                break;
             }
+        }
     }
 
     //释放页目录表 PDPT
@@ -88,14 +86,12 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
     for (unsigned long i = 0; i < num; i++) {
         for (unsigned long j = 0; j < 512UL; j++) {
             if(pdt_vbase[(offset >> 30 << 9) + i * 512UL + j]) {
-                flags = 0;
+                break;
+            } else if(j == 511){
+                free_pages((void *) (pdptt_vbase[(offset >> 30) + i] & PAGE_4K_MASK), 1);
+                pdptt_vbase[(offset >> 30) + i] = 0;
                 break;
             }
-            flags=1;
-        }
-        if (flags) {
-            free_pages((void *) (pdptt_vbase[(offset >> 30) + i] & PAGE_4K_MASK), 1);
-            pdptt_vbase[(offset >> 30) + i] = 0;
         }
     }
 
@@ -105,14 +101,11 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
     for (unsigned long i = 0; i < num; i++) {
         for (unsigned long j = 0; j < 512UL; j++) {
             if(pdptt_vbase[(offset >> 39 << 9) + i * 512UL + j]) {
-                flags = 0;
                 break;
+            } else if(j == 511){
+                free_pages((void *) (pml4t_vbase[(offset >> 39) + i] & PAGE_4K_MASK), 1);
+                pml4t_vbase[(offset >> 39) + i] = 0;
             }
-            flags=1;
-        }
-        if (flags) {
-            free_pages((void *) (pml4t_vbase[(offset >> 39) + i] & PAGE_4K_MASK), 1);
-            pml4t_vbase[(offset >> 39) + i] = 0;
         }
     }
 
