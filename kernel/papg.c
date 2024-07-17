@@ -59,12 +59,12 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
     unsigned long y ,flags;
     unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
 
-    //页表 PT
+    //释放页表 PT
     free_pages((void *)(ptt_vbase[(offset >> 12)] & PAGE_4K_MASK), page_num);
     memset(&ptt_vbase[(offset >> 12)], 0, page_num << 3);
 
 
-    //页目录 PD
+    //释放页目录 PD
     y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL - 1)))) + (512UL - 1)) / 512UL;
     for (unsigned long i = 0; i < y; i++) {
         for (unsigned long j = 0; j < 512; j++) {
@@ -80,7 +80,7 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
             }
     }
 
-    //页目录表 PDPT
+    //释放页目录表 PDPT
     y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 - 1)))) + (512UL * 512 - 1)) /
         (512UL * 512);
     for (unsigned long i = 0; i < y; i++) {
@@ -97,7 +97,7 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
         }
     }
 
-    //页目录表 PML4T
+    //释放页目录表 PML4T
     y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 * 512 - 1)))) +
          (512UL * 512 * 512 - 1)) / (512UL * 512 * 512);
     for (unsigned long i = 0; i < y; i++) {
