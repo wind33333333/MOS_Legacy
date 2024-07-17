@@ -55,10 +55,10 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
 
 
 void unmap_pages(unsigned long vaddr, unsigned long page_num) {
-    unsigned long headlength, taillength, x, y;
+    unsigned long headlength, taillength, x, y ,flags;
     unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
 
-    //PT 页表
+/*    //PT 页表
     headlength = &ptt_vbase[(offset >> 12)] - &ptt_vbase[(offset >> 21 << 9)];
     for (int i = 0; i < headlength; i++) {
         if (ptt_vbase[(offset >> 21 << 9) + i] != 0) {
@@ -90,38 +90,66 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
         for (unsigned long i = 0; i < (512-taillength); i++) {
             addr[i] = 0;
         }
-    }
+    }*/
 
 
-    for (unsigned long i = 0; i < page_num; i++) {
-        ptt_vbase[(offset >> 12) + i] = 0;
-    }
+/*    for (unsigned long i = 0; i < page_num; i++) {
+        if (ptt_vbase[(offset >> 12) + i] != 0) {
+            free_pages((void *)(ptt_vbase[(offset >> 12) + i] & PAGE_4K_MASK), 1);
+            ptt_vbase[(offset >> 12) + i] = 0;
+        }
+    }*/
+
+    //页表 PT
+    free_pages((void *)(ptt_vbase[(offset >> 12)] & PAGE_4K_MASK), page_num);
+    memset(&ptt_vbase[(offset >> 12)], 0, page_num << 3);
 
 
+    //页目录 PD
     y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL - 1)))) + (512UL - 1)) / 512UL;
     for (unsigned long i = 0; i < y; i++) {
-        if (ptt_vbase[(offset >> 21 << 9) + i])
-
-
-            if (pdt_vbase[(offset >> 21) + i] != 0) {
-                free_pages((void *) (pdt_vbase[(offset >> 21) + i] & PAGE_4K_MASK), 1);
+        for (unsigned long j = 0; j < 512; j++) {
+            if(ptt_vbase[(offset >> 21 << 9) + i * 512 + j] != 0) {
+                flags = 0;
+                break;
+            }
+            flags=1;
+        }
+            if (flags) {
+                free_pages((void *)(pdt_vbase[(offset >> 21) + i] & PAGE_4K_MASK), 1);
                 pdt_vbase[(offset >> 21) + i] = 0;
             }
     }
 
+    //页目录表 PDPT
     y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 - 1)))) + (512UL * 512 - 1)) /
         (512UL * 512);
     for (unsigned long i = 0; i < y; i++) {
-        if (pdptt_vbase[(offset >> 30) + i] != 0) {
+        for (unsigned long j = 0; j < (512UL*512); j++) {
+            if(pdt_vbase[(offset >> 30 << 9) + i * 512UL*512 + j] != 0) {
+                flags = 0;
+                break;
+            }
+            flags=1;
+        }
+        if (flags) {
             free_pages((void *) (pdptt_vbase[(offset >> 30) + i] & PAGE_4K_MASK), 1);
             pdptt_vbase[(offset >> 30) + i] = 0;
         }
     }
 
+    //页目录表 PML4T
     y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 * 512 - 1)))) +
          (512UL * 512 * 512 - 1)) / (512UL * 512 * 512);
     for (unsigned long i = 0; i < y; i++) {
-        if (pml4t_vbase[(offset >> 39) + i] != 0) {
+        for (unsigned long j = 0; j < (512UL*512*512); j++) {
+            if(pdptt_vbase[(offset >> 39 << 9) + i * 512UL*512*512 + j] != 0) {
+                flags = 0;
+                break;
+            }
+            flags=1;
+        }
+        if (flags) {
             free_pages((void *) (pml4t_vbase[(offset >> 39) + i] & PAGE_4K_MASK), 1);
             pml4t_vbase[(offset >> 39) + i] = 0;
         }
