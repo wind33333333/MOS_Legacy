@@ -17,10 +17,21 @@ unsigned long* ptt_vbase = (unsigned long*)0xFFFFFF8000000000;    //pt虚拟地�
 
 extern unsigned long __PML4T[512];
 
-#define FULSH_TLB_PAGE(addr) \
+#define INVLPG(addr) \
         do{                     \
-        __asm__ __volatile__("invlpg (%0)"::"r"(addr):"memory"); \
+            __asm__ __volatile__("invlpg (%0) \n\t"::"r"(addr):"memory"); \
         }while(0)
+
+#define SET_CR3(addr) \
+        do{           \
+            __asm__ __volatile__("mov %0,%%cr3 \n\t"::"r"(addr):"memory");              \
+        }while(0)
+
+#define GET_CR3(addr) \
+        do{           \
+            __asm__ __volatile__("mov %%cr3,%0 \n\t":"=r"(addr)::"memory");              \
+        }while(0)
+
 
 #define PAPG_G      1UL<<8
 #define PAPG_PAT    1UL<<7

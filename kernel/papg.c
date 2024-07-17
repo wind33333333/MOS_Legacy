@@ -34,9 +34,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
                      memory_management_struct.kernel_start, memory_management_struct.kernel_end);
 
         addr = Virt_To_Phy(&__PML4T);
-        __asm__ __volatile__(
-                "mov    %%rax,%%cr3 \n\t"
-                ::"a"(addr):);
+        SET_CR3(addr);
 
         map_pages(Virt_To_Phy(Pos.FB_addr), Pos.FB_addr, Pos.FB_length / 4096,
                   PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
@@ -48,13 +46,11 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
 
         map_pages((unsigned long) alloc_pages(0x200), 0x7FFFFFF000, 0x515,
                   PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
-        unmap_pages(0x7FFFFFF000, 0x515);
+//        unmap_pages(0x7FFFFFF000, 0x515);
     }
 
     addr = Virt_To_Phy(&__PML4T);
-    __asm__ __volatile__(
-            "mov    %%rax,%%cr3 \n\t"
-            ::"a"(addr):);
+    SET_CR3(addr);
 
     return;
 }
@@ -96,7 +92,7 @@ void map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num,
     }
 
     for (unsigned long i = 0; i < page_num; i++) {
-        FULSH_TLB_PAGE((vaddr & PAGE_4K_MASK) + i * 4096);
+        INVLPG((vaddr & PAGE_4K_MASK) + i * 4096);
     }
 
     return;
@@ -140,7 +136,7 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
 
     // 刷新 TLB
     for (unsigned long i = 0; i < page_num; i++) {
-        FULSH_TLB_PAGE((vaddr & PAGE_4K_MASK) + i * 4096);
+        INVLPG((vaddr & PAGE_4K_MASK) + i * 4096);
     }
 
     return;
