@@ -65,11 +65,11 @@ extern unsigned long __PML4T[512];
 
 #define SFENCE() __asm__ __volatile__ ("sfence":::);
 
-#define INVLPG(addr) __asm__ __volatile__("invlpg (%0)"::"r"(addr):"memory");
+#define INVLPG(addr) __asm__ __volatile__("invlpg (%0)"::"r"(addr):);
 
-#define SET_CR3(addr) __asm__ __volatile__("mov %0,%%cr3"::"r"(addr):"memory");
+#define SET_CR3(addr) __asm__ __volatile__("mov %0,%%cr3"::"r"(addr):);
 
-#define GET_CR3(addr) __asm__ __volatile__("mov %%cr3,%0":"=r"(addr)::"memory");
+#define GET_CR3(addr) __asm__ __volatile__("mov %%cr3,%0":"=r"(addr)::);
 
 
 #define PAPG_G      1UL<<8
