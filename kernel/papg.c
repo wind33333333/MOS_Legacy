@@ -55,6 +55,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
 }
 
 
+//释放物理内存映射虚拟内存
 void unmap_pages(unsigned long vaddr, unsigned long page_num) {
     unsigned long y ,flags;
     unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
