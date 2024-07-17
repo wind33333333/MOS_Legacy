@@ -51,7 +51,8 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
     return;
 }
 
-void map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num, unsigned long attr) {
+void
+map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num, unsigned long attr) {
 
     unsigned long y;
     unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
@@ -109,23 +110,25 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
     y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL - 1)))) + (512UL - 1)) / 512UL;
     for (unsigned long i = 0; i < y; i++) {
         if (pdt_vbase[(offset >> 21) + i] != 0) {
-            free_pages((void *)(pdt_vbase[(offset >> 21) + i] & PAGE_4K_MASK), 1);
+            free_pages((void *) (pdt_vbase[(offset >> 21) + i] & PAGE_4K_MASK), 1);
             pdt_vbase[(offset >> 21) + i] = 0;
         }
     }
 
-    y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 - 1)))) + (512UL * 512 - 1)) / (512UL * 512);
+    y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 - 1)))) + (512UL * 512 - 1)) /
+        (512UL * 512);
     for (unsigned long i = 0; i < y; i++) {
         if (pdptt_vbase[(offset >> 30) + i] != 0) {
-            free_pages((void *)(pdptt_vbase[(offset >> 30) + i] & PAGE_4K_MASK), 1);
+            free_pages((void *) (pdptt_vbase[(offset >> 30) + i] & PAGE_4K_MASK), 1);
             pdptt_vbase[(offset >> 30) + i] = 0;
         }
     }
 
-    y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 * 512 - 1)))) + (512UL * 512 * 512 - 1)) / (512UL * 512 * 512);
+    y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 * 512 - 1)))) +
+         (512UL * 512 * 512 - 1)) / (512UL * 512 * 512);
     for (unsigned long i = 0; i < y; i++) {
         if (pml4t_vbase[(offset >> 39) + i] != 0) {
-            free_pages((void *)(pml4t_vbase[(offset >> 39) + i] & PAGE_4K_MASK), 1);
+            free_pages((void *) (pml4t_vbase[(offset >> 39) + i] & PAGE_4K_MASK), 1);
             pml4t_vbase[(offset >> 39) + i] = 0;
         }
     }
