@@ -57,9 +57,8 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
 
 
 void unmap_pages(unsigned long vaddr, unsigned long page_num) {
-    unsigned long y ,flags,bb;
+    unsigned long y ,flags;
     unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
-    unsigned long* dd;
 
     //页表 PT
     free_pages((void *)(ptt_vbase[(offset >> 12)] & PAGE_4K_MASK), page_num);
@@ -70,8 +69,6 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
     y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL - 1)))) + (512UL - 1)) / 512UL;
     for (unsigned long i = 0; i < y; i++) {
         for (unsigned long j = 0; j < 512; j++) {
-            dd = &ptt_vbase[(offset >> 21 << 9) + i * 512 + j];
-            bb = *dd;
             if(ptt_vbase[(offset >> 21 << 9) + i * 512 + j] != 0) {
                 flags = 0;
                 break;
@@ -79,8 +76,6 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
             flags=1;
         }
             if (flags) {
-                dd = &pdt_vbase[(offset >> 21) + i];
-                bb = *dd;
                 free_pages((void *)(pdt_vbase[(offset >> 21) + i] & PAGE_4K_MASK), 1);
                 pdt_vbase[(offset >> 21) + i] = 0;
             }
@@ -91,8 +86,6 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
         (512UL * 512);
     for (unsigned long i = 0; i < y; i++) {
         for (unsigned long j = 0; j < 512UL; j++) {
-            dd = &pdt_vbase[(offset >> 30 << 9) + i * 512UL + j];
-            bb = *dd;
             if(pdt_vbase[(offset >> 30 << 9) + i * 512UL + j] != 0) {
                 flags = 0;
                 break;
@@ -100,8 +93,6 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
             flags=1;
         }
         if (flags) {
-            dd = &pdptt_vbase[(offset >> 30) + i];
-            bb = *dd;
             free_pages((void *) (pdptt_vbase[(offset >> 30) + i] & PAGE_4K_MASK), 1);
             pdptt_vbase[(offset >> 30) + i] = 0;
         }
@@ -112,8 +103,6 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
          (512UL * 512 * 512 - 1)) / (512UL * 512 * 512);
     for (unsigned long i = 0; i < y; i++) {
         for (unsigned long j = 0; j < 512UL; j++) {
-            dd = &pdptt_vbase[(offset >> 39 << 9) + i * 512UL + j];
-            bb = *dd;
             if(pdptt_vbase[(offset >> 39 << 9) + i * 512UL + j] != 0) {
                 flags = 0;
                 break;
@@ -121,8 +110,6 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
             flags=1;
         }
         if (flags) {
-            dd = &pml4t_vbase[(offset >> 39) + i];
-            bb = *dd;
             free_pages((void *) (pml4t_vbase[(offset >> 39) + i] & PAGE_4K_MASK), 1);
             pml4t_vbase[(offset >> 39) + i] = 0;
         }
