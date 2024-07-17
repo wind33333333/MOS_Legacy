@@ -41,9 +41,11 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
                   PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
 
 
-        map_pages((unsigned long) alloc_pages(0x200), 0x7FFFFFF000, 0x515,
+        map_pages((unsigned long) alloc_pages(0x516), 0x7FFFFFF000, 516,
                   PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
-        unmap_pages(0x7FFFFFF000, 0x515);
+        map_pages((unsigned long) alloc_pages(1),0x7FFFE00000,1,PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
+        map_pages((unsigned long) alloc_pages(1),0x8000204000,1,PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P),
+        unmap_pages(0x7FFFFFF000, 516);
     }
 
     SET_CR3(HADDR_TO_LADDR(&__PML4T));
@@ -52,27 +54,47 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
 }
 
 
-
 void unmap_pages(unsigned long vaddr, unsigned long page_num) {
-    unsigned long headlength,taillength,x,y;
+    unsigned long headlength, taillength, x, y;
     unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
 
     //PT 页表
-    headlength = (&ptt_vbase[(offset >> 12)] - &ptt_vbase[(offset >> 21 << 9)]);
+    headlength = &ptt_vbase[(offset >> 12)] - &ptt_vbase[(offset >> 21 << 9)];
     for (int i = 0; i < headlength; i++) {
         if (ptt_vbase[(offset >> 21 << 9) + i] != 0) {
             x = 1;
             break;
         }
-        x=0;
+        x = 0;
     }
 
-    taillength = (&ptt_vbase[(offset >> 12) + page_num] - &ptt_vbase[(offset >> 21 << 9) + page_num]);
+    if(x){
+        for (unsigned long i = 0; i < (512-headlength); i++) {
+            ptt_vbase[(offset >> 12) + i] = 0;
+        }
+    }
+
+
+    taillength = (((unsigned long) &ptt_vbase[(offset >> 12) + page_num + 0x1FF] & ~0xFFFUL) -
+                  (unsigned long) &ptt_vbase[(offset >> 12) + page_num]) >> 3;
+    for (int i = 0; i < taillength; i++) {
+        if (ptt_vbase[(offset >> 12) + page_num + i] != 0) {
+            x = 1;
+            break;
+        }
+        x = 0;
+    }
+
+    if(x){
+        for (unsigned long i = 0; i < (512-taillength); i++) {
+            ptt_vbase[(offset >> 21 <<9) + page_num + i] = 0;
+        }
+    }
+
 
     for (unsigned long i = 0; i < page_num; i++) {
-            ptt_vbase[(offset >> 12) + i] = 0;
+        ptt_vbase[(offset >> 12) + i] = 0;
     }
-
 
 
     y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL - 1)))) + (512UL - 1)) / 512UL;
@@ -80,10 +102,10 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
         if (ptt_vbase[(offset >> 21 << 9) + i])
 
 
-        if (pdt_vbase[(offset >> 21) + i] != 0) {
-            free_pages((void *) (pdt_vbase[(offset >> 21) + i] & PAGE_4K_MASK), 1);
-            pdt_vbase[(offset >> 21) + i] = 0;
-        }
+            if (pdt_vbase[(offset >> 21) + i] != 0) {
+                free_pages((void *) (pdt_vbase[(offset >> 21) + i] & PAGE_4K_MASK), 1);
+                pdt_vbase[(offset >> 21) + i] = 0;
+            }
     }
 
     y = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 - 1)))) + (512UL * 512 - 1)) /
