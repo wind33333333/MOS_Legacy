@@ -56,10 +56,10 @@ __attribute__((section(".init_text"))) void memory_init(unsigned char bsp_flags)
 
         //把内核1M开始到kernel_end地址bit map置1，标记为已使用
         memset(memory_management_struct.bits_map + ((0x100000 >> PAGE_4K_SHIFT) >> 6), 0xFF,
-               (Virt_To_Phy(memory_management_struct.kernel_end) - 0x100000) >> PAGE_4K_SHIFT >> 3);
-        totalmem = Virt_To_Phy(memory_management_struct.kernel_end) & 0xFFFFFFFFFFFF8000;
+               (HADDR_TO_LADDR(memory_management_struct.kernel_end) - 0x100000) >> PAGE_4K_SHIFT >> 3);
+        totalmem = HADDR_TO_LADDR(memory_management_struct.kernel_end) & 0xFFFFFFFFFFFF8000;
         for (; totalmem <
-               Virt_To_Phy(memory_management_struct.kernel_end); totalmem += PAGE_4K_SIZE) {
+               HADDR_TO_LADDR(memory_management_struct.kernel_end); totalmem += PAGE_4K_SIZE) {
             *(memory_management_struct.bits_map + (totalmem >> PAGE_4K_SHIFT >> 6)) ^=
                     1UL << ((totalmem - 0x100000) >> PAGE_4K_SHIFT) % 64;
         }
@@ -67,7 +67,7 @@ __attribute__((section(".init_text"))) void memory_init(unsigned char bsp_flags)
         memory_management_struct.alloc_pages += (memory_management_struct.e820[0].length
                 >> PAGE_4K_SHIFT);
         memory_management_struct.alloc_pages += (
-                (Virt_To_Phy(memory_management_struct.kernel_end) - 0x100000) >> PAGE_4K_SHIFT);
+                (HADDR_TO_LADDR(memory_management_struct.kernel_end) - 0x100000) >> PAGE_4K_SHIFT);
         memory_management_struct.free_pages =
                 memory_management_struct.total_pages - memory_management_struct.alloc_pages;
 

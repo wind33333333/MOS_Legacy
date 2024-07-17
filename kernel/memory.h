@@ -21,8 +21,8 @@ extern unsigned long _start_text;
 #define PAGE_4K_MASK	(~ (PAGE_4K_SIZE - 1))
 #define PAGE_4K_ALIGN(addr)	(((unsigned long)(addr) + PAGE_4K_SIZE - 1) & PAGE_4K_MASK)
 
-#define Virt_To_Phy(addr)	((unsigned long)(addr) & (~PAGE_OFFSET))
-#define Phy_To_Virt(addr)	((unsigned long *)((unsigned long)(addr) | PAGE_OFFSET))
+#define HADDR_TO_LADDR(addr)	((unsigned long)(addr) & (~PAGE_OFFSET))
+#define LADDR_TO_HADDR(addr)	((unsigned long *)((unsigned long)(addr) | PAGE_OFFSET))
 
 struct E820
 {

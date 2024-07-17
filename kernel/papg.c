@@ -5,9 +5,9 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
     if (bsp_flags) {
         unsigned long pml4_bak[256] = {0};
         unsigned long pml4e_num =
-                Virt_To_Phy(memory_management_struct.kernel_end) / (4096UL * 512 * 512 * 512);
+                HADDR_TO_LADDR(memory_management_struct.kernel_end) / (4096UL * 512 * 512 * 512);
 
-        if (Virt_To_Phy(memory_management_struct.kernel_end) % (4096UL * 512 * 512 * 512))
+        if (HADDR_TO_LADDR(memory_management_struct.kernel_end) % (4096UL * 512 * 512 * 512))
             pml4e_num++;
 
         for (unsigned int i = 0; i < pml4e_num; i++) {
@@ -16,7 +16,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
         }
 
         map_pages(0, 0,
-                  Virt_To_Phy(memory_management_struct.kernel_end) / 4096,
+                  HADDR_TO_LADDR(memory_management_struct.kernel_end) / 4096,
                   PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
 
         for (unsigned int i = 0; i < pml4e_num; i++) {
@@ -31,13 +31,13 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
         color_printk(ORANGE, BLACK, "OS StartAddr: %#018lX \tEndAddr: %#018lX \n",
                      memory_management_struct.kernel_start, memory_management_struct.kernel_end);
 
-        SET_CR3(Virt_To_Phy(&__PML4T));
+        SET_CR3(HADDR_TO_LADDR(&__PML4T));
 
-        map_pages(Virt_To_Phy(Pos.FB_addr), Pos.FB_addr, Pos.FB_length / 4096,
+        map_pages(HADDR_TO_LADDR(Pos.FB_addr), Pos.FB_addr, Pos.FB_length / 4096,
                   PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
-        map_pages(Virt_To_Phy(ioapic_baseaddr), (unsigned long) ioapic_baseaddr, 1,
+        map_pages(HADDR_TO_LADDR(ioapic_baseaddr), (unsigned long) ioapic_baseaddr, 1,
                   PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
-        map_pages(Virt_To_Phy(hpet_attr.baseaddr), hpet_attr.baseaddr, 0x1,
+        map_pages(HADDR_TO_LADDR(hpet_attr.baseaddr), hpet_attr.baseaddr, 0x1,
                   PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
 
 
@@ -46,7 +46,7 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
 //        unmap_pages(0x7FFFFFF000, 0x515);
     }
 
-    SET_CR3(Virt_To_Phy(&__PML4T));
+    SET_CR3(HADDR_TO_LADDR(&__PML4T));
 
     return;
 }
