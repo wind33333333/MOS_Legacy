@@ -33,11 +33,11 @@ __attribute__((section(".init_text"))) void page_init(unsigned char bsp_flags) {
 
         map_pages(HADDR_TO_LADDR(Pos.FB_addr), Pos.FB_addr, Pos.FB_length / 4096, PAGE_ROOT_RW);
         map_pages(HADDR_TO_LADDR(ioapic_baseaddr), (unsigned long) ioapic_baseaddr, 1,
-                  PAGE_ROOT_RW);
-        map_pages(HADDR_TO_LADDR(hpet_attr.baseaddr), hpet_attr.baseaddr, 1, PAGE_ROOT_RW);
+                  PAGE_UC);
+        map_pages(HADDR_TO_LADDR(hpet_attr.baseaddr), hpet_attr.baseaddr, 1, PAGE_UC);
 
 
-        map_pages((unsigned long) alloc_pages(516), 0x7FFFFFF000, 516, PAGE_ROOT_R);
+        map_pages((unsigned long) alloc_pages(516), 0x7FFFFFF000, 516, PAGE_ROOT_RW);
         map_pages((unsigned long) alloc_pages(1), 0x7FFFE00000, 1, PAGE_ROOT_RW);
         map_pages((unsigned long) alloc_pages(1), 0x8000204000, 1, PAGE_ROOT_RW),
 //        unmap_pages(0x7FFFFFF000, 516);
