@@ -167,7 +167,7 @@ GO_TO_TMP_Protect:
 ;=======	IA32_EFER enable long-mode
 	mov	ecx,	0C0000080h		;IA32_EFER
 	rdmsr
-	or	eax,	901h            ;bit11启用NX功能配合分页NX位置位表示页不可执行 bit8开启长模式 bit0开启syscall/sysret指令
+	or	eax,	901h            ;bit11启用NXE功能配合分页NX位置位表示页不可执行 bit8开启长模式 bit0开启syscall/sysret指令
 	wrmsr
 
 ;=======	set CR0 open PE and paging
