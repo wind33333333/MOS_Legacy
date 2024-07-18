@@ -164,7 +164,7 @@ void map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num,
     for (unsigned long i = 0; i < num; i++) {
         if (pml4t_vbase[(offset >> 39) + i] == 0) {
             pml4t_vbase[(offset >> 39) + i] =
-                    (unsigned long) alloc_pages(1) | (attr & 0xFFFFFFFFFFFFFE7FUL);
+                    (unsigned long) alloc_pages(1) | (attr & 0x3F);
             memset(&pdptt_vbase[(offset >> 39 << 9) + i * 512], 0x0, 4096);
         }
     }
@@ -176,7 +176,7 @@ void map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num,
     for (unsigned long i = 0; i < num; i++) {
         if (pdptt_vbase[(offset >> 30) + i] == 0) {
             pdptt_vbase[(offset >> 30) + i] =
-                    (unsigned long) alloc_pages(1) | (attr & 0xFFFFFFFFFFFFFF7FUL);
+                    (unsigned long) alloc_pages(1) | (attr & 0x13F);
             memset(&pdt_vbase[(offset >> 30 << 9) + i * 512], 0x0, 4096);
         }
     }
@@ -186,7 +186,7 @@ void map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num,
     for (unsigned long i = 0; i < num; i++) {
         if (pdt_vbase[(offset >> 21) + i] == 0) {
             pdt_vbase[(offset >> 21) + i] =
-                    (unsigned long) alloc_pages(1) | (attr & 0xFFFFFFFFFFFFFF7FUL | PAPG_G);
+                    (unsigned long) alloc_pages(1) | (attr & 0x13F);
             memset(&ptt_vbase[(offset >> 21 << 9) + i * 512], 0x0, 4096);
         }
     }
