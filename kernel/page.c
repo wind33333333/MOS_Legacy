@@ -17,7 +17,7 @@ __attribute__((section(".init_text"))) void page_init(unsigned char bsp_flags) {
 
         map_pages(0, 0,
                   HADDR_TO_LADDR(memory_management_struct.kernel_end) / 4096,
-                  PAGE_G | PAGE_PAT | PAGE_RW | PAGE_P);
+                  PAGE_ROOT_RWX);
 
         for (unsigned int i = 0; i < pml4e_num; i++) {
             //__PML4T[i] = pml4t_vbase[i];            //修改正式内核PML4T 低
@@ -34,17 +34,17 @@ __attribute__((section(".init_text"))) void page_init(unsigned char bsp_flags) {
         SET_CR3(HADDR_TO_LADDR(&__PML4T));
 
         map_pages(HADDR_TO_LADDR(Pos.FB_addr), Pos.FB_addr, Pos.FB_length / 4096,
-                  PAGE_NX | PAGE_G | PAGE_PAT | PAGE_RW | PAGE_P);
+                  PAGE_ROOT_RW);
         map_pages(HADDR_TO_LADDR(ioapic_baseaddr), (unsigned long) ioapic_baseaddr, 1,
-                  PAGE_NX | PAGE_G | PAGE_PAT | PAGE_PCD | PAGE_PWT | PAGE_RW | PAGE_P);
+                  PAGE_ROOT_RW);
         map_pages(HADDR_TO_LADDR(hpet_attr.baseaddr), hpet_attr.baseaddr, 1,
-                  PAGE_NX | PAGE_G | PAGE_PAT | PAGE_PCD | PAGE_PWT | PAGE_RW | PAGE_P);
+                  PAGE_ROOT_RW);
 
 
         map_pages((unsigned long) alloc_pages(516), 0x7FFFFFF000, 516,
-                  PAGE_ROOT_RX);
-        map_pages((unsigned long) alloc_pages(1),0x7FFFE00000,1,PAGE_NX | PAGE_PAT | PAGE_RW | PAGE_P);
-        map_pages((unsigned long) alloc_pages(1),0x8000204000,1,PAGE_NX | PAGE_PAT | PAGE_RW | PAGE_P),
+                  PAGE_ROOT_R);
+        map_pages((unsigned long) alloc_pages(1),0x7FFFE00000,1,PAGE_ROOT_RW);
+        map_pages((unsigned long) alloc_pages(1),0x8000204000,1,PAGE_ROOT_RW),
 //        unmap_pages(0x7FFFFFF000, 516);
 //        unmap_pages(0x7FFFE00000, 1);
 //        unmap_pages(0x8000204000, 1);
