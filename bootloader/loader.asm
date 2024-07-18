@@ -164,13 +164,13 @@ GO_TO_TMP_Protect:
 	mov	eax,	0x90000
 	mov	cr3,	eax
 
-;=======	enable long-mode
+;=======	IA32_EFER enable long-mode
 	mov	ecx,	0C0000080h		;IA32_EFER
 	rdmsr
 	or	eax,	101h            ;bit8开启长模式 bit0开启syscall/sysret指令
 	wrmsr
 
-;=======	open PE and paging
+;=======	set CR0 open PE and paging
 	mov	eax,	cr0
 ;	bts	eax,	31            ;bit31 PG位
     or  eax,    0x80000003    ;bit0 PE, bit1 MP, bit31 PG
