@@ -147,9 +147,9 @@ GO_TO_TMP_Protect:
 ;=======	load GDTR
 	lgdt	[GdtPtr64]
 
-;=======	open PAE
+;=======	set CR4
 	mov	eax,	cr4
-    or  eax,    0x50E20   ;bit5 PAE, bit9 OSFXSR, bit10 OSXMMEXCPT,bit11 UMIP禁止用户模式下执行 SGDT、SIDT、SLDT、SMSW 和 STR 指令， bit16 FSGSBASE, bit18 OSXSAVE。启用avx指令值需要设置bit9、bit10和bit18
+    or  eax,    0x50EA0   ;bit5 PAE,bit7 PGE, bit9 OSFXSR, bit10 OSXMMEXCPT,bit11 UMIP禁止用户模式下执行 SGDT、SIDT、SLDT、SMSW 和 STR 指令， bit16 FSGSBASE, bit18 OSXSAVE。启用avx指令值需要设置bit9、bit10和bit18
 	mov	cr4,	eax
 
 ;========== XCR0寄存器 启用avx,avx2和（avx512指令集桌面级cpu大部分不支持最好禁用)
