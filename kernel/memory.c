@@ -193,7 +193,7 @@ void map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num,
 
     //PT 映射页表
     for (unsigned long i = 0; i < page_num; i++) {
-        ptt_vbase[(offset >> 12) + i] = (paddr & PAGE_4K_MASK) + i * 4096;
+        ptt_vbase[(offset >> 12) + i] = (paddr & PAGE_4K_MASK) + i * 4096 | attr;
         INVLPG((vaddr & PAGE_4K_MASK) + i * 4096);
     }
 
