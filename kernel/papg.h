@@ -8,7 +8,6 @@
 
 void papg_init(unsigned char bsp_flags);
 
-void unmap_pages(unsigned long paddr, unsigned long page_num);
 
 
 #endif

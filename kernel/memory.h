@@ -6,11 +6,17 @@
 #include "cpuinfo.h"
 
 void  memory_init(unsigned char bsp_flags);
+
 void * alloc_pages(unsigned long required_length);
+
 int free_pages(void *pages_addr,unsigned long required_length);
+
 void map_pages(unsigned long paddr, unsigned long vaddr,unsigned long page_num, unsigned long attr);
 
+void unmap_pages(unsigned long paddr, unsigned long page_num);
+
 extern unsigned long kenelstack_top;
+
 extern unsigned long _start_text;
 
 #define E820_SIZE    0x500
