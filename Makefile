@@ -40,7 +40,7 @@ ${BUILD}/kernel.bin: ${BUILD}/system
 
 ${BUILD}/system: ${BUILD}/head.o ${BUILD}/main.o ${BUILD}/printk.o ${BUILD}/interrupt.o \
  				${BUILD}/ioapic.o ${BUILD}/ap.o ${BUILD}/acpi.o ${BUILD}/idt.o ${BUILD}/apic.o \
-				${BUILD}/memory.o ${BUILD}/gdt.o ${BUILD}/tss.o ${BUILD}/papg.o ${BUILD}/cpuinfo.o \
+				${BUILD}/memory.o ${BUILD}/gdt.o ${BUILD}/tss.o ${BUILD}/page.o ${BUILD}/cpuinfo.o \
 				${BUILD}/hpet.o
 	ld -b elf64-x86-64 -z muldefs -o $@ $^ -T $(KERNEL)/Kernel.lds
 

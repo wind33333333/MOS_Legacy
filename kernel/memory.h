@@ -68,15 +68,15 @@ unsigned long* ptt_vbase = (unsigned long*)0xFFFFFF8000000000;    //pt虚拟地�
 #define GET_CR3(paddr) __asm__ __volatile__("mov %%cr3,%0":"=r"(paddr)::);
 
 
-#define PAPG_NX     1UL<<63
-#define PAPG_G      1UL<<8
-#define PAPG_PAT    1UL<<7
-#define PAPG_D      1UL<<6
-#define PAPG_A      1UL<<5
-#define PAPG_PCD    1UL<<4
-#define PAPG_PWT    1UL<<3
-#define PAPG_US     1UL<<2
-#define PAPG_RW     1UL<<1
-#define PAPG_P      1UL<<0
+#define PAGE_NX     1UL<<63
+#define PAGE_G      1UL<<8
+#define PAGE_PAT    1UL<<7
+#define PAGE_D      1UL<<6
+#define PAGE_A      1UL<<5
+#define PAGE_PCD    1UL<<4
+#define PAGE_PWT    1UL<<3
+#define PAGE_US     1UL<<2
+#define PAGE_RW     1UL<<1
+#define PAGE_P      1UL<<0
 
 #endif

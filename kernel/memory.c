@@ -32,7 +32,7 @@ __attribute__((section(".init_text"))) void memory_init(unsigned char bsp_flags)
         memory_management_struct.bits_map = (unsigned long *) kenelstack_top;
         memory_management_struct.bits_size = totalmem >> PAGE_4K_SHIFT;
         memory_management_struct.bits_length =
-                (memory_management_struct.bits_size + 63) / 8 & 0xFFFFFFFFFFFFFFF8;
+                (memory_management_struct.bits_size + 63) / 8 & 0xFFFFFFFFFFFFFFF8UL;
         memset(memory_management_struct.bits_map, 0xff, memory_management_struct.bits_length);
 
         //bit map 1M以上可用空间置0，i=1跳过1M保持使用置1，等全部初始化后再释放
@@ -41,7 +41,7 @@ __attribute__((section(".init_text"))) void memory_init(unsigned char bsp_flags)
                    ((memory_management_struct.e820[i].address >> PAGE_4K_SHIFT) >> 6), 0,
                    (memory_management_struct.e820[i].length >> PAGE_4K_SHIFT) >> 3);
             totalmem = memory_management_struct.e820[i].address +
-                       memory_management_struct.e820[i].length & 0xFFFFFFFFFFFF8000;
+                       memory_management_struct.e820[i].length & 0xFFFFFFFFFFFF8000UL;
             for (; totalmem < (memory_management_struct.e820[i].address +
                                memory_management_struct.e820[i].length); totalmem += PAGE_4K_SIZE) {
                 *(memory_management_struct.bits_map + (totalmem >> PAGE_4K_SHIFT >> 6)) ^=
@@ -53,13 +53,13 @@ __attribute__((section(".init_text"))) void memory_init(unsigned char bsp_flags)
         memory_management_struct.kernel_start = (unsigned long) &_start_text;
         memory_management_struct.kernel_end =
                 kenelstack_top + (memory_management_struct.bits_length + 0xfff) &
-                0xFFFFFFFFFFFFF000;
+                0xFFFFFFFFFFFFF000UL;
 
         //把内核1M开始到kernel_end地址bit map置1，标记为已使用
         memset(memory_management_struct.bits_map + ((0x100000 >> PAGE_4K_SHIFT) >> 6), 0xFF,
                (HADDR_TO_LADDR(memory_management_struct.kernel_end) - 0x100000) >> PAGE_4K_SHIFT
                                                                                 >> 3);
-        totalmem = HADDR_TO_LADDR(memory_management_struct.kernel_end) & 0xFFFFFFFFFFFF8000;
+        totalmem = HADDR_TO_LADDR(memory_management_struct.kernel_end) & 0xFFFFFFFFFFFF8000UL;
         for (; totalmem <
                HADDR_TO_LADDR(memory_management_struct.kernel_end); totalmem += PAGE_4K_SIZE) {
             *(memory_management_struct.bits_map + (totalmem >> PAGE_4K_SHIFT >> 6)) ^=
@@ -98,7 +98,7 @@ void *alloc_pages(unsigned long page_num) {
     unsigned long current_length = 0;
 
     for (unsigned long i = 0; i < (memory_management_struct.bits_size / 64); i++) {
-        if ((memory_management_struct.bits_map[i] == 0xFFFFFFFFFFFFFFFF)) {
+        if ((memory_management_struct.bits_map[i] == 0xFFFFFFFFFFFFFFFFUL)) {
             current_length = 0;
             continue;
         }

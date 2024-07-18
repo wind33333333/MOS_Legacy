@@ -1,12 +1,12 @@
-#ifndef __PAPG_INIT_H__
-#define __PAPG_INIT_H__
+#ifndef __PAGE_INIT_H__
+#define __PAGE_INIT_H__
 
 #include "printk.h"
 #include "memory.h"
 #include "cpuinfo.h"
 #include "hpet.h"
 
-void papg_init(unsigned char bsp_flags);
+void page_init(unsigned char bsp_flags);
 
 
 

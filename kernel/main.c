@@ -8,7 +8,7 @@
 #include "memory.h"
 #include "gdt.h"
 #include "tss.h"
-#include "papg.h"
+#include "page.h"
 #include "cpuinfo.h"
 #include "hpet.h"
 
@@ -25,7 +25,7 @@ __attribute__((section(".init_text"))) void Kernel_init(void) {
     hpet_init(bsp_flags);                               //初始化hpet
     ioapic_init(bsp_flags);                             //初始化ioapic
     apic_init();                                        //初始化apic
-    papg_init(bsp_flags);                               //初始化内核页表
+    page_init(bsp_flags);                               //初始化内核页表
     ap_init(cpu_id,bsp_flags);                          //初始化ap核
 
     //ENABLE_HPET_TIMES(*hpetRegisters.TIM0_CONF,*hpetRegisters.TIM0_COMP,0x3000000,HPET_PERIODIC,0);
