@@ -42,7 +42,7 @@ __attribute__((section(".init_text"))) void page_init(unsigned char bsp_flags) {
 
 
         map_pages((unsigned long) alloc_pages(516), 0x7FFFFFF000, 516,
-                  PAGE_NX | PAGE_PAT | PAGE_RW | PAGE_P);
+                  PAGE_NX | PAGE_PAT | PAGE_P);
         map_pages((unsigned long) alloc_pages(1),0x7FFFE00000,1,PAGE_NX | PAGE_PAT | PAGE_RW | PAGE_P);
         map_pages((unsigned long) alloc_pages(1),0x8000204000,1,PAGE_NX | PAGE_PAT | PAGE_RW | PAGE_P),
 //        unmap_pages(0x7FFFFFF000, 516);
