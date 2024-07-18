@@ -6,18 +6,14 @@
 #include "cpuinfo.h"
 
 void  memory_init(unsigned char bsp_flags);
-
 void * alloc_pages(unsigned long required_length);
-
 int free_pages(void *pages_addr,unsigned long required_length);
-
 void map_pages(unsigned long paddr, unsigned long vaddr,unsigned long page_num, unsigned long attr);
-
 void unmap_pages(unsigned long paddr, unsigned long page_num);
 
 extern unsigned long kenelstack_top;
-
 extern unsigned long _start_text;
+extern unsigned long __PML4T[512];
 
 #define E820_SIZE    0x500
 #define E820_BASE    0x504
@@ -63,18 +59,12 @@ unsigned long* pdptt_vbase = (unsigned long*)0xFFFFFFFFFFE00000;  //pdpt虚拟�
 unsigned long* pdt_vbase = (unsigned long*)0xFFFFFFFFC0000000;    //pd虚拟地址基址
 unsigned long* ptt_vbase = (unsigned long*)0xFFFFFF8000000000;    //pt虚拟地址基址
 
-extern unsigned long __PML4T[512];
 
 #define MFENCE() __asm__ __volatile__ ("mfence":::);
-
 #define LFENCE() __asm__ __volatile__ ("lfence":::);
-
 #define SFENCE() __asm__ __volatile__ ("sfence":::);
-
 #define INVLPG(vaddr) __asm__ __volatile__("invlpg (%0)"::"r"(vaddr):);
-
 #define SET_CR3(paddr) __asm__ __volatile__("mov %0,%%cr3"::"r"(paddr):);
-
 #define GET_CR3(paddr) __asm__ __volatile__("mov %%cr3,%0":"=r"(paddr)::);
 
 
