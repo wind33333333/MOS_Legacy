@@ -66,6 +66,11 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
     free_pages((void *)(ptt_vbase[(offset >> 12)] & PAGE_4K_MASK), page_num);
     memset(&ptt_vbase[(offset >> 12)], 0, page_num << 3);
 
+    // 刷新 TLB
+    for (unsigned long i = 0; i < page_num; i++) {
+        INVLPG((vaddr & PAGE_4K_MASK) + i * 4096);
+    }
+
     //释放页目录 PD
     num = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL - 1)))) + (512UL - 1)) / 512UL;
     for (unsigned long i = 0; i < num; i++) {
@@ -114,58 +119,6 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
             }
             j++;
         }
-    }
-
-/*
-
-    //释放页目录 PD
-    num = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL - 1)))) + (512UL - 1)) / 512UL;
-    for (unsigned long i = 0; i < num; i++) {
-        for (unsigned long j = 0; j < 512; j++) {
-            if(ptt_vbase[(offset >> 21 << 9) + i * 512 + j]) {
-                break;
-            } else if(j == 511){
-                free_pages((void *)(pdt_vbase[(offset >> 21) + i] & PAGE_4K_MASK), 1);
-                pdt_vbase[(offset >> 21) + i] = 0;
-                break;
-            }
-        }
-    }
-
-    //释放页目录表 PDPT
-    num = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 - 1)))) + (512UL * 512 - 1)) /
-        (512UL * 512);
-    for (unsigned long i = 0; i < num; i++) {
-        for (unsigned long j = 0; j < 512UL; j++) {
-            if(pdt_vbase[(offset >> 30 << 9) + i * 512UL + j]) {
-                break;
-            } else if(j == 511){
-                free_pages((void *) (pdptt_vbase[(offset >> 30) + i] & PAGE_4K_MASK), 1);
-                pdptt_vbase[(offset >> 30) + i] = 0;
-                break;
-            }
-        }
-    }
-
-    //释放页目录表 PML4T
-    num = ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 * 512 - 1)))) +
-         (512UL * 512 * 512 - 1)) / (512UL * 512 * 512);
-    for (unsigned long i = 0; i < num; i++) {
-        for (unsigned long j = 0; j < 512UL; j++) {
-            if(pdptt_vbase[(offset >> 39 << 9) + i * 512UL + j]) {
-                break;
-            } else if(j == 511){
-                free_pages((void *) (pml4t_vbase[(offset >> 39) + i] & PAGE_4K_MASK), 1);
-                pml4t_vbase[(offset >> 39) + i] = 0;
-                break;
-            }
-        }
-    }
-*/
-
-    // 刷新 TLB
-    for (unsigned long i = 0; i < page_num; i++) {
-        INVLPG((vaddr & PAGE_4K_MASK) + i * 4096);
     }
 
     return;
