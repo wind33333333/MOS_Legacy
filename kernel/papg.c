@@ -34,20 +34,22 @@ __attribute__((section(".init_text"))) void papg_init(unsigned char bsp_flags) {
         SET_CR3(HADDR_TO_LADDR(&__PML4T));
 
         map_pages(HADDR_TO_LADDR(Pos.FB_addr), Pos.FB_addr, Pos.FB_length / 4096,
-                  PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
+                  PAPG_NX | PAPG_G | PAPG_PAT | PAPG_RW | PAPG_P);
         map_pages(HADDR_TO_LADDR(ioapic_baseaddr), (unsigned long) ioapic_baseaddr, 1,
-                  PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
+                  PAPG_NX | PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
         map_pages(HADDR_TO_LADDR(hpet_attr.baseaddr), hpet_attr.baseaddr, 1,
-                  PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
+                  PAPG_NX | PAPG_G | PAPG_PAT | PAPG_PCD | PAPG_PWT | PAPG_RW | PAPG_P);
 
 
         map_pages((unsigned long) alloc_pages(516), 0x7FFFFFF000, 516,
-                  PAPG_PAT | PAPG_RW | PAPG_P);
-        map_pages((unsigned long) alloc_pages(1),0x7FFFE00000,1,PAPG_PAT | PAPG_RW | PAPG_P);
-        map_pages((unsigned long) alloc_pages(1),0x8000204000,1,PAPG_PAT | PAPG_RW | PAPG_P),
-        unmap_pages(0x7FFFFFF000, 516);
-        unmap_pages(0x7FFFE00000, 1);
-        unmap_pages(0x8000204000, 1);
+                  PAPG_NX | PAPG_PAT | PAPG_RW | PAPG_P);
+        map_pages((unsigned long) alloc_pages(1),0x7FFFE00000,1,PAPG_NX | PAPG_PAT | PAPG_RW | PAPG_P);
+        map_pages((unsigned long) alloc_pages(1),0x8000204000,1,PAPG_NX | PAPG_PAT | PAPG_RW | PAPG_P),
+//        unmap_pages(0x7FFFFFF000, 516);
+//        unmap_pages(0x7FFFE00000, 1);
+//        unmap_pages(0x8000204000, 1);
+
+        *(unsigned long*)0x7FFFFFF000 = 0xFFFFFFFF;
     }
 
     SET_CR3(HADDR_TO_LADDR(&__PML4T));
