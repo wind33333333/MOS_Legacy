@@ -173,7 +173,7 @@ GO_TO_TMP_Protect:
 ;=======	set CR0 open PE and paging
 	mov	eax,	cr0
     or  eax,    0x80010003    ;bit0 PE, bit1 MP, bit16 WP, bit31 PG
-    btr	eax,	2
+    and eax,    0x9FFFFFFB    ;bit2 EM, bit29 NW, bit30 CD
 	mov	cr0,	eax
 	jmp	SelectorCode64:longx64
 
