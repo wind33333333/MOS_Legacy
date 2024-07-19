@@ -202,7 +202,7 @@ void map_pages(unsigned long paddr, unsigned long vaddr, unsigned long page_num,
 
 
 //释放物理内存映射虚拟内存
-void unmap_pages(unsigned long vaddr, unsigned long page_num) {
+void unmap_pages11(unsigned long vaddr, unsigned long page_num) {
     unsigned long num, j;
     unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
 
@@ -271,7 +271,7 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
 
 
 //释放物理内存映射虚拟内存
-void unmap_pages11(unsigned long vaddr, unsigned long page_num) {
+void unmap_pages(unsigned long vaddr, unsigned long page_num) {
     unsigned long nums[] = {
             ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL - 1)))) + (512UL - 1)) / 512UL,
             ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 - 1)))) +

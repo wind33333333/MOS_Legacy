@@ -38,11 +38,11 @@ __attribute__((section(".init_text"))) void page_init(unsigned char bsp_flags) {
 
 
         map_pages((unsigned long) alloc_pages(516), 0x7FFFFFF000, 516, PAGE_ROOT_RW);
-        //map_pages((unsigned long) alloc_pages(1), 0x7FFFE00000, 1, PAGE_ROOT_RW);
-        //map_pages((unsigned long) alloc_pages(1), 0x8000204000, 1, PAGE_ROOT_RW),
+        map_pages((unsigned long) alloc_pages(1), 0x7FFFE00000, 1, PAGE_ROOT_RW);
+        map_pages((unsigned long) alloc_pages(1), 0x8000204000, 1, PAGE_ROOT_RW),
         unmap_pages(0x7FFFFFF000, 516);
-        //unmap_pages(0x7FFFE00000, 1);
-        //unmap_pages(0x8000204000, 1);
+        unmap_pages(0x7FFFE00000, 1);
+        unmap_pages(0x8000204000, 1);
 
         //*(unsigned long *) 0x7FFFFFF000 = 0xFFFFFFFF;
     }
