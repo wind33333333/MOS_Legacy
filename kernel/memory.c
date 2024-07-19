@@ -138,13 +138,13 @@ int free_pages(void *pages_addr, unsigned long page_num) {
     SPIN_LOCK(memory_management_struct.lock);
     if ((pages_addr + (page_num << PAGE_4K_SHIFT)) >
         (memory_management_struct.e820[memory_management_struct.e820_length - 1].address +
-         memory_management_struct.e820[memory_management_struct.e820_length - 1].length))
+         memory_management_struct.e820[memory_management_struct.e820_length - 1].length)){
+        memory_management_struct.lock = 0;
         return -1;
+    }
 
     for (unsigned long i = 0; i < page_num; i++) {
-        (memory_management_struct.bits_map[(((unsigned long) pages_addr >> PAGE_4K_SHIFT) + i) /
-                                           64] ^= (1UL
-                << (((unsigned long) pages_addr >> PAGE_4K_SHIFT) + i) % 64));
+        (memory_management_struct.bits_map[(((unsigned long) pages_addr >> PAGE_4K_SHIFT) + i) / 64] ^= (1UL << (((unsigned long) pages_addr >> PAGE_4K_SHIFT) + i) % 64));
     }
     memory_management_struct.alloc_pages -= page_num;
     memory_management_struct.free_pages += page_num;
@@ -207,7 +207,7 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
     unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
 
     //释放页表 PT
-    free_pages((void *) (ptt_vbase[(offset >> 12)] & PAGE_4K_MASK), page_num);
+    free_pages((void *)(ptt_vbase[(offset >> 12)] & PAGE_4K_MASK), page_num);
     memset(&ptt_vbase[(offset >> 12)], 0, page_num << 3);
 
     // 刷新 TLB
@@ -223,7 +223,7 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
             if (ptt_vbase[(offset >> 21 << 9) + i * 512 + j]) {
                 break;
             } else if (j == 511) {
-                free_pages((void *) (pdt_vbase[(offset >> 21) + i] & PAGE_4K_MASK), 1);
+                free_pages((void *)(pdt_vbase[(offset >> 21) + i] & PAGE_4K_MASK), 1);
                 pdt_vbase[(offset >> 21) + i] = 0;
                 break;
             }
@@ -264,6 +264,54 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
             }
             j++;
         }
+    }
+
+    return;
+}
+
+
+//释放物理内存映射虚拟内存
+void unmap_pages11(unsigned long vaddr, unsigned long page_num) {
+    unsigned long nums[] = {
+            ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL - 1)))) + (512UL - 1)) / 512UL,
+            ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 - 1)))) +
+             (512UL * 512 - 1)) / (512UL * 512),
+            ((page_num + ((vaddr >> 12) - ((vaddr >> 12) & ~(512UL * 512 * 512 - 1)))) +
+             (512UL * 512 * 512 - 1)) / (512UL * 512 * 512)};
+    unsigned long level_offsets[] = {21, 30, 39};
+    unsigned long *table_bases[] = {ptt_vbase, pdt_vbase, pdptt_vbase, pml4t_vbase};
+    unsigned long offset = vaddr & 0xFFFFFFFFFFFFUL;
+    unsigned long k;
+
+    //释放页表 PT
+    free_pages((void *) (ptt_vbase[(offset >> 12)] & PAGE_4K_MASK), page_num);
+    memset(&ptt_vbase[(offset >> 12)], 0, page_num << 3);
+
+    // 刷新 TLB
+    for (unsigned long i = 0; i < page_num; i++) {
+        INVLPG((vaddr & PAGE_4K_MASK) + i * 4096);
+    }
+
+    for (unsigned long i = 0; i < 3; i++) {
+        for (unsigned long j = 0; j < nums[i]; j++) {
+            k = 0;
+            while (1) {
+                unsigned long *p = table_bases[i];
+                unsigned long p1 = p[(offset >> level_offsets[i] << 9) + j * 512 + k];
+                unsigned long p2 = table_bases[i][(offset >> level_offsets[i] << 9) + j * 512 + k];
+                if (table_bases[i][(offset >> level_offsets[i] << 9) + j * 512 + k]) {
+                    break;
+                } else if (k == 511) {
+                    unsigned long p1 = table_bases[i + 1][(offset >> level_offsets[i]) + j];
+                    free_pages((void *) ((table_bases[i + 1][(offset >> level_offsets[i]) + j]) &
+                                         PAGE_4K_MASK), 1);
+                    table_bases[i + 1][(offset >> level_offsets[i]) + j] = 0;
+                    break;
+                }
+                k++;
+            }
+        }
+
     }
 
     return;
