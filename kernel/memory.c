@@ -292,7 +292,6 @@ void unmap_pages(unsigned long vaddr, unsigned long page_num) {
         INVLPG((vaddr & PAGE_4K_MASK) + i * 4096);
     }
 
-
     //释放页目录表PD 页目录指针表PDPT 四级页目录表PLM4
     for (unsigned long i = 0; i < 3; i++) {
         for (unsigned long j = 0; j < nums[i]; j++) {
