@@ -51,6 +51,7 @@ __attribute__((section(".init_text"))) void page_init(unsigned char bsp_flags) {
         unmap_pages(0x8000204000, 1);
 
 
+
     }
 
     SET_CR3(HADDR_TO_LADDR(&__PML4T));
