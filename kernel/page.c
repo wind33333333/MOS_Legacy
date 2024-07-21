@@ -4,11 +4,8 @@ __attribute__((section(".init_text"))) void page_init(unsigned char bsp_flags) {
 
     if (bsp_flags) {
         unsigned long pml4_bak[256] = {0};
-        unsigned long pml4e_num =
-                HADDR_TO_LADDR(memory_management_struct.kernel_end) / (4096UL * 512 * 512 * 512);
-
-        if (HADDR_TO_LADDR(memory_management_struct.kernel_end) % (4096UL * 512 * 512 * 512))
-            pml4e_num++;
+        unsigned long pml4e_num = (((memory_management_struct.kernel_end >> 12) - ((memory_management_struct.kernel_end >> 12) & ~(512UL * 512 * 512 - 1))) +
+                                   (512UL * 512 * 512 - 1)) / (512UL * 512 * 512);
 
         for (unsigned int i = 0; i < pml4e_num; i++) {
             pml4_bak[i] = pml4t_vbase[i];  //备份原PML4E
