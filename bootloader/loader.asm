@@ -86,7 +86,6 @@ Label_Get_Mem_OK:
 	pop	ax
 	mov	bp,	GetMemStructOKMessage
 	int	10h
-
 ;========获取vbe缓冲区地址
 	mov ax,0
 	mov es,ax
@@ -94,6 +93,7 @@ Label_Get_Mem_OK:
 	mov ax,4f01h
 	mov cx,118h
 	int 10h
+
 ;=======	set the SVGA mode(VESA VBE)
 	mov	ax,	4F02h
 	mov	bx,	4180h	;========================mode : 虚拟机0x180 or 物理机0x118
