@@ -117,5 +117,31 @@ typedef struct {
 } __attribute__((packed)) HPET;
 
 
+typedef struct {
+    char Signature[4];          // 表签名，应为"MCFG"
+    unsigned int Length;            // 表的总长度，包括表头和所有配置空间描述符
+    unsigned char Revision;           // 表的修订版本
+    unsigned char Checksum;           // 表的校验和
+    char OEMID[6];              // OEM ID
+    char OEMTableID[8];         // OEM 表 ID
+    unsigned int OEMRevision;       // OEM 修订版本
+    unsigned int CreatorID;         // 创建者 ID
+    unsigned int CreatorRevision;   // 创建者修订版本
+    unsigned int Reserved;          // 保留字段，应为0
+} MCFGHeader;
+
+typedef struct {
+    unsigned long BaseAddress;       // PCIe配置空间的基地址
+    unsigned int SegmentGroupNumber;// PCIe段组号
+    unsigned char StartBusNumber;     // 起始总线号
+    unsigned char EndBusNumber;       // 结束总线号
+    unsigned int Reserved;          // 保留字段，应为0
+} MCFGConfigurationSpace;
+
+typedef struct {
+    MCFGHeader Header;
+    MCFGConfigurationSpace ConfigSpaces[];
+} __attribute__((packed)) MCFG;
+
 
 #endif

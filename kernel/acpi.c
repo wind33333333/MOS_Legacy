@@ -6,6 +6,7 @@ __attribute__((section(".init_text"))) void acpi_init(unsigned char bsp_flags) {
         RSDT *rsdt = (RSDT *) 0;
         MADT *madt = (MADT *) 0;
         HPET *hpet = (HPET *) 0;
+        MCFG *mcfg = (MCFG *) 0;
 
         for (; rsdp < 0x100000; rsdp = (unsigned long *) rsdp + 2) {
             if (*(unsigned long *) rsdp == 0x2052545020445352) {  //'RSD PTR '
@@ -22,6 +23,9 @@ __attribute__((section(".init_text"))) void acpi_init(unsigned char bsp_flags) {
                 case 0x54455048:        //"HPET"
                     hpet = (HPET *) rsdt->Entry[i];
                     hpet_attr.baseaddr = (unsigned long)LADDR_TO_HADDR(hpet->BaseAddressUpper);
+                    break;
+                case 0x4746434D:        //"MCFG"
+                    mcfg = (MCFG *) rsdt->Entry[i];
                     break;
             }
         }
@@ -47,6 +51,8 @@ __attribute__((section(".init_text"))) void acpi_init(unsigned char bsp_flags) {
                      ioapic_baseaddr);
 
         color_printk(YELLOW, BLACK, "HPET: %#018lX \tHPET ADDR: %#018lX\n", hpet, hpet_attr.baseaddr);
+
+        color_printk(YELLOW, BLACK, "MCFG: %#018lX \n", mcfg);
 
         for (int i = 0; i < 24; ++i) {
             if ((irq_to_gsi[i].IRQ == 0x0) && (irq_to_gsi[i].GSI == 0x0))

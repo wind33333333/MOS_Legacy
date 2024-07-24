@@ -56,20 +56,20 @@ $(BUILD)/%.o: $(KERNEL)/%.c
 bochs: all
 	bochs -q -f bochsrc
 
-qemu-gdb: all
-	qemu-system-x86_64 -monitor telnet:127.0.0.1:4444,server,nowait -m 8G -boot c -S -s -cpu max -smp cores=2,threads=2 -hda $(BUILD)/$(HDD)
+#qemu-gdb: all
+#	qemu-system-x86_64 -monitor telnet:127.0.0.1:4444,server,nowait -m 8G -boot c -S -s -cpu max -smp cores=2,threads=2 -hda $(BUILD)/$(HDD)
 
 qemu-monitor:
 	telnet 127.0.0.1 4444
 
-qemu: all
-	qemu-system-x86_64  -m 8G -boot c -cpu max -smp cores=2,threads=2 -hda $(BUILD)/$(HDD)
-
-#qemu-gdb: all
-#	qemu-system-x86_64 -M q35 -m 2G -boot c -S -s -cpu max -smp cores=1,threads=2 -hda $(BUILD)/$(HDD)
-
 #qemu: all
-#	qemu-system-x86_64 -M q35 -m 2G -boot c -cpu max -smp cores=1,threads=2 -hda $(BUILD)/$(HDD)
+#	qemu-system-x86_64  -m 8G -boot c -cpu max -smp cores=2,threads=2 -hda $(BUILD)/$(HDD)
+
+qemu-gdb: all
+	qemu-system-x86_64 -M q35 -m 2G -boot c -S -s -cpu max -smp cores=1,threads=2 -hda $(BUILD)/$(HDD)
+
+qemu: all
+	qemu-system-x86_64 -M q35 -m 2G -boot c -cpu max -smp cores=1,threads=2 -hda $(BUILD)/$(HDD)
 
 clean:
 #	-rm ./build/*
