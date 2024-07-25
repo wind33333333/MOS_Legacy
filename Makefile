@@ -60,16 +60,22 @@ bochs: all
 #	qemu-system-x86_64 -monitor telnet:127.0.0.1:4444,server,nowait -m 8G -boot c -S -s -cpu max -smp cores=2,threads=2 -hda $(BUILD)/$(HDD)
 
 #qemu: all
-#	qemu-system-x86_64  -m 8G -boot c -cpu max -smp cores=2,threads=2 -hda $(BUILD)/$(HDD)
+#	qemu-system-x86_64 -monitor telnet:127.0.0.1:4444,server,nowait -m 8G -boot c -cpu max -smp cores=2,threads=2 -hda $(BUILD)/$(HDD)
 
-qemu-gdb: all
-	qemu-system-x86_64 -monitor telnet:127.0.0.1:4444,server,nowait -M q35 -m 8G -boot c -S -s -cpu max -smp cores=1,threads=1 -hda $(BUILD)/$(HDD)
+#qemu-gdb: all
+#	qemu-system-x86_64 -monitor telnet:127.0.0.1:4444,server,nowait -M q35 -m 8G -boot c -S -s -cpu max -smp cores=1,threads=1 -hda $(BUILD)/$(HDD)
 
-qemu: all
-	qemu-system-x86_64 -monitor telnet:127.0.0.1:4444,server,nowait -M q35 -m 8G -boot c -cpu max -smp cores=1,threads=1 -hda $(BUILD)/$(HDD)
+#qemu: all
+#	qemu-system-x86_64 -monitor telnet:127.0.0.1:4444,server,nowait -M q35 -m 8G -boot c -cpu max -smp cores=1,threads=1 -hda $(BUILD)/$(HDD)
 
 qemu-monitor:
 	telnet 127.0.0.1 4444
+
+qemu-gdb: all
+	qemu-system-x86_64 -monitor telnet:127.0.0.1:4444,server,nowait -M q35 -m 8G -boot c -S -s -cpu max -smp cores=1,threads=1 -drive file=$(BUILD)/$(HDD),if=ide,id=ide0,media=disk,format=raw
+
+qemu: all
+	qemu-system-x86_64 -monitor telnet:127.0.0.1:4444,server,nowait -M q35 -m 8G -boot c -cpu max -smp cores=1,threads=1 -drive file=$(BUILD)/$(HDD),if=ide,id=ide0,media=disk,format=raw
 
 clean:
 #	-rm ./build/*

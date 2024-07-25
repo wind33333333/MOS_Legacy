@@ -23,7 +23,6 @@ read_disk:
 	out dx,al	;32-39
 	rol rax,24	;8-15位
 	out dx,al
-
 	inc dx		;0x1f5
 	ror rax,32	;40-47位
 	out dx,al
@@ -37,7 +36,6 @@ read_disk:
 	inc dx		;0x1f7
 	mov al,0x24	;读磁盘24h
 	out dx,al
-
 	cld
 .readnextsec:
     push rcx
